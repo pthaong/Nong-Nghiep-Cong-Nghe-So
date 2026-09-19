@@ -1,10 +1,12 @@
-// AgriSmart Authentication UI module.
-// Uses authService as the single integration point for future backend APIs.
+/* AgriSmart Authentication UI
+   Scope: Login, Register, Forgot Password, validation and UI states.
+*/
 (function (global) {
   const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   let activeView = 'login';
+  let loginRole = 'user';
 
-  function byId(id) { return document.getElementById(id); }
+  const byId = id => document.getElementById(id);
 
   function setAlert(id, message, type = 'danger') {
     const el = byId(id);
@@ -17,6 +19,7 @@
     const input = byId(inputId);
     const error = byId(errorId);
     if (!input || !error) return !message;
+
     input.classList.toggle('is-invalid', Boolean(message));
     input.classList.toggle('is-valid', !message && input.value.trim() !== '');
     error.textContent = message || '';
@@ -26,8 +29,10 @@
   function clearFormState(formId) {
     const form = byId(formId);
     if (!form) return;
-    form.querySelectorAll('.is-invalid, .is-valid').forEach(el => el.classList.remove('is-invalid', 'is-valid'));
-    form.querySelectorAll('.invalid-feedback').forEach(el => { el.textContent = ''; });
+    form.querySelectorAll('.is-invalid,.is-valid')
+      .forEach(el => el.classList.remove('is-invalid','is-valid'));
+    form.querySelectorAll('.invalid-feedback')
+      .forEach(el => { el.textContent = ''; });
   }
 
   function setLoading(buttonId, loading) {
@@ -40,15 +45,21 @@
   function validateEmail(inputId, errorId) {
     const value = byId(inputId).value.trim();
     if (!value) return setFieldError(inputId, errorId, 'Email không được để trống.');
-    if (!EMAIL_PATTERN.test(value)) return setFieldError(inputId, errorId, 'Vui lòng nhập email hợp lệ.');
+    if (!EMAIL_PATTERN.test(value)) {
+      return setFieldError(inputId, errorId, 'Vui lòng nhập email hợp lệ.');
+    }
     return setFieldError(inputId, errorId, '');
   }
 
   function validateLogin() {
     let valid = validateEmail('loginEmail', 'loginEmailError');
     const password = byId('loginPass').value;
-    if (!password) valid = setFieldError('loginPass', 'loginPassError', 'Mật khẩu không được để trống.') && valid;
-    else setFieldError('loginPass', 'loginPassError', '');
+
+    if (!password) {
+      valid = setFieldError('loginPass','loginPassError','Mật khẩu không được để trống.') && valid;
+    } else {
+      setFieldError('loginPass','loginPassError','');
+    }
     return valid;
   }
 
@@ -60,36 +71,54 @@
     const confirm = byId('registerConfirmPass').value;
     const terms = byId('registerTerms').checked;
 
-    valid = setFieldError('registerName', 'registerNameError', name ? '' : 'Họ và tên không được để trống.') && valid;
-    valid = validateEmail('registerEmail', 'registerEmailError') && valid;
-    valid = setFieldError('registerPhone', 'registerPhoneError', phone ? '' : 'Số điện thoại không được để trống.') && valid;
-    valid = setFieldError('registerPass', 'registerPassError', password.length >= 6 ? '' : 'Mật khẩu phải có ít nhất 6 ký tự.') && valid;
-    valid = setFieldError('registerConfirmPass', 'registerConfirmPassError', confirm === password ? '' : 'Mật khẩu xác nhận không trùng khớp.') && valid;
-    valid = setFieldError('registerTerms', 'registerTermsError', terms ? '' : 'Bạn cần đồng ý với điều khoản sử dụng.') && valid;
+    valid = setFieldError('registerName','registerNameError',
+      name ? '' : 'Họ và tên không được để trống.') && valid;
+    valid = validateEmail('registerEmail','registerEmailError') && valid;
+    valid = setFieldError('registerPhone','registerPhoneError',
+      phone ? '' : 'Số điện thoại không được để trống.') && valid;
+    valid = setFieldError('registerPass','registerPassError',
+      password.length >= 6 ? '' : 'Mật khẩu phải có ít nhất 6 ký tự.') && valid;
+    valid = setFieldError('registerConfirmPass','registerConfirmPassError',
+      confirm === password ? '' : 'Mật khẩu xác nhận không trùng khớp.') && valid;
+    valid = setFieldError('registerTerms','registerTermsError',
+      terms ? '' : 'Bạn cần đồng ý với điều khoản sử dụng.') && valid;
+
     return valid;
   }
 
   function validateForgot() {
-    return validateEmail('forgotEmail', 'forgotEmailError');
+    return validateEmail('forgotEmail','forgotEmailError');
   }
 
   function selectLoginRole(role) {
-    global.loginRole = role;
-    document.querySelectorAll('.role-toggle button').forEach(button => button.classList.toggle('active', button.dataset.role === role));
+    loginRole = role;
+    document.querySelectorAll('.role-toggle button')
+      .forEach(button => button.classList.toggle('active', button.dataset.role === role));
+
     const hint = byId('demoHintText');
-    if (hint) hint.textContent = role === 'admin' ? 'admin@agrismart.vn / admin123' : 'nongdan@agrismart.vn / 123456';
+    if (hint) {
+      hint.textContent = role === 'admin'
+        ? 'admin@agrismart.vn / admin123'
+        : 'nongdan@agrismart.vn / 123456';
+    }
   }
 
   function showAuthView(view) {
     activeView = view;
-    document.querySelectorAll('[data-auth-view]').forEach(section => section.classList.toggle('active', section.dataset.authView === view));
+    document.querySelectorAll('[data-auth-view]')
+      .forEach(section => section.classList.toggle('active', section.dataset.authView === view));
+
     if (view !== 'forgot') {
       const success = byId('forgotSuccess');
       const formState = byId('forgotFormState');
       if (success) success.classList.remove('show');
       if (formState) formState.style.display = 'block';
     }
-    document.querySelector(`#auth${view.charAt(0).toUpperCase() + view.slice(1)}View input`)?.focus();
+
+    const target = document.querySelector(
+      `#auth${view.charAt(0).toUpperCase() + view.slice(1)}View input`
+    );
+    if (target) target.focus();
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
@@ -105,21 +134,29 @@
   async function doLogin(event) {
     event.preventDefault();
     setAlert('loginAlert', '');
+
     if (!validateLogin()) return false;
     setLoading('loginSubmit', true);
+
     try {
       const result = await global.authService.login({
         email: byId('loginEmail').value.trim(),
         password: byId('loginPass').value,
-        role: global.loginRole || 'user'
+        role: loginRole
       });
-      global.setAgriSmartSession({ userId: result.userId, role: result.role });
-      const remember = byId('rememberLogin')?.checked;
+
       try {
-        if (remember) localStorage.setItem('agrismart_session', JSON.stringify(global.session));
-        else localStorage.removeItem('agrismart_session');
-      } catch (storageError) { /* Storage is optional for the mock frontend. */ }
-      global.enterApp();
+        if (byId('rememberLogin').checked) {
+          localStorage.setItem('agrismart_session', JSON.stringify({
+            userId: result.userId,
+            role: result.role
+          }));
+        } else {
+          localStorage.removeItem('agrismart_session');
+        }
+      } catch (_) {}
+
+      setAlert('loginAlert', 'Đăng nhập thành công.', 'success');
     } catch (error) {
       setAlert('loginAlert', error.message || 'Đăng nhập không thành công.');
     } finally {
@@ -131,8 +168,10 @@
   async function handleRegister(event) {
     event.preventDefault();
     setAlert('registerAlert', '');
+
     if (!validateRegister()) return false;
     setLoading('registerSubmit', true);
+
     try {
       await global.authService.register({
         name: byId('registerName').value.trim(),
@@ -140,9 +179,9 @@
         phone: byId('registerPhone').value.trim(),
         password: byId('registerPass').value
       });
-      setAlert('registerAlert', 'Tạo tài khoản thành công. Bạn có thể đăng nhập ngay.', 'success');
+
+      setAlert('registerAlert','Tạo tài khoản thành công. Bạn có thể đăng nhập ngay.','success');
       byId('loginEmail').value = byId('registerEmail').value.trim();
-      byId('loginPass').value = '';
       byId('registerForm').reset();
       clearFormState('registerForm');
       setTimeout(() => showAuthView('login'), 900);
@@ -157,8 +196,10 @@
   async function handleForgotPassword(event) {
     event.preventDefault();
     setAlert('forgotAlert', '');
+
     if (!validateForgot()) return false;
     setLoading('forgotSubmit', true);
+
     try {
       await global.authService.forgotPassword(byId('forgotEmail').value.trim());
       byId('forgotFormState').style.display = 'none';
@@ -171,27 +212,25 @@
     return false;
   }
 
-  function logout() {
-    global.setAgriSmartSession(null);
-    try { localStorage.removeItem('agrismart_session'); } catch (error) { /* optional */ }
-    const app = byId('app');
-    const login = byId('loginScreen');
-    if (app) app.style.display = 'none';
-    if (login) login.style.display = 'flex';
-    byId('loginPass').value = '';
-    setAlert('loginAlert', '');
-    showAuthView('login');
-  }
-
   function initAuthUI() {
     byId('loginForm')?.addEventListener('submit', doLogin);
     byId('registerForm')?.addEventListener('submit', handleRegister);
     byId('forgotForm')?.addEventListener('submit', handleForgotPassword);
-    ['loginEmail', 'loginPass'].forEach(id => byId(id)?.addEventListener('input', () => setAlert('loginAlert', '')));
+
+    ['loginEmail','loginPass'].forEach(id => {
+      byId(id)?.addEventListener('input', () => setAlert('loginAlert',''));
+    });
+
     selectLoginRole('user');
     showAuthView(activeView);
   }
 
-  Object.assign(global, { selectLoginRole, showAuthView, togglePassword, doLogin, logout });
+  Object.assign(global, {
+    selectLoginRole,
+    showAuthView,
+    togglePassword,
+    doLogin
+  });
+
   initAuthUI();
 })(window);
