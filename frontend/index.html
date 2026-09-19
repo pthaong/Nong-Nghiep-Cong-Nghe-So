@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriSmart — Nông nghiệp thông minh</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+
+
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ============================================================= AUTHENTICATION ============================================================= -->
+<div id="loginScreen" aria-live="polite">
+  <div class="login-card auth-card">
+    <div class="login-visual">
+      <div class="brand"><span class="dot"></span> AgriSmart</div>
+      <div>
+        <span class="auth-kicker">AGRISMART · NÔNG NGHIỆP THÔNG MINH</span>
+        <h2>Trợ lý nông nghiệp thông minh cho từng thửa ruộng.</h2>
+        <p>Theo dõi thời tiết, mùa vụ, nhật ký canh tác và nhận khuyến nghị từ AI — tất cả trong một hệ thống.</p>
+      </div>
+      <div class="login-stat">
+        <div><b>12.4k+</b><small>Nông dân sử dụng</small></div>
+        <div><b id="provinceCoverageCount">34</b><small>Tỉnh, thành phủ sóng</small></div>
+        <div><b>24/7</b><small>AI hỗ trợ chẩn đoán</small></div>
+      </div>
+    </div>
+
+    <div class="login-form-wrap auth-form-wrap">
+      <!-- LOGIN -->
+      <section class="auth-view active" id="authLoginView" data-auth-view="login">
+        <div class="auth-heading">
+          <span class="auth-icon"><i class="bi bi-shield-check"></i></span>
+          <div>
+            <h4 class="mb-1">Đăng nhập hệ thống</h4>
+            <p class="text-muted2 mb-0">Truy cập không gian quản lý AgriSmart của bạn.</p>
+          </div>
+        </div>
+
+        <div class="role-toggle" aria-label="Chọn vai trò">
+          <button type="button" class="active" data-role="user" onclick="selectLoginRole('user')"><i class="bi bi-person-workspace me-1"></i>Nông dân</button>
+          <button type="button" data-role="admin" onclick="selectLoginRole('admin')"><i class="bi bi-shield-lock me-1"></i>Quản trị viên</button>
+        </div>
+
+        <div class="auth-alert" id="loginAlert" role="alert" aria-live="assertive"></div>
+        <form id="loginForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="loginEmail">Email</label>
+            <input type="email" class="form-control auth-input" id="loginEmail" autocomplete="email" placeholder="you@example.com" required>
+            <div class="invalid-feedback" id="loginEmailError"></div>
+          </div>
+          <div class="mb-2">
+            <label class="form-label" for="loginPass">Mật khẩu</label>
+            <div class="password-field">
+              <input type="password" class="form-control auth-input" id="loginPass" autocomplete="current-password" placeholder="Nhập mật khẩu" required>
+              <button type="button" class="password-toggle" onclick="togglePassword('loginPass', this)" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+            </div>
+            <div class="invalid-feedback" id="loginPassError"></div>
+          </div>
+          <div class="d-flex justify-content-between align-items-center mb-4 auth-options">
+            <label class="form-check small mb-0">
+              <input class="form-check-input" type="checkbox" id="rememberLogin">
+              <span class="form-check-label">Ghi nhớ đăng nhập</span>
+            </label>
+            <button type="button" class="auth-link-btn" onclick="showAuthView('forgot')">Quên mật khẩu?</button>
+          </div>
+          <button class="btn btn-forest w-100 py-2 fw-semibold auth-submit" id="loginSubmit" type="submit">
+            <span class="btn-label">Đăng nhập</span><span class="btn-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </form>
+        <div class="auth-switch">Chưa có tài khoản? <button type="button" class="auth-link-btn fw-semibold" onclick="showAuthView('register')">Đăng ký</button></div>
+        <div class="demo-hint mt-3"><b>Tài khoản demo:</b> <span id="demoHintText">nongdan@agrismart.vn / 123456</span></div>
+      </section>
+
+      <!-- REGISTER -->
+      <section class="auth-view" id="authRegisterView" data-auth-view="register">
+        <div class="auth-heading">
+          <span class="auth-icon"><i class="bi bi-person-plus"></i></span>
+          <div>
+            <h4 class="mb-1">Tạo tài khoản</h4>
+            <p class="text-muted2 mb-0">Bắt đầu quản lý mùa vụ cùng AgriSmart.</p>
+          </div>
+        </div>
+        <div class="auth-alert" id="registerAlert" role="alert" aria-live="assertive"></div>
+        <form id="registerForm" novalidate>
+          <div class="mb-3">
+            <label class="form-label" for="registerName">Họ và tên</label>
+            <input type="text" class="form-control auth-input" id="registerName" autocomplete="name" placeholder="Nguyễn Văn A" required>
+            <div class="invalid-feedback" id="registerNameError"></div>
+          </div>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label" for="registerEmail">Email</label>
+              <input type="email" class="form-control auth-input" id="registerEmail" autocomplete="email" placeholder="you@example.com" required>
+              <div class="invalid-feedback" id="registerEmailError"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="registerPhone">Số điện thoại</label>
+              <input type="tel" class="form-control auth-input" id="registerPhone" autocomplete="tel" placeholder="09xxxxxxxx" required>
+              <div class="invalid-feedback" id="registerPhoneError"></div>
+            </div>
+          </div>
+          <div class="row g-3 mt-0">
+            <div class="col-md-6">
+              <label class="form-label" for="registerPass">Mật khẩu</label>
+              <div class="password-field">
+                <input type="password" class="form-control auth-input" id="registerPass" autocomplete="new-password" placeholder="Tối thiểu 6 ký tự" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('registerPass', this)" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+              </div>
+              <div class="invalid-feedback" id="registerPassError"></div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label" for="registerConfirmPass">Xác nhận mật khẩu</label>
+              <div class="password-field">
+                <input type="password" class="form-control auth-input" id="registerConfirmPass" autocomplete="new-password" placeholder="Nhập lại mật khẩu" required>
+                <button type="button" class="password-toggle" onclick="togglePassword('registerConfirmPass', this)" aria-label="Hiện mật khẩu"><i class="bi bi-eye"></i></button>
+              </div>
+              <div class="invalid-feedback" id="registerConfirmPassError"></div>
+            </div>
+          </div>
+          <label class="form-check auth-terms my-3">
+            <input class="form-check-input" type="checkbox" id="registerTerms" required>
+            <span class="form-check-label">Tôi đồng ý với <button type="button" class="auth-inline-link" onclick="return false;">điều khoản sử dụng</button> của AgriSmart.</span>
+          </label>
+          <div class="invalid-feedback d-block" id="registerTermsError"></div>
+          <button class="btn btn-forest w-100 py-2 fw-semibold auth-submit" id="registerSubmit" type="submit">
+            <span class="btn-label">Đăng ký</span><span class="btn-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          </button>
+        </form>
+        <div class="auth-switch">Đã có tài khoản? <button type="button" class="auth-link-btn fw-semibold" onclick="showAuthView('login')">Đăng nhập</button></div>
+      </section>
+
+      <!-- FORGOT PASSWORD -->
+      <section class="auth-view" id="authForgotView" data-auth-view="forgot">
+        <div class="auth-heading">
+          <span class="auth-icon"><i class="bi bi-key"></i></span>
+          <div>
+            <h4 class="mb-1">Quên mật khẩu?</h4>
+            <p class="text-muted2 mb-0">Nhập email để nhận hướng dẫn đặt lại mật khẩu.</p>
+          </div>
+        </div>
+        <div class="auth-alert" id="forgotAlert" role="alert" aria-live="assertive"></div>
+        <div id="forgotFormState">
+          <form id="forgotForm" novalidate>
+            <div class="mb-4">
+              <label class="form-label" for="forgotEmail">Email</label>
+              <input type="email" class="form-control auth-input" id="forgotEmail" autocomplete="email" placeholder="you@example.com" required>
+              <div class="invalid-feedback" id="forgotEmailError"></div>
+            </div>
+            <button class="btn btn-forest w-100 py-2 fw-semibold auth-submit" id="forgotSubmit" type="submit">
+              <span class="btn-label">Gửi yêu cầu</span><span class="btn-spinner spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            </button>
+          </form>
+        </div>
+        <div class="auth-success" id="forgotSuccess" role="status" aria-live="polite">
+          <div class="auth-success-icon"><i class="bi bi-check2"></i></div>
+          <h6>Yêu cầu đã được ghi nhận</h6>
+          <p>Liên kết đặt lại mật khẩu sẽ được gửi đến email của bạn.</p>
+        </div>
+        <div class="auth-switch"><button type="button" class="auth-link-btn" onclick="showAuthView('login')"><i class="bi bi-arrow-left me-1"></i>Quay lại đăng nhập</button></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================= APP ============================================================= -->
+<div id="app">
+<div class="app-shell">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> AgriSmart</div>
+    <div class="sidebar-scroll">
+      <div id="navUser">
+        <div class="nav-link-app" data-page="home" onclick="goPage('home')"><i class="bi bi-house-door"></i> Trang chủ</div>
+        <div class="nav-link-app" data-page="crops" onclick="goPage('crops')"><i class="bi bi-flower2"></i> Cây trồng</div>
+        <div class="nav-link-app" data-page="seasons" onclick="goPage('seasons')"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
+        <div class="nav-link-app" data-page="log" onclick="goPage('log')"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
+        <div class="nav-link-app" data-page="weather" onclick="goPage('weather')"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
+        <div class="nav-link-app" data-page="ai" onclick="goPage('ai')"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
+        <div class="nav-section-label">Khác</div>
+        <div class="nav-link-app" data-page="prices" onclick="goPage('prices')"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
+        <div class="nav-link-app" data-page="account" onclick="goPage('account')"><i class="bi bi-person-circle"></i> Tài khoản</div>
+      </div>
+      <div id="navAdmin" style="display:none;">
+        <div class="nav-link-app" data-page="admin-overview" onclick="goPage('admin-overview')"><i class="bi bi-speedometer2"></i> Tổng quan</div>
+        <div class="nav-link-app" data-page="admin-users" onclick="goPage('admin-users')"><i class="bi bi-people"></i> Người dùng</div>
+        <div class="nav-link-app" data-page="admin-fields" onclick="goPage('admin-fields')"><i class="bi bi-map"></i> Ruộng &amp; mùa vụ</div>
+        <div class="nav-link-app" data-page="admin-prices" onclick="goPage('admin-prices')"><i class="bi bi-cash-coin"></i> Giá nông sản</div>
+        <div class="nav-link-app" data-page="admin-alerts" onclick="goPage('admin-alerts')"><i class="bi bi-exclamation-triangle"></i> Cảnh báo thời tiết</div>
+        <div class="nav-link-app" data-page="admin-ai" onclick="goPage('admin-ai')"><i class="bi bi-clock-history"></i> Lịch sử AI hệ thống</div>
+        <div class="nav-section-label">Khác</div>
+        <div class="nav-link-app" data-page="account" onclick="goPage('account')"><i class="bi bi-person-circle"></i> Tài khoản</div>
+      </div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="mini-user" onclick="goPage('account')">
+        <div class="mini-avatar" id="miniAvatar">N</div>
+        <div style="min-width:0;">
+          <div style="color:#fff; font-weight:600; font-size:.85rem;" id="miniName">Nông dân</div>
+          <div style="color:#9FB99A; font-size:.72rem;" id="miniRegion">Cần Thơ</div>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-light w-100 mt-3" onclick="logout()"><i class="bi bi-box-arrow-left me-1"></i>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="main-col">
+    <div class="topbar">
+      <button class="sidebar-toggle-btn" onclick="document.getElementById('sidebar').classList.toggle('open')"><i class="bi bi-list"></i></button>
+      <div>
+        <p class="page-title" id="pageTitle">Trang chủ</p>
+        <p class="page-sub" id="pageSub">Tổng quan canh tác hôm nay</p>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()" title="Đổi giao diện sáng/tối"><i class="bi bi-moon-stars" id="themeIcon"></i></button>
+        <span class="badge-role" id="topRoleBadge">Nông dân</span>
+      </div>
+    </div>
+    <div class="content" id="content">
+
+      <!-- ===================== TRANG CHỦ ===================== -->
+      <section class="page" id="page-home">
+        <div class="row g-3 mb-3">
+          <div class="col-lg-7">
+            <div class="weather-hero h-100">
+              <div class="d-flex justify-content-between align-items-start position-relative">
+                <div>
+                  <div class="small-cap text-white-50">THỜI TIẾT HÔM NAY · <span id="homeRegion">Cần Thơ</span></div>
+                  <div class="weather-temp mt-1" id="homeTemp">33°C</div>
+                  <div class="mt-1" id="homeCondition">Nắng gián đoạn, có mây</div>
+                </div>
+                <i class="bi bi-cloud-sun" style="font-size:3.2rem; opacity:.85;"></i>
+              </div>
+              <div class="row mt-3 position-relative">
+                <div class="col-4"><i class="bi bi-droplet-half me-1"></i><span id="homeHumidity">78%</span><div class="small text-white-50">Độ ẩm</div></div>
+                <div class="col-4"><i class="bi bi-cloud-rain me-1"></i><span id="homeRain">20%</span><div class="small text-white-50">Khả năng mưa</div></div>
+                <div class="col-4"><i class="bi bi-wind me-1"></i><span id="homeWind">14 km/h</span><div class="small text-white-50">Gió</div></div>
+              </div>
+              <button class="btn btn-sm btn-light mt-3 position-relative" onclick="goPage('weather')">Xem dự báo 7 ngày <i class="bi bi-arrow-right"></i></button>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-x h-100">
+              <div class="card-x-head"><h6 class="mb-0"><i class="bi bi-exclamation-triangle text-danger me-1"></i>Cảnh báo thông minh</h6></div>
+              <div class="card-x-body" id="homeAlerts"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-md-3 col-6">
+            <div class="stat-tile"><i class="bi bi-flower2 text-success"></i><div class="num" id="statFields">0</div><div class="small text-muted2">Ruộng đang quản lý</div></div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="stat-tile"><i class="bi bi-rulers" style="color:var(--soil);"></i><div class="num" id="statArea">0</div><div class="small text-muted2">Tổng diện tích (ha)</div></div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="stat-tile"><i class="bi bi-journal-check" style="color:var(--sky);"></i><div class="num" id="statLogs">0</div><div class="small text-muted2">Nhật ký tháng này</div></div>
+          </div>
+          <div class="col-md-3 col-6">
+            <div class="stat-tile"><i class="bi bi-robot" style="color:var(--sun);"></i><div class="num" id="statAI">0</div><div class="small text-muted2">Lượt hỏi AI</div></div>
+          </div>
+        </div>
+
+        <div class="row g-3 mb-3">
+          <div class="col-lg-7">
+            <div class="card-x h-100">
+              <div class="card-x-head d-flex justify-content-between">
+                <h6 class="mb-0"><i class="bi bi-flower2 me-1"></i>Cây trồng đang quản lý</h6>
+                <a href="javascript:goPage('crops')" class="small">Xem tất cả</a>
+              </div>
+              <div class="card-x-body"><div class="row g-2" id="homeFields"></div></div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-x h-100">
+              <div class="card-x-head d-flex justify-content-between">
+                <h6 class="mb-0"><i class="bi bi-cash-coin me-1"></i>Giá nông sản nổi bật</h6>
+                <a href="javascript:goPage('prices')" class="small">Xem tất cả</a>
+              </div>
+              <div class="card-x-body" id="homePrices"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-x">
+          <div class="card-x-head d-flex justify-content-between">
+            <h6 class="mb-0"><i class="bi bi-stars me-1"></i>Khuyến nghị AI mới nhất</h6>
+            <a href="javascript:goPage('ai')" class="small">Hỏi AI ngay</a>
+          </div>
+          <div class="card-x-body"><div class="row g-2" id="homeAI"></div></div>
+        </div>
+      </section>
+
+      <!-- ===================== CÂY TRỒNG ===================== -->
+      <section class="page" id="page-crops">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted2">Danh sách ruộng / vườn bạn đang canh tác</div>
+          <button class="btn btn-forest btn-sm" data-bs-toggle="modal" data-bs-target="#fieldModal" onclick="openFieldModal()"><i class="bi bi-plus-lg me-1"></i>Thêm ruộng / cây trồng</button>
+        </div>
+        <div class="row g-3" id="cropsList"></div>
+      </section>
+
+      <!-- ===================== MÙA VỤ ===================== -->
+      <section class="page" id="page-seasons">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted2">Kế hoạch và theo dõi các mùa vụ trong năm</div>
+          <button class="btn btn-forest btn-sm" data-bs-toggle="modal" data-bs-target="#seasonModal" onclick="openSeasonModal()"><i class="bi bi-plus-lg me-1"></i>Thêm mùa vụ</button>
+        </div>
+        <div class="card-x">
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Tên mùa vụ</th><th>Cây trồng</th><th>Bắt đầu</th><th>Kết thúc</th><th>Trạng thái</th><th>Số ruộng</th><th></th></tr></thead>
+                <tbody id="seasonsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== NHẬT KÝ CANH TÁC ===================== -->
+      <section class="page" id="page-log">
+        <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+          <div class="d-flex gap-2 align-items-center">
+            <select class="form-select form-select-sm" style="width:auto;" id="logFilterField" onchange="renderLogs()">
+              <option value="">Tất cả ruộng</option>
+            </select>
+          </div>
+          <button class="btn btn-forest btn-sm" data-bs-toggle="modal" data-bs-target="#logModal" onclick="openLogModal()"><i class="bi bi-plus-lg me-1"></i>Ghi nhật ký mới</button>
+        </div>
+        <div class="card-x">
+          <div class="card-x-body">
+            <div class="timeline" id="logTimeline"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== THỜI TIẾT ===================== -->
+      <section class="page" id="page-weather">
+        <div class="row g-3 mb-3">
+          <div class="col-lg-4">
+            <div class="weather-hero h-100">
+              <div class="d-flex justify-content-between align-items-center">
+                <div class="small-cap text-white-50">KHU VỰC <span id="wRegion">Cần Thơ</span></div>
+                <button class="btn btn-sm btn-light" onclick="refreshWeather(true)" id="weatherRefreshBtn" title="Cập nhật thời tiết"><i class="bi bi-arrow-clockwise"></i></button>
+              </div>
+              <div class="weather-temp mt-1" id="wTemp">33°C</div>
+              <div id="wCondition">Nắng gián đoạn, có mây</div>
+              <div class="small text-white-50 mt-1">Cảm giác như <span id="wFeels">36°C</span></div>
+              <hr style="border-color:rgba(255,255,255,.25)">
+              <div class="row">
+                <div class="col-6 mb-2"><i class="bi bi-droplet-half me-1"></i>Độ ẩm: <b id="wHumidity">78%</b></div>
+                <div class="col-6 mb-2"><i class="bi bi-cloud-rain me-1"></i>Mưa: <b id="wRain">20%</b></div>
+                <div class="col-6"><i class="bi bi-wind me-1"></i>Gió: <b id="wWind">14 km/h</b></div>
+                <div class="col-6"><i class="bi bi-eye me-1"></i>Tầm nhìn: <b id="wVisibility">9 km</b></div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-8">
+            <div class="card-x h-100">
+              <div class="card-x-head d-flex justify-content-between align-items-center"><h6 class="mb-0">Dự báo 7 ngày tới</h6><span class="small text-muted2" id="weatherSource">Dữ liệu demo</span></div>
+              <div class="card-x-body"><div class="forecast-strip" id="forecastStrip"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card-x mb-3">
+          <div class="card-x-head"><h6 class="mb-0"><i class="bi bi-exclamation-triangle text-danger me-1"></i>Cảnh báo thời tiết xấu</h6></div>
+          <div class="card-x-body" id="weatherAlertsFull"></div>
+        </div>
+        <div class="card-x">
+          <div class="card-x-head"><h6 class="mb-0">Xu hướng nhiệt độ &amp; lượng mưa (7 ngày)</h6></div>
+          <div class="card-x-body"><canvas id="weatherChart" height="90"></canvas></div>
+        </div>
+      </section>
+
+      <!-- ===================== AI ===================== -->
+      <section class="page" id="page-ai">
+        <div class="d-flex gap-2 mb-3 flex-wrap">
+          <button class="ai-tab-btn active" data-tab="diag" onclick="switchAITab('diag')"><i class="bi bi-bug me-1"></i>Chẩn đoán bệnh</button>
+          <button class="ai-tab-btn" data-tab="advice" onclick="switchAITab('advice')"><i class="bi bi-lightbulb me-1"></i>Tư vấn chăm sóc</button>
+          <button class="ai-tab-btn" data-tab="history" onclick="switchAITab('history')"><i class="bi bi-clock-history me-1"></i>Lịch sử tư vấn</button>
+          <button class="ai-tab-btn" data-tab="chat" onclick="switchAITab('chat')"><i class="bi bi-chat-dots me-1"></i>Chat với AI</button>
+        </div>
+
+        <!-- CHẨN ĐOÁN -->
+        <div class="ai-tabpane" id="aitab-diag">
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <div class="card-x">
+                <div class="card-x-head"><h6 class="mb-0">Mô tả tình trạng cây</h6></div>
+                <div class="card-x-body">
+                  <div class="mb-2">
+                    <label class="form-label">Loại cây</label>
+                    <select class="form-select" id="diagCrop">
+                      <option>Lúa</option><option>Cà chua</option><option>Xoài</option><option>Rau muống</option><option>Thanh long</option><option>Cà phê</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Triệu chứng quan sát được</label>
+                    <textarea class="form-control" id="diagSymptom" rows="4" placeholder="Ví dụ: lá vàng từ mép lá lan vào trong gân, xuất hiện đốm nâu, cây héo vào buổi trưa..."></textarea>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Tải ảnh lá / cây bị bệnh (tuỳ chọn)</label>
+                    <div class="upload-drop ai-image-drop" id="diagDropZone" onclick="document.getElementById('diagImgInput').click()" ondragover="handleDiagDragOver(event)" ondragleave="handleDiagDragLeave(event)" ondrop="handleDiagDrop(event)">
+                      <i class="bi bi-image" style="font-size:1.6rem;"></i>
+                      <div class="small mt-1 fw-semibold">Chọn hoặc kéo thả ảnh lá / cây</div>
+                      <div class="small text-muted2">JPG, PNG · nên chụp rõ lá và vùng bị bệnh</div>
+                      <input type="file" id="diagImgInput" accept="image/*" style="display:none" onchange="previewDiagImg(event)">
+                    </div>
+                    <img id="diagImgPreview" style="display:none; max-height:170px; max-width:100%; border-radius:10px; margin-top:8px; object-fit:cover;">
+                    <div class="small text-muted2 mt-1" id="diagImageMeta"></div>
+                  </div>
+                  <button class="btn btn-forest w-100 mt-2" onclick="runDiagnosis()"><i class="bi bi-robot me-1"></i>Phân tích bằng AI</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div id="diagResultWrap">
+                <div class="empty-state"><i class="bi bi-clipboard2-pulse d-block mb-2"></i>Kết quả chẩn đoán AI sẽ hiển thị tại đây.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- TƯ VẤN -->
+        <div class="ai-tabpane" id="aitab-advice" style="display:none;">
+          <div class="row g-3">
+            <div class="col-lg-5">
+              <div class="card-x">
+                <div class="card-x-head"><h6 class="mb-0">Thông tin để AI tư vấn</h6></div>
+                <div class="card-x-body">
+                  <div class="mb-2">
+                    <label class="form-label">Chọn ruộng / cây trồng</label>
+                    <select class="form-select" id="adviceField"></select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Giai đoạn sinh trưởng hiện tại</label>
+                    <select class="form-select" id="adviceStage">
+                      <option>Mạ non / cây con</option><option>Đẻ nhánh / phát triển thân lá</option><option>Ra hoa</option><option>Đậu quả / làm hạt</option><option>Thu hoạch</option>
+                    </select>
+                  </div>
+                  <div class="mb-2">
+                    <label class="form-label">Câu hỏi thêm cho AI (tuỳ chọn)</label>
+                    <textarea class="form-control" id="adviceQuestion" rows="3" placeholder="Ví dụ: tôi có nên bón phân vào lúc này không?"></textarea>
+                  </div>
+                  <button class="btn btn-forest w-100 mt-2" onclick="runAdvice()"><i class="bi bi-lightbulb me-1"></i>Nhận tư vấn</button>
+                </div>
+              </div>
+            </div>
+            <div class="col-lg-7">
+              <div id="adviceResultWrap">
+                <div class="empty-state"><i class="bi bi-chat-square-dots d-block mb-2"></i>Khuyến nghị chăm sóc từ AI sẽ hiển thị tại đây.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CHAT AI -->
+        <div class="ai-tabpane" id="aitab-chat" style="display:none;">
+          <div class="card-x ai-chat-card">
+            <div class="card-x-head d-flex justify-content-between align-items-center">
+              <h6 class="mb-0"><i class="bi bi-robot me-1"></i>AgriSmart AI</h6>
+              <span class="chip chip-info">Nhận biết ngữ cảnh</span>
+            </div>
+            <div class="ai-chat-body" id="aiChatMessages"></div>
+            <div class="card-x-body border-top">
+              <div class="d-flex gap-2">
+                <textarea class="form-control" id="aiChatInput" rows="2" placeholder="Ví dụ: Lúa đang đẻ nhánh, mấy hôm nay mưa nhiều, tôi có nên bón phân không?"></textarea>
+                <button class="btn btn-forest align-self-end" onclick="sendAIChat()"><i class="bi bi-send"></i></button>
+              </div>
+              <div class="small text-muted2 mt-2">AI sử dụng thông tin khu vực, ruộng và thời tiết hiện tại để trả lời. Nội dung mang tính tham khảo.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- LỊCH SỬ -->
+        <div class="ai-tabpane" id="aitab-history" style="display:none;">
+          <div class="card-x">
+            <div class="card-x-body p-0">
+              <div class="table-responsive">
+                <table class="table-x mb-0">
+                  <thead><tr><th>Ngày</th><th>Loại</th><th>Nội dung hỏi</th><th>Kết luận chính</th><th></th></tr></thead>
+                  <tbody id="aiHistoryTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== GIÁ NÔNG SẢN ===================== -->
+      <section class="page" id="page-prices">
+        <div class="card-x mb-3">
+          <div class="card-x-head"><h6 class="mb-0">Bảng giá nông sản tham khảo hôm nay</h6></div>
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Nông sản</th><th>Giá</th><th>Đơn vị</th><th>Thay đổi</th></tr></thead>
+                <tbody id="pricesTableFull"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+        <div class="card-x">
+          <div class="card-x-head d-flex justify-content-between align-items-center">
+            <div>
+              <h6 class="mb-0">So sánh giá nông sản</h6>
+              <div class="small text-muted2 mt-1">Chọn tối đa 3 nông sản để so sánh trực tiếp.</div>
+            </div>
+            <span class="chip chip-info" id="priceCompareCount">0/3</span>
+          </div>
+          <div class="card-x-body">
+            <div class="row g-2 mb-3">
+              <div class="col-md-4">
+                <label class="form-label">Nông sản 1</label>
+                <select class="form-select price-compare-select" id="priceCompare1" onchange="updatePriceComparison()"></select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Nông sản 2</label>
+                <select class="form-select price-compare-select" id="priceCompare2" onchange="updatePriceComparison()"></select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label">Nông sản 3</label>
+                <select class="form-select price-compare-select" id="priceCompare3" onchange="updatePriceComparison()"></select>
+              </div>
+            </div>
+            <div id="priceCompareSummary" class="price-compare-summary mb-3"></div>
+            <div class="price-chart-wrap"><canvas id="priceChart" height="110"></canvas></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== TÀI KHOẢN ===================== -->
+      <section class="page" id="page-account">
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="card-x">
+              <div class="card-x-body text-center">
+                <div class="mini-avatar mx-auto mb-2" style="width:64px;height:64px;font-size:1.6rem;" id="accAvatar">N</div>
+                <h5 class="mb-0" id="accName">Nông dân</h5>
+                <span class="badge-role mt-1 d-inline-block" id="accRoleBadge">Nông dân</span>
+                <hr>
+                <div class="text-start small">
+                  <div class="d-flex justify-content-between py-1"><span class="text-muted2">Email</span><span id="accEmail">-</span></div>
+                  <div class="d-flex justify-content-between py-1"><span class="text-muted2">Số điện thoại</span><span id="accPhoneView">-</span></div>
+                  <div class="d-flex justify-content-between py-1"><span class="text-muted2">Khu vực canh tác</span><span id="accRegionView">-</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-lg-7">
+            <div class="card-x">
+              <div class="card-x-head"><h6 class="mb-0">Cập nhật thông tin cá nhân</h6></div>
+              <div class="card-x-body">
+                <form onsubmit="return saveAccount(event)">
+                  <div class="row g-2">
+                    <div class="col-md-6"><label class="form-label">Họ và tên</label><input class="form-control" id="accNameInput" required></div>
+                    <div class="col-md-6"><label class="form-label">Số điện thoại</label><input class="form-control" id="accPhoneInput"></div>
+                    <div class="col-md-6"><label class="form-label">Email</label><input class="form-control" id="accEmailInput" disabled></div>
+                    <div class="col-md-6">
+                      <label class="form-label">Khu vực canh tác</label>
+                      <div class="province-autocomplete" id="accProvinceAutocomplete">
+                        <input class="form-control province-search" id="accRegionSearch" type="text" placeholder="Gõ tên tỉnh/thành..." autocomplete="off" required>
+                        <i class="bi bi-search province-search-icon"></i>
+                        <input type="hidden" id="accRegionInput">
+                        <div class="province-suggestions" id="accProvinceSuggestions"></div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="btn btn-forest mt-3" type="submit"><i class="bi bi-check-lg me-1"></i>Lưu thay đổi</button>
+                  <span class="small text-success ms-2" id="accSaved" style="display:none;">Đã lưu!</span>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ADMIN: TỔNG QUAN ===================== -->
+      <section class="page" id="page-admin-overview">
+        <div class="row g-3 mb-3">
+          <div class="col-md-3 col-6"><div class="stat-tile"><i class="bi bi-people" style="color:var(--sky);"></i><div class="num" id="adStatUsers">0</div><div class="small text-muted2">Người dùng</div></div></div>
+          <div class="col-md-3 col-6"><div class="stat-tile"><i class="bi bi-flower2 text-success"></i><div class="num" id="adStatFields">0</div><div class="small text-muted2">Ruộng canh tác</div></div></div>
+          <div class="col-md-3 col-6"><div class="stat-tile"><i class="bi bi-journal-check" style="color:var(--soil);"></i><div class="num" id="adStatLogs">0</div><div class="small text-muted2">Nhật ký ghi nhận</div></div></div>
+          <div class="col-md-3 col-6"><div class="stat-tile"><i class="bi bi-robot" style="color:var(--sun);"></i><div class="num" id="adStatAI">0</div><div class="small text-muted2">Lượt AI đã xử lý</div></div></div>
+        </div>
+        <div class="row g-3">
+          <div class="col-lg-7">
+            <div class="card-x">
+              <div class="card-x-head"><h6 class="mb-0">Hoạt động nhật ký canh tác gần đây (toàn hệ thống)</h6></div>
+              <div class="card-x-body"><canvas id="adminActivityChart" height="110"></canvas></div>
+            </div>
+          </div>
+          <div class="col-lg-5">
+            <div class="card-x">
+              <div class="card-x-head"><h6 class="mb-0">Cảnh báo đang hoạt động</h6></div>
+              <div class="card-x-body" id="adminAlertsMini"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ADMIN: NGƯỜI DÙNG ===================== -->
+      <section class="page" id="page-admin-users">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted2">Quản lý toàn bộ tài khoản trong hệ thống</div>
+          <button class="btn btn-forest btn-sm" data-bs-toggle="modal" data-bs-target="#userModal"><i class="bi bi-plus-lg me-1"></i>Thêm người dùng</button>
+        </div>
+        <div class="card-x">
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Họ tên</th><th>Email</th><th>Vai trò</th><th>Khu vực</th><th>Trạng thái</th><th></th></tr></thead>
+                <tbody id="adminUsersTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ADMIN: RUỘNG & MÙA VỤ ===================== -->
+      <section class="page" id="page-admin-fields">
+        <div class="card-x">
+          <div class="card-x-head"><h6 class="mb-0">Toàn bộ ruộng / mùa vụ trong hệ thống</h6></div>
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Tên ruộng</th><th>Cây trồng</th><th>Diện tích</th><th>Giai đoạn</th><th>Ngày gieo trồng</th><th>Chủ ruộng</th></tr></thead>
+                <tbody id="adminFieldsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ADMIN: GIÁ NÔNG SẢN ===================== -->
+      <section class="page" id="page-admin-prices">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted2">Cập nhật giá nông sản hiển thị cho nông dân</div>
+        </div>
+        <div class="card-x">
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Nông sản</th><th>Giá (đ)</th><th>Đơn vị</th><th>% Thay đổi</th><th></th></tr></thead>
+                <tbody id="adminPricesTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================== ADMIN: CẢNH BÁO ===================== -->
+      <section class="page" id="page-admin-alerts">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div class="small text-muted2">Cấu hình cảnh báo thời tiết / dịch hại gửi đến nông dân</div>
+          <button class="btn btn-forest btn-sm" data-bs-toggle="modal" data-bs-target="#alertModal"><i class="bi bi-plus-lg me-1"></i>Thêm cảnh báo</button>
+        </div>
+        <div id="adminAlertsFull"></div>
+      </section>
+
+      <!-- ===================== ADMIN: LỊCH SỬ AI ===================== -->
+      <section class="page" id="page-admin-ai">
+        <div class="card-x">
+          <div class="card-x-head"><h6 class="mb-0">Toàn bộ lịch sử tương tác AI của người dùng</h6></div>
+          <div class="card-x-body p-0">
+            <div class="table-responsive">
+              <table class="table-x mb-0">
+                <thead><tr><th>Ngày</th><th>Người dùng</th><th>Loại</th><th>Nội dung</th><th>Kết luận</th></tr></thead>
+                <tbody id="adminAITable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ============================================================= MODALS ============================================================= -->
+
+<!-- Field Modal -->
+<div class="modal fade" id="fieldModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Thêm ruộng / cây trồng</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <form onsubmit="return saveField(event)">
+  <div class="modal-body">
+    <input type="hidden" id="fieldId">
+    <div class="mb-2"><label class="form-label">Tên ruộng / vườn</label><input class="form-control" id="fieldName" required placeholder="VD: Ruộng số 3 - Kênh 5"></div>
+    <div class="row g-2">
+      <div class="col-md-6"><label class="form-label">Loại cây trồng</label>
+        <select class="form-select" id="fieldCrop">
+          <option>Lúa OM5451</option><option>Lúa OM18</option><option>Cà chua</option><option>Xoài</option><option>Rau muống</option><option>Thanh long</option><option>Cà phê</option>
+        </select>
+      </div>
+      <div class="col-md-6"><label class="form-label">Diện tích (ha)</label><input type="number" step="0.1" class="form-control" id="fieldArea" required></div>
+      <div class="col-md-6"><label class="form-label">Ngày gieo trồng</label><input type="date" class="form-control" id="fieldDate" required></div>
+      <div class="col-md-6"><label class="form-label">Giai đoạn phát triển</label>
+        <select class="form-select" id="fieldStage">
+          <option>Mạ non / cây con</option><option>Đẻ nhánh</option><option>Ra hoa</option><option>Đậu quả / làm hạt</option><option>Thu hoạch</option>
+        </select>
+      </div>
+      <div class="col-12"><label class="form-label">Thuộc mùa vụ (tuỳ chọn)</label><select class="form-select" id="fieldSeason"></select></div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Huỷ</button><button class="btn btn-forest" type="submit">Lưu</button></div>
+  </form>
+</div></div></div>
+
+<!-- Season Modal -->
+<div class="modal fade" id="seasonModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Thêm mùa vụ</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <form onsubmit="return saveSeason(event)">
+  <div class="modal-body">
+    <div class="mb-2"><label class="form-label">Tên mùa vụ</label><input class="form-control" id="seasonName" required placeholder="VD: Vụ Hè Thu 2026"></div>
+    <div class="mb-2"><label class="form-label">Cây trồng chính</label><input class="form-control" id="seasonCrop" required></div>
+    <div class="row g-2">
+      <div class="col-md-6"><label class="form-label">Ngày bắt đầu</label><input type="date" class="form-control" id="seasonStart" required></div>
+      <div class="col-md-6"><label class="form-label">Ngày kết thúc dự kiến</label><input type="date" class="form-control" id="seasonEnd" required></div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Huỷ</button><button class="btn btn-forest" type="submit">Lưu</button></div>
+  </form>
+</div></div></div>
+
+<!-- Log Modal -->
+<div class="modal fade" id="logModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Ghi nhật ký canh tác</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <form onsubmit="return saveLog(event)">
+  <div class="modal-body">
+    <div class="mb-2"><label class="form-label">Ruộng / vườn</label><select class="form-select" id="logField" required></select></div>
+    <div class="row g-2">
+      <div class="col-md-6"><label class="form-label">Ngày thực hiện</label><input type="date" class="form-control" id="logDate" required></div>
+      <div class="col-md-6"><label class="form-label">Loại công việc</label>
+        <select class="form-select" id="logType">
+          <option>Tưới nước</option><option>Bón phân</option><option>Phun thuốc</option><option>Làm cỏ</option><option>Khác</option>
+        </select>
+      </div>
+    </div>
+    <div class="mb-2 mt-2"><label class="form-label">Tình trạng cây</label>
+      <select class="form-select" id="logStatus"><option>Bình thường</option><option>Cần theo dõi</option><option>Có dấu hiệu bệnh</option></select>
+    </div>
+    <div class="mb-2"><label class="form-label">Ghi chú công việc</label><textarea class="form-control" id="logNote" rows="3" placeholder="Mô tả chi tiết công việc đã thực hiện..."></textarea></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Huỷ</button><button class="btn btn-forest" type="submit">Lưu nhật ký</button></div>
+  </form>
+</div></div></div>
+
+<!-- User Modal (admin) -->
+<div class="modal fade" id="userModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Thêm người dùng</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <form onsubmit="return adminAddUser(event)">
+  <div class="modal-body">
+    <div class="mb-2"><label class="form-label">Họ và tên</label><input class="form-control" id="newUserName" required></div>
+    <div class="mb-2"><label class="form-label">Email</label><input type="email" class="form-control" id="newUserEmail" required></div>
+    <div class="row g-2">
+      <div class="col-md-6"><label class="form-label">Vai trò</label><select class="form-select" id="newUserRole"><option value="user">Nông dân</option><option value="admin">Quản trị viên</option></select></div>
+      <div class="col-md-6"><label class="form-label">Khu vực</label>
+        <div class="province-autocomplete" id="newUserProvinceAutocomplete">
+          <input class="form-control province-search" id="newUserRegionSearch" type="text" placeholder="Gõ tên tỉnh/thành..." autocomplete="off" required>
+          <i class="bi bi-search province-search-icon"></i>
+          <input type="hidden" id="newUserRegion">
+          <div class="province-suggestions" id="newUserProvinceSuggestions"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Huỷ</button><button class="btn btn-forest" type="submit">Thêm</button></div>
+  </form>
+</div></div></div>
+
+<!-- Alert Modal (admin) -->
+<div class="modal fade" id="alertModal" tabindex="-1"><div class="modal-dialog"><div class="modal-content">
+  <div class="modal-header"><h5 class="modal-title">Thêm cảnh báo</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
+  <form onsubmit="return adminAddAlert(event)">
+  <div class="modal-body">
+    <div class="mb-2"><label class="form-label">Tiêu đề cảnh báo</label><input class="form-control" id="newAlertTitle" required></div>
+    <div class="mb-2"><label class="form-label">Mức độ</label>
+      <select class="form-select" id="newAlertLevel"><option value="high">Cao</option><option value="medium">Trung bình</option><option value="low">Thấp</option></select>
+    </div>
+    <div class="mb-2"><label class="form-label">Nội dung</label><textarea class="form-control" id="newAlertDesc" rows="3" required></textarea></div>
+  </div>
+  <div class="modal-footer"><button class="btn btn-outline-secondary" data-bs-dismiss="modal" type="button">Huỷ</button><button class="btn btn-forest" type="submit">Thêm cảnh báo</button></div>
+  </form>
+</div></div></div>
+
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.4/chart.umd.min.js"></script>
+    <script src="js/data/provinces.js"></script>
+    <script src="js/services/weather-service.js"></script>
+    <script src="js/services/ai-service.js"></script>
+    <script src="js/config.js"></script>
+    <script src="js/services/auth-service.js"></script>
+    <script src="js/app-core.js"></script>
+    <script src="js/modules/auth.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
