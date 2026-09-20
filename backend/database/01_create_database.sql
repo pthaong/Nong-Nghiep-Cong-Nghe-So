@@ -1,5 +1,4 @@
-IF DB_ID('SmartAgriculture') IS NULL
+IF DB_ID(N'SmartAgriculture') IS NULL
 BEGIN
-    CREATE DATABASE SmartAgriculture;
+    EXEC(N'CREATE DATABASE [SmartAgriculture]');
 END
-GO
