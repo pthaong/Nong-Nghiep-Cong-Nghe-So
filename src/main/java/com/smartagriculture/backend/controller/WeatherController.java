@@ -1,4 +1,4 @@
-package controller;
+package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.dto.WeatherResponse;
 import com.smartagriculture.backend.service.WeatherService;
