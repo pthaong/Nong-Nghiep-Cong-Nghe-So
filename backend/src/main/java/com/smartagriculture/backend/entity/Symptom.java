@@ -1,8 +1,10 @@
 package com.smartagriculture.backend.entity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
+
 
 @Entity
 @Table(name = "symptoms")
@@ -19,7 +21,7 @@ public class Symptom {
     // Mô tả triệu chứng
     @Lob
     private String description;
-
+@JsonIgnore
     // Quan hệ nhiều-nhiều với Disease
     @ManyToMany(mappedBy = "symptoms")
     private Set<Disease> diseases = new HashSet<>();

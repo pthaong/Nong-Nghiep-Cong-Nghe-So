@@ -1,5 +1,4 @@
-package controller;
-
+package com.smartagriculture.backend.controller;
 import com.smartagriculture.backend.entity.Symptom;
 import com.smartagriculture.backend.service.SymptomService;
 import org.springframework.web.bind.annotation.*;
