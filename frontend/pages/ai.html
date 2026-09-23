@@ -1,0 +1,132 @@
+<div class="ai-tabpane" id="aitab-diag">
+    <div class="row g-3">
+
+        <!-- CỘT NHẬP THÔNG TIN -->
+        <div class="col-lg-5">
+            <div class="card-x">
+
+                <div class="card-x-head">
+                    <h6 class="mb-0">Mô tả tình trạng cây</h6>
+                </div>
+
+                <div class="card-x-body">
+
+                    <!-- Loại cây -->
+                    <div class="mb-2">
+                        <label class="form-label">Loại cây</label>
+
+                        <select class="form-select" id="diagCrop">
+                            <option value="Lúa">Lúa</option>
+                            <option value="Cà chua">Cà chua</option>
+                            <option value="Xoài">Xoài</option>
+                            <option value="Rau muống">Rau muống</option>
+                            <option value="Thanh long">Thanh long</option>
+                            <option value="Cà phê">Cà phê</option>
+                        </select>
+                    </div>
+
+                    <!-- Triệu chứng -->
+                    <div class="mb-2">
+                        <label class="form-label">
+                            Triệu chứng quan sát được
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="diagSymptom"
+                            rows="4"
+                            placeholder="Ví dụ: lá vàng từ mép lá lan vào trong gân, xuất hiện đốm nâu, cây héo vào buổi trưa..."></textarea>
+                    </div>
+
+                    <!-- Upload ảnh -->
+                    <div class="mb-2">
+
+                        <label class="form-label">
+                            Tải ảnh lá / cây bị bệnh (tuỳ chọn)
+                        </label>
+
+                        <div
+                            class="upload-drop ai-image-drop"
+                            id="diagDropZone"
+                            onclick="document.getElementById('diagImgInput').click()"
+                            ondragover="handleDiagDragOver(event)"
+                            ondragleave="handleDiagDragLeave(event)"
+                            ondrop="handleDiagDrop(event)"
+                        >
+
+                            <i
+                                class="bi bi-image"
+                                style="font-size:1.6rem;">
+                            </i>
+
+                            <div class="small mt-1 fw-semibold">
+                                Chọn hoặc kéo thả ảnh lá / cây
+                            </div>
+
+                            <div class="small text-muted2">
+                                JPG, PNG · nên chụp rõ lá và vùng bị bệnh
+                            </div>
+
+                            <input
+                                type="file"
+                                id="diagImgInput"
+                                accept="image/*"
+                                style="display:none"
+                                onchange="previewDiagImg(event)"
+                            >
+
+                        </div>
+
+                        <!-- Ảnh preview -->
+                        <img
+                            id="diagImgPreview"
+                            class="preview-img"
+                            style="display:none;"
+                            alt="Ảnh cây được chọn"
+                        >
+
+                        <!-- Thông tin ảnh -->
+                        <div
+                            class="small text-muted2 mt-1"
+                            id="diagImageMeta">
+                        </div>
+
+                    </div>
+
+                    <!-- Nút phân tích -->
+                    <button
+                        class="btn btn-forest w-100 mt-2"
+                        type="button"
+                        onclick="runDiagnosis()"
+                    >
+                        <i class="bi bi-robot me-1"></i>
+                        Phân tích bằng AI
+                    </button>
+
+                </div>
+            </div>
+        </div>
+
+
+        <!-- CỘT KẾT QUẢ -->
+        <div class="col-lg-7">
+
+            <div id="diagResultWrap">
+
+                <div class="empty-state">
+                    <i class="bi bi-clipboard2-pulse d-block mb-2"></i>
+
+                    Kết quả chẩn đoán AI sẽ hiển thị tại đây.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- JavaScript của chức năng AI -->
+<script src="../js/services/ai-service.js"></script>
+<script src="../js/ai.js"></script>
