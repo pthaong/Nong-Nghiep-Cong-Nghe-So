@@ -1,4 +1,4 @@
-package controller;
+package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.entity.Disease;
 import com.smartagriculture.backend.service.DiseaseService;
@@ -38,7 +38,26 @@ public class DiseaseController {
 
         return diseaseService.update(id, disease);
     }
+// =========================
+// ADD SYMPTOM TO DISEASE
+// =========================
+@PutMapping("/{diseaseId}/symptoms/{symptomId}")
+public Disease addSymptom(
+        @PathVariable Long diseaseId,
+        @PathVariable Long symptomId) {
 
+    return diseaseService.addSymptom(diseaseId, symptomId);
+}
+// =========================
+// REMOVE SYMPTOM FROM DISEASE
+// =========================
+@DeleteMapping("/{diseaseId}/symptoms/{symptomId}")
+public Disease removeSymptom(
+        @PathVariable Long diseaseId,
+        @PathVariable Long symptomId) {
+
+    return diseaseService.removeSymptom(diseaseId, symptomId);
+}
     @DeleteMapping("/{id}")
     public String delete(@PathVariable Long id) {
 
