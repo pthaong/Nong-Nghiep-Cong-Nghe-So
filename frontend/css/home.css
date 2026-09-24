@@ -1,0 +1,1312 @@
+/* =========================================================
+   AGRISMART - FARMER HOME
+   Dark green agricultural dashboard
+   ========================================================= */
+
+:root {
+
+    --bg-main: #0b120d;
+    --bg-header: #101a12;
+
+    --surface: #131d15;
+    --surface-light: #18241a;
+    --surface-hover: #1c291e;
+
+    --border: #29362a;
+    --border-light: #324333;
+
+    --text-main: #f1f3eb;
+    --text-soft: #c0c9bb;
+    --text-muted: #8f9c8d;
+
+    --green: #21a45b;
+    --green-light: #5bc66f;
+
+    --blue: #4c9ed8;
+    --blue-light: #74b7e8;
+
+    --yellow: #e7ad3f;
+    --orange: #e58b45;
+
+    --red: #f04c46;
+
+    --shadow:
+        0 12px 30px rgba(0, 0, 0, 0.18);
+}
+
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+
+    margin: 0;
+
+    background: var(--bg-main);
+
+    color: var(--text-main);
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+
+    min-height: 100vh;
+}
+
+
+/* =========================================================
+   HEADER
+   ========================================================= */
+
+.home-header {
+
+    height: 70px;
+
+    background: var(--bg-header);
+
+    border-bottom:
+        1px solid var(--border);
+
+    padding:
+        0 28px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    position: sticky;
+
+    top: 0;
+
+    z-index: 1000;
+}
+
+.header-left h1 {
+
+    margin: 0;
+
+    font-size: 21px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+.header-left p {
+
+    margin:
+        3px 0 0;
+
+    color: var(--text-muted);
+
+    font-size: 12px;
+}
+
+.header-right {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+.theme-button {
+
+    width: 34px;
+    height: 34px;
+
+    border:
+        1px solid #526256;
+
+    border-radius: 7px;
+
+    background: transparent;
+
+    color: #9eafa1;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+.theme-button:hover {
+
+    background: var(--surface-light);
+
+    color: white;
+}
+
+.farmer-badge {
+
+    padding:
+        5px 11px;
+
+    border-radius: 999px;
+
+    background:
+        rgba(49, 126, 54, 0.24);
+
+    color:
+        #57c565;
+
+    font-size: 11px;
+
+    font-weight: 700;
+}
+
+.profile-button {
+
+    width: 34px;
+    height: 34px;
+
+    border-radius: 50%;
+
+    color: var(--text-soft);
+
+    text-decoration: none;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 20px;
+
+    transition: 0.2s;
+}
+
+.profile-button:hover {
+
+    color: white;
+
+    background: var(--surface-light);
+}
+
+
+/* =========================================================
+   MAIN CONTAINER
+   ========================================================= */
+
+.home-container {
+
+    width: 100%;
+
+    max-width: 1440px;
+
+    margin:
+        0 auto;
+
+    padding:
+        24px 28px 50px;
+}
+
+
+/* =========================================================
+   TOP GRID
+   ========================================================= */
+
+.top-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1.45fr 1fr;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+
+/* =========================================================
+   WEATHER
+   ========================================================= */
+
+.weather-card {
+
+    min-height: 260px;
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #5ba3d0 0%,
+            #3c83ad 48%,
+            #276b8e 100%
+        );
+
+    box-shadow: var(--shadow);
+}
+
+.weather-background-circle {
+
+    width: 180px;
+    height: 180px;
+
+    position: absolute;
+
+    right: -5px;
+    top: -25px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.08);
+}
+
+.weather-content {
+
+    position: relative;
+
+    z-index: 2;
+
+    height: 100%;
+
+    padding:
+        25px 28px;
+}
+
+.weather-location {
+
+    color:
+        rgba(255, 255, 255, 0.72);
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    margin-bottom: 3px;
+}
+
+.weather-location strong {
+
+    color:
+        rgba(255, 255, 255, 0.85);
+}
+
+.weather-main {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    margin-bottom: 7px;
+}
+
+.weather-temperature {
+
+    color: white;
+
+    font-size: 56px;
+
+    font-weight: 800;
+
+    line-height: 1;
+}
+
+.weather-description {
+
+    color: white;
+
+    font-size: 15px;
+
+    margin-top: 5px;
+}
+
+.weather-symbol {
+
+    font-size: 56px;
+
+    color:
+        rgba(255, 255, 255, 0.8);
+
+    margin-right: 15px;
+}
+
+.weather-details {
+
+    display: flex;
+
+    gap: 60px;
+
+    margin-top: 17px;
+}
+
+.weather-detail {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.weather-detail > i {
+
+    color:
+        rgba(255, 255, 255, 0.95);
+
+    font-size: 16px;
+}
+
+.weather-detail strong {
+
+    display: block;
+
+    color: white;
+
+    font-size: 14px;
+}
+
+.weather-detail span {
+
+    display: block;
+
+    color:
+        rgba(255, 255, 255, 0.65);
+
+    font-size: 12px;
+
+    margin-top: 1px;
+}
+
+.forecast-button {
+
+    border: 0;
+
+    background: white;
+
+    color: #18251b;
+
+    padding:
+        7px 11px;
+
+    border-radius: 4px;
+
+    margin-top: 17px;
+
+    font-size: 13px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.forecast-button:hover {
+
+    background: #edf2ec;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   WARNING
+   ========================================================= */
+
+.warning-card {
+
+    min-height: 260px;
+
+    background: var(--surface);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    box-shadow: var(--shadow);
+}
+
+.card-heading h2 {
+
+    margin: 0 0 18px;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+.card-heading h2 i {
+
+    color: var(--red);
+
+    margin-right: 5px;
+}
+
+.warning-box {
+
+    min-height: 109px;
+
+    display: flex;
+
+    gap: 13px;
+
+    padding: 14px;
+
+    border:
+        1px solid #66571e;
+
+    background:
+        rgba(91, 77, 21, 0.25);
+
+    border-radius: 14px;
+}
+
+.warning-icon {
+
+    color: #eab74c;
+
+    font-size: 21px;
+
+    flex-shrink: 0;
+}
+
+.warning-content h3 {
+
+    margin: 0 0 5px;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+.warning-content p {
+
+    margin: 0;
+
+    color: var(--text-soft);
+
+    font-size: 12px;
+
+    line-height: 1.55;
+}
+
+
+/* =========================================================
+   STATISTICS
+   ========================================================= */
+
+.stats-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(4, 1fr);
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+.stat-card {
+
+    min-height: 108px;
+
+    background: var(--surface);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 14px;
+
+    padding: 14px 18px;
+
+    box-shadow: var(--shadow);
+
+    transition: 0.2s;
+}
+
+.stat-card:hover {
+
+    background: var(--surface-hover);
+
+    transform: translateY(-2px);
+}
+
+.stat-icon {
+
+    font-size: 20px;
+
+    margin-bottom: 3px;
+}
+
+.stat-icon.green {
+    color: #16a75d;
+}
+
+.stat-icon.orange {
+    color: #d58a4d;
+}
+
+.stat-icon.blue {
+    color: #51a9e6;
+}
+
+.stat-icon.yellow {
+    color: #e3ac40;
+}
+
+.stat-value {
+
+    font-size: 30px;
+
+    font-weight: 800;
+
+    line-height: 1;
+}
+
+.stat-label {
+
+    color: #a9b3a5;
+
+    font-size: 12px;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   MIDDLE GRID
+   ========================================================= */
+
+.middle-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        1.4fr 1fr;
+
+    gap: 16px;
+
+    margin-bottom: 16px;
+}
+
+.panel-card,
+.ai-panel {
+
+    background: var(--surface);
+
+    border:
+        1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 18px;
+
+    box-shadow: var(--shadow);
+}
+
+.panel-header {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    margin-bottom: 16px;
+}
+
+.panel-title {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.panel-title i {
+
+    color: #dfe8dc;
+
+    font-size: 16px;
+}
+
+.panel-title h2 {
+
+    margin: 0;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+.view-all-button {
+
+    border: 0;
+
+    background: transparent;
+
+    color: #1591ff;
+
+    font-size: 12px;
+
+    cursor: pointer;
+}
+
+.view-all-button:hover {
+
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   CROP
+   ========================================================= */
+
+.crop-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, 1fr);
+
+    gap: 9px;
+}
+
+.crop-card {
+
+    min-height: 165px;
+
+    background:
+        #162119;
+
+    border:
+        1px solid #2d3a2d;
+
+    border-radius: 14px;
+
+    padding: 14px;
+
+    transition: 0.2s;
+}
+
+.crop-card:hover {
+
+    border-color:
+        #3c513e;
+
+    background:
+        #19251b;
+}
+
+.crop-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: flex-start;
+
+    gap: 10px;
+}
+
+.crop-top h3 {
+
+    margin: 0;
+
+    font-size: 14px;
+
+    line-height: 1.35;
+
+    font-weight: 700;
+}
+
+.crop-top p {
+
+    margin:
+        4px 0 0;
+
+    color: #aeb8aa;
+
+    font-size: 12px;
+}
+
+.crop-badge {
+
+    flex-shrink: 0;
+
+    max-width: 100px;
+
+    padding:
+        5px 9px;
+
+    border-radius: 20px;
+
+    background:
+        rgba(61, 117, 62, 0.25);
+
+    color: #52b35a;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    text-align: center;
+}
+
+.crop-progress {
+
+    width: 100%;
+
+    height: 6px;
+
+    border-radius: 20px;
+
+    overflow: hidden;
+
+    background: #29362a;
+
+    margin:
+        14px 0 9px;
+}
+
+.progress-fill {
+
+    height: 100%;
+
+    background:
+        #5baf5e;
+
+    border-radius: inherit;
+}
+
+.crop-info {
+
+    display: flex;
+
+    gap: 10px;
+
+    justify-content: space-between;
+
+    color: #b4beb0;
+
+    font-size: 11px;
+
+    line-height: 1.35;
+}
+
+.crop-actions {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 10px;
+}
+
+.crop-action {
+
+    width: 33px;
+    height: 30px;
+
+    border-radius: 5px;
+
+    background: transparent;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    transition: 0.2s;
+}
+
+.crop-action.edit {
+
+    border:
+        1px solid #159f78;
+
+    color: #21c28d;
+}
+
+.crop-action.delete {
+
+    border:
+        1px solid #ed343e;
+
+    color: #ed343e;
+}
+
+.crop-action:hover {
+
+    background: rgba(255, 255, 255, 0.05);
+}
+
+
+/* =========================================================
+   PRODUCT PRICE
+   ========================================================= */
+
+.price-list {
+
+    width: 100%;
+}
+
+.price-item {
+
+    min-height: 53px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    border-bottom:
+        1px solid #2b382c;
+
+    gap: 10px;
+}
+
+.price-item:last-child {
+
+    border-bottom: 0;
+}
+
+.price-item > div:first-child {
+
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 1px;
+}
+
+.price-item strong {
+
+    font-size: 13px;
+
+    font-weight: 700;
+}
+
+.price-item span {
+
+    color: #9da99b;
+
+    font-size: 11px;
+}
+
+.price-right {
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: flex-end;
+
+    gap: 1px;
+}
+
+.price-right strong {
+
+    font-size: 14px;
+
+    color: #e9eee7;
+}
+
+.price-up {
+
+    color: #42c36b !important;
+}
+
+.price-down {
+
+    color: #f24942 !important;
+}
+
+.price-neutral {
+
+    color: #adb5aa !important;
+}
+
+
+/* =========================================================
+   AI PANEL
+   ========================================================= */
+
+.ai-panel {
+
+    margin-bottom: 10px;
+}
+
+.ai-question-button {
+
+    color: #1591ff;
+
+    text-decoration: none;
+
+    font-size: 12px;
+}
+
+.ai-question-button:hover {
+
+    text-decoration: underline;
+}
+
+.recommendation-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 10px;
+}
+
+.recommendation-card {
+
+    min-height: 190px;
+
+    border:
+        1px solid #2b382c;
+
+    border-radius: 14px;
+
+    background:
+        #182319;
+
+    padding: 15px;
+
+    transition: 0.2s;
+}
+
+.recommendation-card:hover {
+
+    background:
+        #1b271c;
+
+    transform: translateY(-2px);
+}
+
+.recommendation-card.danger {
+
+    border-color:
+        #304034;
+}
+
+.recommendation-card.warning {
+
+    border-color:
+        #3b3d2b;
+}
+
+.recommendation-card.info {
+
+    border-color:
+        #2f3b40;
+}
+
+.recommendation-tag {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 5px;
+
+    border-radius: 20px;
+
+    padding:
+        4px 8px;
+
+    font-size: 10px;
+
+    font-weight: 600;
+
+    margin-bottom: 10px;
+}
+
+.recommendation-card.danger
+.recommendation-tag {
+
+    color: #ef624e;
+
+    background:
+        rgba(190, 62, 43, 0.15);
+}
+
+.recommendation-card.warning
+.recommendation-tag {
+
+    color: #e3ae43;
+
+    background:
+        rgba(179, 135, 40, 0.14);
+}
+
+.recommendation-card.info
+.recommendation-tag {
+
+    color: #4bb4e5;
+
+    background:
+        rgba(51, 136, 173, 0.15);
+}
+
+.recommendation-card h3 {
+
+    margin:
+        0 0 7px;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    line-height: 1.4;
+}
+
+.recommendation-card p {
+
+    margin: 0;
+
+    color: #aeb8aa;
+
+    font-size: 12px;
+
+    line-height: 1.55;
+}
+
+.recommendation-time {
+
+    display: block;
+
+    margin-top: 9px;
+
+    color: #9ca899;
+
+    font-size: 11px;
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+   ========================================================= */
+
+@media (max-width: 1100px) {
+
+    .top-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .middle-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .weather-card,
+    .warning-card {
+
+        min-height: auto;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    .home-header {
+
+        height: auto;
+
+        min-height: 64px;
+
+        padding:
+            10px 15px;
+    }
+
+    .header-left h1 {
+
+        font-size: 18px;
+    }
+
+    .header-left p {
+
+        font-size: 10px;
+    }
+
+    .home-container {
+
+        padding:
+            15px 12px 35px;
+    }
+
+    .stats-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+    .crop-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .recommendation-grid {
+
+        grid-template-columns:
+            1fr;
+    }
+
+    .weather-details {
+
+        gap: 20px;
+
+        justify-content:
+            space-between;
+    }
+
+    .weather-temperature {
+
+        font-size: 46px;
+    }
+
+    .weather-symbol {
+
+        font-size: 43px;
+
+        margin-right: 0;
+    }
+
+}
+
+
+/* =========================================================
+   RESPONSIVE - SMALL PHONE
+   ========================================================= */
+
+@media (max-width: 480px) {
+
+    .home-header {
+
+        align-items:
+            flex-start;
+    }
+
+    .header-right {
+
+        gap: 5px;
+    }
+
+    .farmer-badge {
+
+        display: none;
+    }
+
+    .profile-button {
+
+        font-size: 18px;
+    }
+
+    .weather-content {
+
+        padding:
+            20px;
+    }
+
+    .weather-main {
+
+        align-items:
+            flex-start;
+    }
+
+    .weather-temperature {
+
+        font-size: 42px;
+    }
+
+    .weather-details {
+
+        display: grid;
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap: 12px;
+    }
+
+    .stats-grid {
+
+        gap: 8px;
+    }
+
+    .stat-card {
+
+        padding: 12px;
+
+        min-height: 100px;
+    }
+
+    .stat-value {
+
+        font-size: 25px;
+    }
+
+    .panel-card,
+    .ai-panel {
+
+        padding: 13px;
+    }
+
+    .crop-info {
+
+        flex-direction:
+            column;
+
+        gap: 3px;
+    }
+
+    .price-item {
+
+        min-height: 58px;
+    }
+
+}
