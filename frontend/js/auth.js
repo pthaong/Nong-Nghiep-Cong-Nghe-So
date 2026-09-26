@@ -149,6 +149,8 @@
         if (byId('rememberLogin').checked) {
           localStorage.setItem('agrismart_session', JSON.stringify({
             userId: result.userId,
+            name: result.name,
+            email: result.email,
             role: result.role
           }));
         } else {
@@ -157,6 +159,11 @@
       } catch (_) {}
 
       setAlert('loginAlert', 'Đăng nhập thành công.', 'success');
+
+      setTimeout(() => {
+        window.location.href = 'pages/home.html';
+      }, 500);
+      
     } catch (error) {
       setAlert('loginAlert', error.message || 'Đăng nhập không thành công.');
     } finally {
