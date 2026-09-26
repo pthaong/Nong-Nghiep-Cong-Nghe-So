@@ -2,6 +2,7 @@ package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.dto.WeatherResponse;
 import com.smartagriculture.backend.service.WeatherService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,10 +16,11 @@ public class WeatherController {
     }
 
     @GetMapping
-    public WeatherResponse getWeather(
-            @RequestParam double latitude,
-            @RequestParam double longitude) {
+    public ResponseEntity<WeatherResponse> getWeather(
+            @RequestParam String location) {
 
-        return weatherService.getWeather(latitude, longitude);
+        return ResponseEntity.ok(
+                weatherService.getWeather(location)
+        );
     }
 }
