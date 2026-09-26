@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class WeatherResponse {
 
     private double latitude;
-
     private double longitude;
 
     private CurrentWeather current;

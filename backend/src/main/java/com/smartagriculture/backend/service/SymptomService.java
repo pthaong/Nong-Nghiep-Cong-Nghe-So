@@ -15,30 +15,7 @@ public class SymptomService {
         this.symptomRepository = symptomRepository;
     }
 
-    public List<Symptom> getAll() {
+    public List<Symptom> getAllSymptoms() {
         return symptomRepository.findAll();
-    }
-
-    public Symptom getById(Long id) {
-        return symptomRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy triệu chứng"));
-    }
-
-    public Symptom create(Symptom symptom) {
-        return symptomRepository.save(symptom);
-    }
-
-    public Symptom update(Long id, Symptom symptom) {
-
-        Symptom existing = getById(id);
-
-        existing.setName(symptom.getName());
-        existing.setDescription(symptom.getDescription());
-
-        return symptomRepository.save(existing);
-    }
-
-    public void delete(Long id) {
-        symptomRepository.deleteById(id);
     }
 }

@@ -13,39 +13,30 @@ public class Disease {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Tên bệnh
-    @Column(nullable = false, length = 255)
+    @Column(nullable = false)
     private String name;
 
-    // Loại cây bị bệnh
-    @Column(name = "plant_type", length = 100)
+    @Column(name = "plant_type")
     private String plantType;
 
-    // Mô tả
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    // Nguyên nhân
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String cause;
 
-    // Cách điều trị
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String treatment;
 
-    // Cách phòng ngừa
-    @Lob
+    @Column(columnDefinition = "TEXT")
     private String prevention;
 
-    // Thời gian tạo
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    // Thời gian cập nhật
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Quan hệ nhiều-nhiều với Symptom
     @ManyToMany
     @JoinTable(
         name = "disease_symptoms",

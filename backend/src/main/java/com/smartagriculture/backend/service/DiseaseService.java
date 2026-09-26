@@ -5,6 +5,7 @@ import com.smartagriculture.backend.repository.DiseaseRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DiseaseService {
@@ -15,34 +16,11 @@ public class DiseaseService {
         this.diseaseRepository = diseaseRepository;
     }
 
-    public List<Disease> getAll() {
+    public List<Disease> getAllDiseases() {
         return diseaseRepository.findAll();
     }
 
-    public Disease getById(Long id) {
-        return diseaseRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Không tìm thấy bệnh"));
-    }
-
-    public Disease create(Disease disease) {
-        return diseaseRepository.save(disease);
-    }
-
-    public Disease update(Long id, Disease disease) {
-
-        Disease existing = getById(id);
-
-        existing.setName(disease.getName());
-        existing.setPlantType(disease.getPlantType());
-        existing.setDescription(disease.getDescription());
-        existing.setCause(disease.getCause());
-        existing.setTreatment(disease.getTreatment());
-        existing.setPrevention(disease.getPrevention());
-
-        return diseaseRepository.save(existing);
-    }
-
-    public void delete(Long id) {
-        diseaseRepository.deleteById(id);
+    public Optional<Disease> getDiseaseById(Long id) {
+        return diseaseRepository.findById(id);
     }
 }

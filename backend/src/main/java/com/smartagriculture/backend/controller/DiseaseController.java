@@ -2,6 +2,7 @@ package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.entity.Disease;
 import com.smartagriculture.backend.service.DiseaseService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,33 +18,18 @@ public class DiseaseController {
     }
 
     @GetMapping
-    public List<Disease> getAll() {
-        return diseaseService.getAll();
+    public ResponseEntity<List<Disease>> getAllDiseases() {
+        return ResponseEntity.ok(
+                diseaseService.getAllDiseases()
+        );
     }
 
     @GetMapping("/{id}")
-    public Disease getById(@PathVariable Long id) {
-        return diseaseService.getById(id);
-    }
+    public ResponseEntity<Disease> getDiseaseById(
+            @PathVariable Long id) {
 
-    @PostMapping
-    public Disease create(@RequestBody Disease disease) {
-        return diseaseService.create(disease);
-    }
-
-    @PutMapping("/{id}")
-    public Disease update(
-            @PathVariable Long id,
-            @RequestBody Disease disease) {
-
-        return diseaseService.update(id, disease);
-    }
-
-    @DeleteMapping("/{id}")
-    public String delete(@PathVariable Long id) {
-
-        diseaseService.delete(id);
-
-        return "Xóa bệnh thành công";
+        return diseaseService.getDiseaseById(id)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 }
