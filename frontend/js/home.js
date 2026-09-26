@@ -584,7 +584,12 @@
 
         const userName =
             getUserName();
+        
+        const greeting = document.getElementById("userGreeting");
 
+        if (greeting) {
+            greeting.textContent = `Xin chào, ${userName}!`;
+        }
 
         console.log(
             "Người dùng hiện tại:",

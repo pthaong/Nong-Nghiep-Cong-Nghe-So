@@ -47,6 +47,9 @@
 
     const profilePhone =
         document.getElementById("profilePhone");
+    
+    const profileArea =
+        document.getElementById("profileArea");
 
     const profileNameTitle =
         document.getElementById("profileNameTitle");
@@ -200,11 +203,13 @@
             profile.phoneNumber ||
             "";
 
+        // Khu vực hiện dùng dữ liệu mẫu
+        profileArea.value = "Hà Nội";
+
         profileNameTitle.textContent =
             profile.name ||
             profile.fullName ||
             "Nông dân";
-
     }
 
 
