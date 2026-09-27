@@ -111,10 +111,9 @@
 
         try {
 
-            const raw =
-                localStorage.getItem(
-                    "agrismart_session"
-                );
+           const raw =
+    localStorage.getItem("agrismart_session") ||
+    sessionStorage.getItem("agrismart_session");
 
             if (raw) {
 

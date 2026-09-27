@@ -146,17 +146,21 @@
       });
 
       try {
-        if (byId('rememberLogin').checked) {
-          localStorage.setItem('agrismart_session', JSON.stringify({
-            userId: result.userId,
-            name: result.name,
-            email: result.email,
-            role: result.role
-          }));
-        } else {
-          localStorage.removeItem('agrismart_session');
-        }
-      } catch (_) {}
+  const session = {
+    userId: result.userId,
+    name: result.name,
+    email: result.email,
+    role: result.role
+  };
+
+  if (byId('rememberLogin').checked) {
+    localStorage.setItem('agrismart_session', JSON.stringify(session));
+    sessionStorage.removeItem('agrismart_session');
+  } else {
+    sessionStorage.setItem('agrismart_session', JSON.stringify(session));
+    localStorage.removeItem('agrismart_session');
+  }
+} catch (_) {}
 
       setAlert('loginAlert', 'Đăng nhập thành công.', 'success');
 
