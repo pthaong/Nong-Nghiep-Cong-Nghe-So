@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgriSmart — Weather</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="weather.css">
+</head>
+<body>
+<div id="app" style="display:block;">
+  <div class="app-shell">
+    <!-- SIDEBAR -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> AgriSmart</div>
+    <div class="sidebar-scroll">
+      <div id="navUser">
+        <div class="nav-link-app" data-page="home"><i class="bi bi-house-door"></i> Trang chủ</div>
+        <div class="nav-link-app" data-page="crops"><i class="bi bi-flower2"></i> Cây trồng</div>
+        <div class="nav-link-app" data-page="seasons"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
+        <div class="nav-link-app" data-page="log"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
+        <div class="nav-link-app active" data-page="weather"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
+        <div class="nav-link-app" data-page="ai"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
+        <div class="nav-section-label">Khác</div>
+        <div class="nav-link-app" data-page="prices"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
+        <div class="nav-link-app" data-page="account"><i class="bi bi-person-circle"></i> Tài khoản</div>
+      </div>
+      <div class="sidebar-foot">
+      <div class="mini-user">
+        <div class="mini-avatar" id="miniAvatar">N</div>
+        <div style="min-width:0;">
+          <div style="color:#fff; font-weight:600; font-size:.85rem;" id="miniName">Nông dân</div>
+          <div style="color:#9FB99A; font-size:.72rem;" id="miniRegion">Cần Thơ</div>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-light w-100 mt-3"><i class="bi bi-box-arrow-left me-1"></i>Đăng xuất</button>
+    </div>
+  </aside>
+    <div class="main-col">
+      
+<div class="topbar">
+  <button class="sidebar-toggle-btn" onclick="document.getElementById('sidebar').classList.toggle('open')" aria-label="Mở menu">
+    <i class="bi bi-list"></i>
+  </button>
+  <div>
+    <p class="page-title">Thời tiết</p>
+    <p class="page-sub">Dự báo chi tiết theo khu vực canh tác</p>
+  </div>
+  <div class="ms-auto d-flex align-items-center gap-2">
+    <button class="btn btn-sm btn-outline-secondary" onclick="toggleTheme()" title="Đổi giao diện sáng/tối">
+      <i class="bi bi-moon-stars" id="themeIcon"></i>
+    </button>
+    <span class="badge-role user">Nông dân</span>
+  </div>
+</div>
+
+      <div class="content">
+        <section class="page active" id="page-weather">
+  <div class="card-x mb-3 weather-toolbar">
+    <div class="card-x-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-lg-5">
+          <label class="form-label mb-1">Khu vực theo dõi</label>
+          <div class="province-autocomplete">
+            <input id="weatherLocationInput" class="form-control province-search" value="Cần Thơ" autocomplete="off" placeholder="Nhập tỉnh/thành phố...">
+            <i class="bi bi-search province-search-icon"></i>
+            <div id="weatherSuggestions" class="province-suggestions"></div>
+          </div>
+        </div>
+        <div class="col-lg-3">
+          <button class="btn btn-forest w-100" id="weatherApplyBtn" onclick="applyWeatherLocation()">
+            <i class="bi bi-cloud-sun me-1"></i>Xem thời tiết
+          </button>
+        </div>
+        <div class="col-lg-2 col-6">
+          <button class="btn btn-outline-forest w-100" onclick="useMyLocation()" title="Dùng vị trí hiện tại">
+            <i class="bi bi-crosshair me-1"></i>Vị trí của tôi
+          </button>
+        </div>
+        <div class="col-lg-2 col-6">
+          <div class="btn-group w-100" role="group" aria-label="Đơn vị nhiệt độ">
+            <button class="btn btn-outline-secondary active" id="unitC" onclick="setTempUnit('C')">°C</button>
+            <button class="btn btn-outline-secondary" id="unitF" onclick="setTempUnit('F')">°F</button>
+          </div>
+        </div>
+      </div>
+      <div class="small text-muted2 mt-2" id="weatherStatus"><i class="bi bi-info-circle me-1"></i>Chọn khu vực rồi bấm “Xem thời tiết”.</div>
+    </div>
+  </div>
+
+  <div class="row g-3 mb-3">
+    <div class="col-lg-4">
+      <div class="weather-hero h-100">
+        <div class="d-flex justify-content-between align-items-center">
+          <div class="small-cap text-white-50">KHU VỰC <span id="wRegion">Cần Thơ</span></div>
+          <button class="btn btn-sm btn-light" onclick="refreshWeather(true)" id="weatherRefreshBtn" title="Cập nhật thời tiết"><i class="bi bi-arrow-clockwise"></i></button>
+        </div>
+        <div class="weather-temp mt-1" id="wTemp">--°C</div>
+        <div id="wCondition">Đang tải dữ liệu...</div>
+        <div class="small text-white-50 mt-1">Cảm giác như <span id="wFeels">--°C</span></div>
+        <hr style="border-color:rgba(255,255,255,.25)">
+        <div class="row">
+          <div class="col-6 mb-2"><i class="bi bi-droplet-half me-1"></i>Độ ẩm: <b id="wHumidity">--%</b></div>
+          <div class="col-6 mb-2"><i class="bi bi-cloud-rain me-1"></i>Mưa: <b id="wRain">--%</b></div>
+          <div class="col-6"><i class="bi bi-wind me-1"></i>Gió: <b id="wWind">-- km/h</b></div>
+          <div class="col-6"><i class="bi bi-eye me-1"></i>Tầm nhìn: <b id="wVisibility">-- km</b></div>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-8">
+      <div class="card-x h-100">
+        <div class="card-x-head d-flex justify-content-between align-items-center">
+          <h6 class="mb-0">Dự báo 7 ngày tới</h6>
+          <span class="small text-muted2" id="weatherSource">--</span>
+        </div>
+        <div class="card-x-body"><div class="forecast-strip" id="forecastStrip"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card-x mb-3">
+    <div class="card-x-head d-flex justify-content-between align-items-center">
+      <h6 class="mb-0">Theo dõi 12 giờ tới</h6>
+      <span class="small text-muted2">Nhiệt độ · mưa · gió</span>
+    </div>
+    <div class="card-x-body"><div class="hourly-strip" id="hourlyStrip"></div></div>
+  </div>
+
+  <div class="card-x mb-3">
+    <div class="card-x-head"><h6 class="mb-0"><i class="bi bi-exclamation-triangle text-danger me-1"></i>Cảnh báo thời tiết xấu</h6></div>
+    <div class="card-x-body" id="weatherAlertsFull"></div>
+  </div>
+
+  <div class="card-x mb-3">
+    <div class="card-x-head d-flex justify-content-between align-items-center">
+      <h6 class="mb-0">Xu hướng nhiệt độ &amp; lượng mưa (7 ngày)</h6>
+      <button class="btn btn-sm btn-outline-secondary" onclick="downloadWeatherData()"><i class="bi bi-download me-1"></i>Xuất dữ liệu</button>
+    </div>
+    <div class="card-x-body"><canvas id="weatherChart" height="90"></canvas></div>
+  </div>
+
+  <div class="card-x">
+    <div class="card-x-head"><h6 class="mb-0"><i class="bi bi-flower1 me-1"></i>Gợi ý canh tác theo thời tiết</h6></div>
+    <div class="card-x-body" id="weatherAdvice"></div>
+  </div>
+</section>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="weatherDetailModal" class="weather-detail-modal" onclick="if(event.target===this)closeWeatherDetail()"><div class="weather-detail-card"><div class="weather-detail-head"><h6 id="weatherDetailTitle" class="mb-0">Chi tiết</h6><button class="btn btn-sm btn-outline-secondary" onclick="closeWeatherDetail()"><i class="bi bi-x-lg"></i></button></div><div id="weatherDetailBody" class="weather-detail-body"></div></div>
+
+<script src="weather-service.js"></script>
+<script src="weather.js"></script>
+</body>
+</html>
