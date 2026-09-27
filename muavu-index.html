@@ -72,6 +72,7 @@
                 <tr>
                   <th><i class="bi bi-tag me-1"></i>Tên mùa vụ</th>
                   <th><i class="bi bi-flower2 me-1"></i>Cây trồng</th>
+                  <th><i class="bi bi-rulers me-1"></i>Diện tích (ha)</th>
                   <th><i class="bi bi-calendar-event me-1"></i>Bắt đầu</th>
                   <th><i class="bi bi-calendar-check me-1"></i>Kết thúc</th>
                   <th><i class="bi bi-flag me-1"></i>Trạng thái</th>
@@ -105,6 +106,20 @@
       <label class="form-label"><i class="bi bi-flower2 me-1"></i>Cây trồng chính</label>
       <input class="form-control" id="seasonCrop" required placeholder="VD: Cà chua">
     </div>
+    <div class="mb-2">
+  <label class="form-label">
+    <i class="bi bi-map me-1"></i>Diện tích (ha)
+  </label>
+  <input
+    type="number"
+    class="form-control"
+    id="seasonArea"
+    min="0.01"
+    step="0.01"
+    required
+    placeholder="VD: 1.2"
+  >
+</div>
     <div class="row g-2">
       <div class="col-md-6">
         <label class="form-label"><i class="bi bi-calendar-event me-1"></i>Ngày bắt đầu</label>

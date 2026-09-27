@@ -12,7 +12,7 @@
  * -> Phần giao diện (render, modal, sự kiện) KHÔNG cần sửa gì thêm.
  *
  * Hợp đồng dữ liệu:
- *   Season { id, name, crop, start:"YYYY-MM-DD", end:"YYYY-MM-DD", status }
+ ** Season { id, name, crop, area, start:"YYYY-MM-DD", end:"YYYY-MM-DD", status }
  *   Field  { id, seasonId }   // chỉ dùng để đếm "Số ruộng" theo mùa vụ
  *
  * Endpoint gợi ý:
@@ -31,9 +31,9 @@ const SeasonService = (function () {
   const FIELDS_KEY = 'agrismart_fields_v1';
 
   const MOCK_SEASONS = [
-    { id: 's1', name: 'Vụ Đông Xuân 2026', crop: 'Lúa OM5451', start: '2026-01-10', end: '2026-04-20', status: 'Đang canh tác' },
-    { id: 's2', name: 'Vụ Hè Thu 2026', crop: 'Cà chua', start: '2026-08-01', end: '2026-10-30', status: 'Đang canh tác' },
-    { id: 's3', name: 'Vụ Thu Đông 2026', crop: 'Lúa OM18', start: '2026-09-01', end: '2026-12-15', status: 'Lên kế hoạch' }
+    { id: 's1', name: 'Vụ Đông Xuân 2026', crop: 'Lúa OM5451', area: 1.2, start: '2026-01-10', end: '2026-04-20', status: 'Đang canh tác' },
+{ id: 's2', name: 'Vụ Hè Thu 2026', crop: 'Cà chua', area: 0.8, start: '2026-08-01', end: '2026-10-30', status: 'Đang canh tác' },
+{ id: 's3', name: 'Vụ Thu Đông 2026', crop: 'Lúa OM18', area: 1.5, start: '2026-09-01', end: '2026-12-15', status: 'Lên kế hoạch' }
   ];
   const MOCK_FIELDS = [
     { id: 'f1', seasonId: 's1' },
@@ -153,13 +153,13 @@ const SeasonService = (function () {
   }
 
   function loadingRow() {
-    return `<tr><td colspan="7"><div class="empty-state"><div class="spinner-border text-success mb-2" role="status"></div><div>Đang tải danh sách mùa vụ...</div></div></td></tr>`;
+    return `<tr><td colspan="8"><div class="empty-state"><div class="spinner-border text-success mb-2" role="status"></div><div>Đang tải danh sách mùa vụ...</div></div></td></tr>`;
   }
   function emptyRow(msg) {
-    return `<tr><td colspan="7"><div class="empty-state"><i class="bi bi-inbox d-block mb-2"></i>${msg}</div></td></tr>`;
+    return `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-inbox d-block mb-2"></i>${msg}</div></td></tr>`;
   }
   function errorRow(msg) {
-    return `<tr><td colspan="7"><div class="empty-state"><i class="bi bi-exclamation-triangle d-block mb-2 text-danger"></i>${msg}</div></td></tr>`;
+    return `<tr><td colspan="8"><div class="empty-state"><i class="bi bi-exclamation-triangle d-block mb-2 text-danger"></i>${msg}</div></td></tr>`;
   }
 
   function renderRow(s) {
@@ -168,6 +168,7 @@ const SeasonService = (function () {
     return `<tr>
       <td class="fw-semibold"><i class="bi bi-calendar3-range me-1 text-muted2"></i>${escapeHtml(s.name)}</td>
       <td><i class="bi bi-flower2 me-1 text-muted2"></i>${escapeHtml(s.crop)}</td>
+      <td>${s.area} ha</td>
       <td>${s.start}</td>
       <td>${s.end}</td>
       <td><span class="chip ${meta.cls}"><i class="bi ${meta.icon}"></i>${escapeHtml(s.status)}</span></td>
@@ -212,6 +213,7 @@ const SeasonService = (function () {
     document.getElementById('seasonId').value = s.id;
     document.getElementById('seasonName').value = s.name;
     document.getElementById('seasonCrop').value = s.crop;
+    document.getElementById('seasonArea').value = s.area;
     document.getElementById('seasonStart').value = s.start;
     document.getElementById('seasonEnd').value = s.end;
     document.getElementById('seasonStatus').value = s.status;
@@ -228,6 +230,7 @@ const SeasonService = (function () {
     const data = {
       name: document.getElementById('seasonName').value.trim(),
       crop: document.getElementById('seasonCrop').value.trim(),
+      area: parseFloat(document.getElementById('seasonArea').value),
       start: document.getElementById('seasonStart').value,
       end: document.getElementById('seasonEnd').value,
       status: document.getElementById('seasonStatus').value
