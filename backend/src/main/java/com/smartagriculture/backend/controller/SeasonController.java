@@ -1,7 +1,10 @@
+
 package com.smartagriculture.backend.controller;
 
-import com.smartagriculture.backend.entity.Season;
+import com.smartagriculture.backend.dto.SeasonRequest;
+import com.smartagriculture.backend.dto.SeasonResponse;
 import com.smartagriculture.backend.service.SeasonService;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -18,41 +21,50 @@ public class SeasonController {
         this.seasonService = seasonService;
     }
 
-    // Lấy danh sách mùa vụ theo nông dân
+    // Danh sách mùa vụ theo nông dân
     @GetMapping
-    public List<Season> getAll(@RequestParam Long farmerId) {
+    public List<SeasonResponse> getAll(
+            @RequestParam Long farmerId) {
+
         return seasonService.getByFarmer(farmerId);
     }
 
     // Xem chi tiết mùa vụ
     @GetMapping("/{id}")
-    public Season getById(@PathVariable Long id) {
-        return seasonService.getById(id);
+    public SeasonResponse getById(
+            @PathVariable Long id,
+            @RequestParam Long farmerId) {
+
+        return seasonService.getById(id, farmerId);
     }
 
     // Thêm mùa vụ
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Season create(
+    public SeasonResponse create(
             @RequestParam Long farmerId,
-            @Valid @RequestBody Season season) {
+            @Valid @RequestBody SeasonRequest request) {
 
-        return seasonService.create(farmerId, season);
+        return seasonService.create(farmerId, request);
     }
 
-    // Cập nhật mùa vụ
+    // Sửa mùa vụ
     @PutMapping("/{id}")
-    public Season update(
+    public SeasonResponse update(
             @PathVariable Long id,
-            @Valid @RequestBody Season season) {
+            @RequestParam Long farmerId,
+            @Valid @RequestBody SeasonRequest request) {
 
-        return seasonService.update(id, season);
+        return seasonService.update(id, farmerId, request);
     }
 
     // Xóa mùa vụ
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable Long id) {
-    seasonService.delete(id);
+    public void delete(
+            @PathVariable Long id,
+            @RequestParam Long farmerId) {
+
+        seasonService.delete(id, farmerId);
     }
 }

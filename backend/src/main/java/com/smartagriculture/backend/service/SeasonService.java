@@ -1,9 +1,14 @@
+
 package com.smartagriculture.backend.service;
 
+import com.smartagriculture.backend.dto.SeasonRequest;
+import com.smartagriculture.backend.dto.SeasonResponse;
 import com.smartagriculture.backend.entity.Season;
 import com.smartagriculture.backend.entity.User;
 import com.smartagriculture.backend.repository.SeasonRepository;
 import com.smartagriculture.backend.repository.UserRepository;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,60 +26,104 @@ public class SeasonService {
         this.userRepository = userRepository;
     }
 
-    // Lấy danh sách mùa vụ của một nông dân
-    public List<Season> getByFarmer(Long farmerId) {
-        return seasonRepository.findByFarmerId(farmerId);
+    // Danh sách mùa vụ theo tài khoản nông dân
+    public List<SeasonResponse> getByFarmer(Long farmerId) {
+        requireActiveUser(farmerId);
+
+        return seasonRepository.findByFarmerId(farmerId)
+                .stream()
+                .map(SeasonResponse::new)
+                .toList();
     }
 
-    // Xem chi tiết mùa vụ
-    public Season getById(Long id) {
-        return seasonRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Không tìm thấy mùa vụ"));
+    // Chi tiết mùa vụ
+    public SeasonResponse getById(Long id, Long farmerId) {
+        return new SeasonResponse(
+                findOwnedSeason(id, farmerId)
+        );
     }
 
     // Thêm mùa vụ
-    public Season create(Long farmerId, Season season) {
-        User farmer = userRepository.findById(farmerId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException("Không tìm thấy nông dân"));
+    public SeasonResponse create(
+            Long farmerId,
+            SeasonRequest request) {
 
-        validateDates(season);
-        season.setId(null);
+        User farmer = requireActiveUser(farmerId);
+
+        Season season = new Season();
+        copyFields(season, request);
         season.setFarmer(farmer);
 
-        return seasonRepository.save(season);
+        return new SeasonResponse(
+                seasonRepository.save(season)
+        );
     }
 
-    // Cập nhật mùa vụ
-    public Season update(Long id, Season request) {
-        Season existing = getById(id);
+    // Sửa mùa vụ
+    public SeasonResponse update(
+            Long id,
+            Long farmerId,
+            SeasonRequest request) {
 
-        validateDates(request);
+        Season season = findOwnedSeason(id, farmerId);
+        copyFields(season, request);
 
-        existing.setName(request.getName());
-        existing.setCrop(request.getCrop());
-        existing.setArea(request.getArea());
-        existing.setStart(request.getStart());
-        existing.setEnd(request.getEnd());
-        existing.setStatus(request.getStatus());
-
-        return seasonRepository.save(existing);
+        return new SeasonResponse(
+                seasonRepository.save(season)
+        );
     }
 
     // Xóa mùa vụ
-    public void delete(Long id) {
-        Season season = getById(id);
+    public void delete(Long id, Long farmerId) {
+        Season season = findOwnedSeason(id, farmerId);
         seasonRepository.delete(season);
     }
 
-    // Kiểm tra ngày bắt đầu và ngày kết thúc
-    private void validateDates(Season season) {
-        if (season.getStart() != null
-                && season.getEnd() != null
-                && season.getEnd().isBefore(season.getStart())) {
+    private User requireActiveUser(Long farmerId) {
+        if (farmerId == null) {
             throw new IllegalArgumentException(
-                    "Ngày kết thúc không được trước ngày bắt đầu");
+                    "Thiếu ID tài khoản nông dân");
         }
+
+        User user = userRepository.findById(farmerId)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Không tìm thấy tài khoản"));
+
+        if (!"active".equalsIgnoreCase(user.getStatus())) {
+            throw new IllegalArgumentException(
+                    "Tài khoản không hoạt động");
+        }
+
+        return user;
+    }
+
+    private Season findOwnedSeason(Long id, Long farmerId) {
+        requireActiveUser(farmerId);
+
+        Season season = seasonRepository.findById(id)
+        .orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy mùa vụ"));
+       if (!season.getFarmer().getId().equals(farmerId)) {
+    throw new ResponseStatusException(
+            HttpStatus.FORBIDDEN,
+            "Mùa vụ không thuộc tài khoản này");
+}
+
+        return season;
+    }
+
+    private void copyFields(
+            Season season,
+            SeasonRequest request) {
+
+        season.setName(request.getName());
+        season.setCrop(request.getCrop());
+        season.setArea(request.getArea());
+        season.setStart(request.getStart());
+        season.setEnd(request.getEnd());
+        season.setStatus(request.getStatus());
     }
 }
