@@ -5,7 +5,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
+import org.springframework.web.server.ResponseStatusException;
+import org.springframework.http.HttpStatusCode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,6 +51,23 @@ public class GlobalExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
+    // Xử lý lỗi HTTP 403, 404
+    @ExceptionHandler(ResponseStatusException.class)
+    public ResponseEntity<Map<String, Object>> handleResponseStatusException(
+            ResponseStatusException exception) {
+
+        Map<String, Object> response = new HashMap<>();
+
+        response.put("success", false);
+        response.put("message", exception.getReason());
+
+        HttpStatusCode status = exception.getStatusCode();
+
+        return ResponseEntity
+                .status(status)
+                .body(response);
+    }
+
 
     // Lỗi không xác định
     @ExceptionHandler(Exception.class)
