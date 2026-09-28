@@ -10,7 +10,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<link rel="stylesheet" href="weather.css">
+<link rel="stylesheet" href="../css/weather.css">
 </head>
 <body>
 <div id="app" style="display:block;">
@@ -156,7 +156,7 @@
 
 <div id="weatherDetailModal" class="weather-detail-modal" onclick="if(event.target===this)closeWeatherDetail()"><div class="weather-detail-card"><div class="weather-detail-head"><h6 id="weatherDetailTitle" class="mb-0">Chi tiết</h6><button class="btn btn-sm btn-outline-secondary" onclick="closeWeatherDetail()"><i class="bi bi-x-lg"></i></button></div><div id="weatherDetailBody" class="weather-detail-body"></div></div>
 
-<script src="weather-service.js"></script>
-<script src="weather.js"></script>
+<script src="../js/services/weather-service.js"></script>
+<script src="../js/weather.js"></script>
 </body>
 </html>
