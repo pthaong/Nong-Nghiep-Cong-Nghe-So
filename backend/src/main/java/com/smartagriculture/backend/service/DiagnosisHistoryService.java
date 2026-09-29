@@ -3,7 +3,8 @@ package com.smartagriculture.backend.service;
 import com.smartagriculture.backend.entity.DiagnosisHistory;
 import com.smartagriculture.backend.repository.DiagnosisHistoryRepository;
 import org.springframework.stereotype.Service;
-
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @Service
@@ -48,13 +49,11 @@ public List<DiagnosisHistory> getByUserId(Long userId) {
  * Lấy chi tiết một lần chẩn đoán.
  */
 public DiagnosisHistory getById(Long id) {
-
     return repository.findById(id)
-            .orElseThrow(() ->
-                    new IllegalArgumentException(
-                            "Không tìm thấy lịch sử chẩn đoán với ID: " + id
-                    )
-            );
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy lịch sử chẩn đoán với ID: " + id
+            ));
 }
 
 }
