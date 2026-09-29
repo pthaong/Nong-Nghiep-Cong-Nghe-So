@@ -2,61 +2,107 @@ package com.smartagriculture.backend.dto;
 
 public class DiagnosisResponse {
 
-    private String diseaseName;
-    private String result;
-    private String severity;
-    private String cause;
-    private String prevention;
-    private String treatment;
+private boolean success;
 
-    public DiagnosisResponse() {
-    }
+private String diseaseName;
 
-    public String getDiseaseName() {
-        return diseaseName;
-    }
+private String severity;
 
-    public void setDiseaseName(String diseaseName) {
-        this.diseaseName = diseaseName;
-    }
+private String symptoms;
 
-    public String getResult() {
-        return result;
-    }
+private String cause;
 
-    public void setResult(String result) {
-        this.result = result;
-    }
+private String treatment;
 
-    public String getSeverity() {
-        return severity;
-    }
+private String prevention;
 
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
+private String diagnosis;
 
-    public String getCause() {
-        return cause;
-    }
+public DiagnosisResponse() {
+}
 
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
+public DiagnosisResponse(
+        boolean success,
+        String diseaseName,
+        String severity,
+        String symptoms,
+        String cause,
+        String treatment,
+        String prevention,
+        String diagnosis) {
 
-    public String getPrevention() {
-        return prevention;
-    }
+    this.success = success;
+    this.diseaseName = diseaseName;
+    this.severity = severity;
+    this.symptoms = symptoms;
+    this.cause = cause;
+    this.treatment = treatment;
+    this.prevention = prevention;
+    this.diagnosis = diagnosis;
+}
 
-    public void setPrevention(String prevention) {
-        this.prevention = prevention;
-    }
+public boolean isSuccess() {
+    return success;
+}
 
-    public String getTreatment() {
-        return treatment;
-    }
+public void setSuccess(boolean success) {
+    this.success = success;
+}
 
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
-    }
+public String getDiseaseName() {
+    return diseaseName;
+}
+
+public void setDiseaseName(String diseaseName) {
+    this.diseaseName = diseaseName;
+}
+
+public String getSeverity() {
+    return severity;
+}
+
+public void setSeverity(String severity) {
+    this.severity = severity;
+}
+
+public String getSymptoms() {
+    return symptoms;
+}
+
+public void setSymptoms(String symptoms) {
+    this.symptoms = symptoms;
+}
+
+public String getCause() {
+    return cause;
+}
+
+public void setCause(String cause) {
+    this.cause = cause;
+}
+
+public String getTreatment() {
+    return treatment;
+}
+
+public void setTreatment(String treatment) {
+    this.treatment = treatment;
+}
+
+public String getPrevention() {
+    return prevention;
+}
+
+public void setPrevention(String prevention) {
+    this.prevention = prevention;
+}
+
+public String getDiagnosis() {
+    return diagnosis;
+}
+
+public void setDiagnosis(String diagnosis) {
+    this.diagnosis = diagnosis;
+}
+
 }

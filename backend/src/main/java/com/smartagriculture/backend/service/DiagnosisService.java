@@ -1,111 +1,355 @@
 package com.smartagriculture.backend.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.smartagriculture.backend.dto.DiagnosisRequest;
 import com.smartagriculture.backend.dto.DiagnosisResponse;
-import com.smartagriculture.backend.entity.Disease;
-import com.smartagriculture.backend.entity.Symptom;
-import com.smartagriculture.backend.repository.DiseaseRepository;
+import com.smartagriculture.backend.entity.DiagnosisHistory;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class DiagnosisService {
 
-    private final DiseaseRepository diseaseRepository;
+private final GeminiService geminiService;
+private final DiagnosisHistoryService historyService;
+private final ObjectMapper objectMapper;
 
-    public DiagnosisService(DiseaseRepository diseaseRepository) {
-        this.diseaseRepository = diseaseRepository;
+public DiagnosisService(
+        GeminiService geminiService,
+        DiagnosisHistoryService historyService) {
+
+    this.geminiService = geminiService;
+    this.historyService = historyService;
+    this.objectMapper = new ObjectMapper();
+}
+
+// =========================================================
+// CHẨN ĐOÁN BẰNG TEXT
+// =========================================================
+
+public DiagnosisResponse diagnose(
+        Long userId,
+        String plantType,
+        String symptoms) {
+
+    if (plantType == null ||
+            plantType.isBlank()) {
+
+        throw new IllegalArgumentException(
+                "Loại cây không được để trống."
+        );
     }
 
-    public DiagnosisResponse diagnose(DiagnosisRequest request) {
+    if (symptoms == null ||
+            symptoms.isBlank()) {
 
-        String plantType = request.getPlantType();
-        String inputSymptoms = request.getSymptoms();
+        throw new IllegalArgumentException(
+                "Triệu chứng không được để trống."
+        );
+    }
 
-        List<Disease> diseases = diseaseRepository.findAll();
+    String prompt = """
+            Bạn là AI chuyên hỗ trợ chẩn đoán bệnh cây trồng.
 
-        Disease bestDisease = null;
-        int bestScore = 0;
+            Loại cây:
+            %s
 
-        for (Disease disease : diseases) {
+            Triệu chứng:
+            %s
 
-            int score = 0;
+            Hãy tự phân tích dựa trên thông tin được cung cấp.
 
-            // Kiểm tra loại cây
-            if (plantType != null
-                    && disease.getPlantType() != null
-                    && disease.getPlantType()
-                    .toLowerCase()
-                    .contains(plantType.toLowerCase())) {
+            Trả về DUY NHẤT JSON:
 
-                score += 2;
+            {
+              "diseaseName": "Tên bệnh",
+              "severity": "Mức độ",
+              "symptoms": "Dấu hiệu",
+              "cause": "Nguyên nhân",
+              "treatment": "Cách xử lý",
+              "prevention": "Cách phòng ngừa"
             }
 
-            // Kiểm tra triệu chứng
-            if (inputSymptoms != null && disease.getSymptoms() != null) {
+            Nếu không đủ thông tin:
+            diseaseName = "Chưa thể xác định"
 
-                for (Symptom symptom : disease.getSymptoms()) {
+            Không sử dụng Markdown.
+            Không thêm ```json.
+            """.formatted(
+            plantType,
+            symptoms
+    );
 
-                    if (symptom.getName() == null) {
-                        continue;
-                    }
+    String aiResult =
+            geminiService.ask(prompt);
 
-                    String symptomName =
-                            symptom.getName().toLowerCase();
+    return buildResponseAndSave(
+            userId,
+            plantType,
+            symptoms,
+            null,
+            aiResult
+    );
+}
 
-                    String userSymptoms =
-                            inputSymptoms.toLowerCase();
+// =========================================================
+// GIỮ API CŨ
+// =========================================================
 
-                    if (userSymptoms.contains(symptomName)) {
-                        score += 3;
-                    }
-                }
-            }
+public DiagnosisResponse diagnose(
+        String plantType,
+        String symptoms) {
 
-            // Lưu bệnh có điểm cao nhất
-            if (score > bestScore) {
-                bestScore = score;
-                bestDisease = disease;
-            }
-        }
+    return diagnose(
+            null,
+            plantType,
+            symptoms
+    );
+}
 
-        DiagnosisResponse response = new DiagnosisResponse();
+// =========================================================
+// DIAGNOSIS REQUEST
+// =========================================================
 
-        // Không tìm thấy bệnh
-        if (bestDisease == null || bestScore == 0) {
+public DiagnosisResponse diagnose(
+        DiagnosisRequest request) {
 
-            response.setDiseaseName("Chưa xác định");
-            response.setResult("Chưa tìm thấy bệnh phù hợp");
-            response.setSeverity("Chưa xác định");
-            response.setCause("Chưa có dữ liệu phù hợp");
-            response.setPrevention(
-                    "Theo dõi cây và kiểm tra thêm triệu chứng"
+    if (request == null) {
+
+        throw new IllegalArgumentException(
+                "Dữ liệu chẩn đoán không được để trống."
+        );
+    }
+
+    return diagnose(
+            null,
+            request.getPlantType(),
+            request.getSymptoms()
+    );
+}
+
+// =========================================================
+// CHẨN ĐOÁN BẰNG ẢNH
+// =========================================================
+
+public DiagnosisResponse diagnoseByImage(
+        Long userId,
+        String plantType,
+        String symptoms,
+        MultipartFile image)
+        throws Exception {
+
+    if (plantType == null ||
+            plantType.isBlank()) {
+
+        plantType = "Không xác định";
+    }
+
+    if (symptoms == null ||
+            symptoms.isBlank()) {
+
+        symptoms =
+                "Người dùng không cung cấp triệu chứng.";
+    }
+
+    if (image == null ||
+            image.isEmpty()) {
+
+        throw new IllegalArgumentException(
+                "Vui lòng tải lên ảnh cây cần chẩn đoán."
+        );
+    }
+
+    String aiResult =
+            geminiService.analyzeImage(
+                    plantType,
+                    symptoms,
+                    image
             );
-            response.setTreatment(
-                    "Chưa có khuyến nghị xử lý cụ thể"
-            );
 
-            return response;
-        }
+    return buildResponseAndSave(
+            userId,
+            plantType,
+            symptoms,
+            image.getOriginalFilename(),
+            aiResult
+    );
+}
 
-        // Có bệnh phù hợp
-        response.setDiseaseName(bestDisease.getName());
-        response.setResult("Có dấu hiệu bệnh");
+// =========================================================
+// GIỮ API CŨ
+// =========================================================
 
-        // Xác định mức độ dựa vào số điểm
-        if (bestScore >= 8) {
-            response.setSeverity("Cao");
-        } else if (bestScore >= 5) {
-            response.setSeverity("Trung bình");
-        } else {
-            response.setSeverity("Thấp");
-        }
+public DiagnosisResponse diagnoseByImage(
+        String plantType,
+        String symptoms,
+        MultipartFile image)
+        throws Exception {
 
-        response.setCause(bestDisease.getCause());
-        response.setPrevention(bestDisease.getPrevention());
-        response.setTreatment(bestDisease.getTreatment());
+    return diagnoseByImage(
+            null,
+            plantType,
+            symptoms,
+            image
+    );
+}
+
+// =========================================================
+// PARSE AI + LƯU DATABASE
+// =========================================================
+
+private DiagnosisResponse buildResponseAndSave(
+        Long userId,
+        String plantType,
+        String symptoms,
+        String imageName,
+        String aiResult) {
+
+    try {
+
+        JsonNode root =
+                objectMapper.readTree(aiResult);
+
+        String diseaseName =
+                getText(
+                        root,
+                        "diseaseName"
+                );
+
+        String severity =
+                getText(
+                        root,
+                        "severity"
+                );
+
+        String aiSymptoms =
+                getText(
+                        root,
+                        "symptoms"
+                );
+
+        String cause =
+                getText(
+                        root,
+                        "cause"
+                );
+
+        String treatment =
+                getText(
+                        root,
+                        "treatment"
+                );
+
+        String prevention =
+                getText(
+                        root,
+                        "prevention"
+                );
+
+        // ==========================================
+        // LƯU LỊCH SỬ
+        // ==========================================
+
+        DiagnosisHistory history =
+                new DiagnosisHistory();
+
+        history.setUserId(userId);
+        history.setPlantType(plantType);
+        history.setSymptoms(
+                symptoms
+        );
+        history.setImageName(
+                imageName
+        );
+        history.setDiseaseName(
+                diseaseName
+        );
+        history.setSeverity(
+                severity
+        );
+        history.setCause(
+                cause
+        );
+        history.setTreatment(
+                treatment
+        );
+        history.setPrevention(
+                prevention
+        );
+        history.setResult(
+                aiResult
+        );
+
+        historyService.save(history);
+
+        // ==========================================
+        // RESPONSE
+        // ==========================================
+
+        DiagnosisResponse response =
+                new DiagnosisResponse();
+
+        response.setSuccess(true);
+
+        response.setDiseaseName(
+                diseaseName
+        );
+
+        response.setSeverity(
+                severity
+        );
+
+        response.setSymptoms(
+                aiSymptoms
+        );
+
+        response.setCause(
+                cause
+        );
+
+        response.setTreatment(
+                treatment
+        );
+
+        response.setPrevention(
+                prevention
+        );
+
+        response.setDiagnosis(
+                aiResult
+        );
 
         return response;
+
+    } catch (Exception e) {
+
+        throw new RuntimeException(
+                "Không thể xử lý kết quả chẩn đoán AI: "
+                        + e.getMessage(),
+                e
+        );
     }
+}
+
+// =========================================================
+// ĐỌC FIELD JSON
+// =========================================================
+
+private String getText(
+        JsonNode root,
+        String field) {
+
+    JsonNode node =
+            root.path(field);
+
+    if (node.isMissingNode() ||
+            node.isNull()) {
+
+        return "";
+    }
+
+    return node.asText();
+}
+
 }

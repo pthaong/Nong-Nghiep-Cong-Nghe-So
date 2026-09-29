@@ -2,48 +2,44 @@ package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.entity.DiagnosisHistory;
 import com.smartagriculture.backend.service.DiagnosisHistoryService;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/diagnosis-history")
-@CrossOrigin(origins = "*")
+@RequestMapping("/api/diagnosis/history")
 public class DiagnosisHistoryController {
 
-    private final DiagnosisHistoryService service;
+private final DiagnosisHistoryService historyService;
 
-    public DiagnosisHistoryController(
-            DiagnosisHistoryService service) {
-        this.service = service;
-    }
+public DiagnosisHistoryController(
+        DiagnosisHistoryService historyService) {
 
-    @GetMapping
-    public ResponseEntity<List<DiagnosisHistory>> getAll() {
-        return ResponseEntity.ok(service.getAll());
-    }
+    this.historyService = historyService;
+}
 
-    @GetMapping("/{id}")
-    public ResponseEntity<DiagnosisHistory> getById(
-            @PathVariable Long id) {
+/**
+ * GET /api/diagnosis/history/user/{userId}
+ *
+ * Lấy lịch sử chẩn đoán của user.
+ */
+@GetMapping("/user/{userId}")
+public List<DiagnosisHistory> getHistoryByUser(
+        @PathVariable Long userId) {
 
-        return ResponseEntity.ok(service.getById(id));
-    }
+    return historyService.getByUserId(userId);
+}
 
-    @PostMapping
-    public ResponseEntity<DiagnosisHistory> create(
-            @RequestBody DiagnosisHistory history) {
+/**
+ * GET /api/diagnosis/history/{id}
+ *
+ * Xem chi tiết một lần chẩn đoán.
+ */
+@GetMapping("/{id}")
+public DiagnosisHistory getHistoryDetail(
+        @PathVariable Long id) {
 
-        return ResponseEntity.ok(service.save(history));
-    }
+    return historyService.getById(id);
+}
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id) {
-
-        service.delete(id);
-
-        return ResponseEntity.noContent().build();
-    }
 }

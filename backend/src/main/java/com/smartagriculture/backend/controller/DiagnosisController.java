@@ -2,56 +2,82 @@ package com.smartagriculture.backend.controller;
 
 import com.smartagriculture.backend.dto.DiagnosisRequest;
 import com.smartagriculture.backend.dto.DiagnosisResponse;
-import com.smartagriculture.backend.entity.DiagnosisHistory;
-import com.smartagriculture.backend.service.DiagnosisHistoryService;
 import com.smartagriculture.backend.service.DiagnosisService;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/diagnosis")
-@CrossOrigin(origins = "*")
 public class DiagnosisController {
 
-    private final DiagnosisService diagnosisService;
-    private final DiagnosisHistoryService historyService;
+private final DiagnosisService diagnosisService;
 
-    public DiagnosisController(
-            DiagnosisService diagnosisService,
-            DiagnosisHistoryService historyService) {
+public DiagnosisController(
+        DiagnosisService diagnosisService) {
 
-        this.diagnosisService = diagnosisService;
-        this.historyService = historyService;
-    }
+    this.diagnosisService = diagnosisService;
+}
 
-    // API chẩn đoán
-    @PostMapping
-    public ResponseEntity<DiagnosisResponse> diagnose(
-            @RequestBody DiagnosisRequest request) {
+// =========================================================
+// CHẨN ĐOÁN BẰNG TRIỆU CHỨNG
+// =========================================================
 
-        return ResponseEntity.ok(
-                diagnosisService.diagnose(request)
+@PostMapping("/text")
+public DiagnosisResponse diagnose(
+        @RequestParam(required = false)
+        Long userId,
+
+        @RequestBody
+        DiagnosisRequest request) {
+
+    if (request == null) {
+
+        throw new IllegalArgumentException(
+                "Dữ liệu chẩn đoán không được để trống."
         );
     }
 
-    // API lưu lịch sử
-    @PostMapping("/history")
-    public ResponseEntity<DiagnosisHistory> saveHistory(
-            @RequestBody DiagnosisHistory history) {
+    return diagnosisService.diagnose(
+            userId,
+            request.getPlantType(),
+            request.getSymptoms()
+    );
+}
 
-        return ResponseEntity.ok(
-                historyService.save(history)
-        );
-    }
+// =========================================================
+// CHẨN ĐOÁN BẰNG ẢNH
+// =========================================================
 
-    // API xem lịch sử
-    @GetMapping("/history")
-    public ResponseEntity<List<DiagnosisHistory>> getHistory() {
+@PostMapping(
+        value = "/image",
+        consumes = MediaType.MULTIPART_FORM_DATA_VALUE
+)
+public DiagnosisResponse diagnoseByImage(
 
-        return ResponseEntity.ok(
-                historyService.getAll()
-        );
-    }
+        @RequestParam(required = false)
+        Long userId,
+
+        @RequestParam("plantType")
+        String plantType,
+
+        @RequestParam(
+                value = "symptoms",
+                required = false
+        )
+        String symptoms,
+
+        @RequestParam("image")
+        MultipartFile image)
+
+        throws Exception {
+
+    return diagnosisService.diagnoseByImage(
+            userId,
+            plantType,
+            symptoms,
+            image
+    );
+}
+
 }

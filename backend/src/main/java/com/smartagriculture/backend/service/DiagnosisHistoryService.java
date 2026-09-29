@@ -9,27 +9,52 @@ import java.util.List;
 @Service
 public class DiagnosisHistoryService {
 
-    private final DiagnosisHistoryRepository repository;
+private final DiagnosisHistoryRepository repository;
 
-    public DiagnosisHistoryService(DiagnosisHistoryRepository repository) {
-        this.repository = repository;
+public DiagnosisHistoryService(
+        DiagnosisHistoryRepository repository) {
+    this.repository = repository;
+}
+
+/**
+ * Lưu lịch sử chẩn đoán.
+ */
+public DiagnosisHistory save(DiagnosisHistory history) {
+
+    if (history == null) {
+        throw new IllegalArgumentException(
+                "Dữ liệu lịch sử chẩn đoán không được để trống."
+        );
     }
 
-    public List<DiagnosisHistory> getAll() {
-        return repository.findAll();
+    return repository.save(history);
+}
+
+/**
+ * Lấy toàn bộ lịch sử của một user.
+ */
+public List<DiagnosisHistory> getByUserId(Long userId) {
+
+    if (userId == null) {
+        throw new IllegalArgumentException(
+                "User ID không được để trống."
+        );
     }
 
-    public DiagnosisHistory getById(Long id) {
-        return repository.findById(id)
-                .orElseThrow(() ->
-                        new RuntimeException("Không tìm thấy lịch sử chẩn đoán"));
-    }
+    return repository.findByUserIdOrderByCreatedAtDesc(userId);
+}
 
-    public DiagnosisHistory save(DiagnosisHistory history) {
-        return repository.save(history);
-    }
+/**
+ * Lấy chi tiết một lần chẩn đoán.
+ */
+public DiagnosisHistory getById(Long id) {
 
-    public void delete(Long id) {
-        repository.deleteById(id);
-    }
+    return repository.findById(id)
+            .orElseThrow(() ->
+                    new IllegalArgumentException(
+                            "Không tìm thấy lịch sử chẩn đoán với ID: " + id
+                    )
+            );
+}
+
 }

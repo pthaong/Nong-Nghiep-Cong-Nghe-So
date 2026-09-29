@@ -7,128 +7,155 @@ import java.time.LocalDateTime;
 @Table(name = "diagnosis_history")
 public class DiagnosisHistory {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+@Id
+@GeneratedValue(strategy = GenerationType.IDENTITY)
+private Long id;
 
-    @ManyToOne
-    @JoinColumn(name = "disease_id")
-    private Disease disease;
+// ID tài khoản nông dân thực hiện chẩn đoán
+@Column(name = "user_id")
+private Long userId;
 
-    @Column(name = "image_url")
-    private String imageUrl;
+// Loại cây
+@Column(name = "plant_type", nullable = false)
+private String plantType;
 
-    @Column(columnDefinition = "TEXT")
-    private String symptoms;
+// Triệu chứng người dùng nhập
+@Column(name = "symptoms", columnDefinition = "NVARCHAR(MAX)")
+private String symptoms;
 
-    @Column(name = "predicted_disease")
-    private String predictedDisease;
+// Tên file ảnh đã upload
+@Column(name = "image_name")
+private String imageName;
 
-    private Double confidence;
+// Kết quả bệnh
+@Column(name = "disease_name")
+private String diseaseName;
 
-    private String severity;
+// Kết quả chẩn đoán đầy đủ
+@Column(name = "result", columnDefinition = "NVARCHAR(MAX)")
+private String result;
 
-    @Column(columnDefinition = "TEXT")
-    private String cause;
+// Mức độ nghiêm trọng
+@Column(name = "severity")
+private String severity;
 
-    @Column(columnDefinition = "TEXT")
-    private String prevention;
+// Nguyên nhân
+@Column(name = "cause", columnDefinition = "NVARCHAR(MAX)")
+private String cause;
 
-    @Column(columnDefinition = "TEXT")
-    private String treatment;
+// Cách phòng ngừa
+@Column(name = "prevention", columnDefinition = "NVARCHAR(MAX)")
+private String prevention;
 
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
+// Cách xử lý
+@Column(name = "treatment", columnDefinition = "NVARCHAR(MAX)")
+private String treatment;
 
-    public DiagnosisHistory() {
-    }
+@Column(name = "created_at", nullable = false)
+private LocalDateTime createdAt;
 
-    @PrePersist
-    protected void onCreate() {
-        createdAt = LocalDateTime.now();
-    }
+@PrePersist
+protected void onCreate() {
+    createdAt = LocalDateTime.now();
+}
 
-    public Long getId() {
-        return id;
-    }
+public DiagnosisHistory() {
+}
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+public Long getId() {
+    return id;
+}
 
-    public Disease getDisease() {
-        return disease;
-    }
+public void setId(Long id) {
+    this.id = id;
+}
 
-    public void setDisease(Disease disease) {
-        this.disease = disease;
-    }
+public Long getUserId() {
+    return userId;
+}
 
-    public String getImageUrl() {
-        return imageUrl;
-    }
+public void setUserId(Long userId) {
+    this.userId = userId;
+}
 
-    public void setImageUrl(String imageUrl) {
-        this.imageUrl = imageUrl;
-    }
+public String getPlantType() {
+    return plantType;
+}
 
-    public String getSymptoms() {
-        return symptoms;
-    }
+public void setPlantType(String plantType) {
+    this.plantType = plantType;
+}
 
-    public void setSymptoms(String symptoms) {
-        this.symptoms = symptoms;
-    }
+public String getSymptoms() {
+    return symptoms;
+}
 
-    public String getPredictedDisease() {
-        return predictedDisease;
-    }
+public void setSymptoms(String symptoms) {
+    this.symptoms = symptoms;
+}
 
-    public void setPredictedDisease(String predictedDisease) {
-        this.predictedDisease = predictedDisease;
-    }
+public String getImageName() {
+    return imageName;
+}
 
-    public Double getConfidence() {
-        return confidence;
-    }
+public void setImageName(String imageName) {
+    this.imageName = imageName;
+}
 
-    public void setConfidence(Double confidence) {
-        this.confidence = confidence;
-    }
+public String getDiseaseName() {
+    return diseaseName;
+}
 
-    public String getSeverity() {
-        return severity;
-    }
+public void setDiseaseName(String diseaseName) {
+    this.diseaseName = diseaseName;
+}
 
-    public void setSeverity(String severity) {
-        this.severity = severity;
-    }
+public String getResult() {
+    return result;
+}
 
-    public String getCause() {
-        return cause;
-    }
+public void setResult(String result) {
+    this.result = result;
+}
 
-    public void setCause(String cause) {
-        this.cause = cause;
-    }
+public String getSeverity() {
+    return severity;
+}
 
-    public String getPrevention() {
-        return prevention;
-    }
+public void setSeverity(String severity) {
+    this.severity = severity;
+}
 
-    public void setPrevention(String prevention) {
-        this.prevention = prevention;
-    }
+public String getCause() {
+    return cause;
+}
 
-    public String getTreatment() {
-        return treatment;
-    }
+public void setCause(String cause) {
+    this.cause = cause;
+}
 
-    public void setTreatment(String treatment) {
-        this.treatment = treatment;
-    }
+public String getPrevention() {
+    return prevention;
+}
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
+public void setPrevention(String prevention) {
+    this.prevention = prevention;
+}
+
+public String getTreatment() {
+    return treatment;
+}
+
+public void setTreatment(String treatment) {
+    this.treatment = treatment;
+}
+
+public LocalDateTime getCreatedAt() {
+    return createdAt;
+}
+
+public void setCreatedAt(LocalDateTime createdAt) {
+    this.createdAt = createdAt;
+}
+
 }

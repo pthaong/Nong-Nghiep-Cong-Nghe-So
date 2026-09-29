@@ -3,6 +3,7 @@ package com.smartagriculture.backend.dto;
 public class DiagnosisRequest {
 
     private String plantType;
+
     private String symptoms;
 
     public DiagnosisRequest() {
