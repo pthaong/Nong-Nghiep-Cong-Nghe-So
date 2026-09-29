@@ -17,11 +17,11 @@ public class Knowledge {
     @Column(name = "plant_type")
     private String plantType;
 
-    @Column(columnDefinition = "TEXT")
-    private String content;
+    @Column(columnDefinition = "NVARCHAR(MAX)")
+private String content;
 
-    @Column(columnDefinition = "TEXT")
-    private String category;
+@Column(columnDefinition = "NVARCHAR(255)")
+private String category;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;
