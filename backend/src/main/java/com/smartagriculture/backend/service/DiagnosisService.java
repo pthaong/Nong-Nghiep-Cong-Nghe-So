@@ -336,20 +336,23 @@ private DiagnosisResponse buildResponseAndSave(
 // ĐỌC FIELD JSON
 // =========================================================
 
-private String getText(
-        JsonNode root,
-        String field) {
+private String getText(JsonNode root, String field) {
 
-    JsonNode node =
-            root.path(field);
-
-    if (node.isMissingNode() ||
-            node.isNull()) {
-
-        return "";
+    if (root == null || !root.isObject()) {
+        throw new IllegalArgumentException(
+                "Kết quả chẩn đoán AI không đúng định dạng JSON."
+        );
     }
 
-    return node.asText();
+    JsonNode node = root.path(field);
+
+    if (!node.isTextual() || node.asText().isBlank()) {
+        throw new IllegalArgumentException(
+                "Kết quả AI thiếu hoặc không hợp lệ: " + field
+        );
+    }
+
+    return node.asText().trim();
 }
 
 }
