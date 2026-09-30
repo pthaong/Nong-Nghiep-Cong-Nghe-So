@@ -1673,3 +1673,240 @@ body {
         transition: none;
     }
 }
+/* =========================================================
+   FE2 SIDEBAR ALIGNMENT
+   Chỉ đồng bộ thanh menu với giao diện Mùa vụ
+   ========================================================= */
+
+.sidebar {
+    width: 250px;
+    flex-shrink: 0;
+    background: #123527;
+    color: #DCE8D5;
+
+    display: flex;
+    flex-direction: column;
+
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+
+    z-index: 1200;
+}
+
+.sidebar .brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    padding: 20px 20px 14px;
+
+    font-weight: 800;
+    color: #fff;
+    font-size: 1.1rem;
+}
+
+.sidebar .brand .dot {
+    width: 9px;
+    height: 9px;
+
+    border-radius: 50%;
+    background: #E0A23A;
+
+    display: inline-block;
+}
+
+.sidebar-scroll {
+    overflow-y: auto;
+    flex: 1;
+
+    padding: 6px 12px 14px;
+}
+
+.nav-section-label {
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+
+    color: #7C9A80;
+
+    padding: 14px 12px 6px;
+}
+
+.nav-link-app {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+
+    color: #C6DABC;
+
+    padding: 9px 12px;
+
+    border: 1px solid transparent;
+    border-radius: 10px;
+
+    font-size: .88rem;
+    font-weight: 500;
+
+    margin-bottom: 2px;
+
+    cursor: pointer;
+    text-decoration: none;
+
+    transition: .2s;
+}
+
+.nav-link-app i {
+    width: 18px;
+
+    font-size: 1.02rem;
+
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.nav-link-app:hover {
+    background: rgba(255, 255, 255, .06);
+    color: #fff;
+}
+
+.nav-link-app.active {
+    background: #2E6B4C;
+    color: #fff;
+    font-weight: 600;
+}
+
+.sidebar-notification-badge {
+    margin-left: auto;
+
+    min-width: 20px;
+    height: 20px;
+
+    padding: 0 6px;
+
+    border-radius: 999px;
+
+    background: #f04c46;
+    color: #fff;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    line-height: 20px;
+    text-align: center;
+}
+
+.sidebar-notification-badge[hidden] {
+    display: none;
+}
+
+.sidebar-foot {
+    padding: 14px 16px;
+
+    border-top: 1px solid rgba(255, 255, 255, .08);
+}
+
+.mini-user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.mini-avatar {
+    width: 36px;
+    height: 36px;
+
+    flex-shrink: 0;
+
+    border-radius: 50%;
+
+    background: #E0A23A;
+    color: #3a2a05;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-weight: 700;
+}
+
+.mini-user-info {
+    min-width: 0;
+}
+
+.mini-user-name {
+    color: #fff;
+
+    font-weight: 600;
+    font-size: .85rem;
+}
+
+.mini-user-location {
+    color: #9FB99A;
+
+    font-size: .72rem;
+}
+
+.sidebar-logout {
+    width: 100%;
+
+    margin-top: 14px;
+    padding: 6px 12px;
+
+    border: 1px solid rgba(255, 255, 255, .85);
+    border-radius: 4px;
+
+    background: transparent;
+    color: #fff;
+
+    font-size: .875rem;
+
+    cursor: pointer;
+}
+
+.sidebar-logout:hover {
+    background: rgba(255, 255, 255, .08);
+}
+
+
+/* Desktop: chừa đúng 250px cho sidebar giống FE2 */
+
+.home-header {
+    margin-left: 250px;
+    width: calc(100% - 250px);
+}
+
+.home-container {
+    margin-left: 250px;
+    margin-right: 0;
+    width: calc(100% - 250px);
+    max-width: none;
+}
+
+
+/* Sidebar cố định nên desktop không cần hamburger cũ */
+
+.menu-button {
+    display: none;
+}
+
+
+/* Mobile */
+
+@media (max-width: 991px) {
+
+    .sidebar {
+        display: none;
+    }
+
+    .home-header,
+.home-container {
+    margin-left: 0;
+    width: 100%;
+}
+
+    .menu-button {
+        display: none;
+    }
+}

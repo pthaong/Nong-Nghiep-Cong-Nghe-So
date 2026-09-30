@@ -109,85 +109,98 @@
          SIDE MENU (mở bằng nút menu trên header)
          ===================================================== -->
 
-    <div
-        id="sideMenuOverlay"
-        class="side-menu-overlay"
-        hidden
-    ></div>
+    <!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
 
-    <nav
-        id="sideMenu"
-        class="side-menu"
-        aria-label="Menu chính"
-        aria-hidden="true"
-    >
+    <div class="brand">
+        <span class="dot"></span>
+        AgriSmart
+    </div>
 
-        <div class="side-menu-head">
+    <div class="sidebar-scroll">
 
-            <strong>Menu</strong>
+        <a class="nav-link-app active" href="home.html">
+            <i class="bi bi-house-door"></i>
+            <span>Trang chủ</span>
+        </a>
 
-            <button
-                id="sideMenuClose"
-                class="side-menu-close"
-                type="button"
-                aria-label="Đóng menu"
-            >
-                <i class="bi bi-x-lg"></i>
-            </button>
+        <a class="nav-link-app" href="#">
+            <i class="bi bi-flower2"></i>
+            <span>Cây trồng</span>
+        </a>
+
+        <a class="nav-link-app" href="../../muavu-index.html">
+            <i class="bi bi-calendar3-range"></i>
+            <span>Mùa vụ</span>
+        </a>
+
+        <a class="nav-link-app" href="coming-soon.html?module=diary">
+            <i class="bi bi-journal-text"></i>
+            <span>Nhật ký canh tác</span>
+        </a>
+
+        <a class="nav-link-app" href="weather.html">
+            <i class="bi bi-cloud-sun"></i>
+            <span>Thời tiết</span>
+        </a>
+
+        <a class="nav-link-app" href="ai.html">
+            <i class="bi bi-robot"></i>
+            <span>AI chẩn đoán &amp; tư vấn</span>
+        </a>
+
+        <div class="nav-section-label">KHÁC</div>
+
+        <a class="nav-link-app" href="#">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>Giá nông sản</span>
+        </a>
+
+        <a class="nav-link-app" href="profile.html">
+            <i class="bi bi-person-circle"></i>
+            <span>Tài khoản</span>
+        </a>
+
+        <a class="nav-link-app" href="notification.html">
+            <i class="bi bi-bell"></i>
+            <span>Thông báo</span>
+
+            <span
+                class="sidebar-notification-badge"
+                data-notification-badge
+                hidden
+            >0</span>
+        </a>
+
+    </div>
+
+    <div class="sidebar-foot">
+
+        <div class="mini-user">
+
+            <div class="mini-avatar">N</div>
+
+            <div class="mini-user-info">
+                <div class="mini-user-name">Nông dân</div>
+                <div class="mini-user-location">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    AgriSmart
+                </div>
+            </div>
 
         </div>
 
-        <ul class="side-menu-list">
+        <button
+            class="sidebar-logout"
+            type="button"
+        >
+            <i class="bi bi-box-arrow-left"></i>
+            Đăng xuất
+        </button>
 
-            <li>
-                <a class="side-menu-link" href="../../muavu-index.html">
-                    <i class="bi bi-flower1"></i>
-                    <span class="side-menu-label">Mùa vụ</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="coming-soon.html?module=diary">
-                    <i class="bi bi-journal-text"></i>
-                    <span class="side-menu-label">Nhật ký canh tác</span>
-                    <span class="side-menu-soon">Sắp ra mắt</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="weather.html">
-                    <i class="bi bi-cloud-sun"></i>
-                    <span class="side-menu-label">Thời tiết</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="ai.html">
-                    <i class="bi bi-cpu"></i>
-                    <span class="side-menu-label">AI chẩn đoán</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="coming-soon.html?module=knowledge">
-                    <i class="bi bi-book"></i>
-                    <span class="side-menu-label">Kiến thức nông nghiệp</span>
-                    <span class="side-menu-soon">Sắp ra mắt</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="profile.html">
-                    <i class="bi bi-person"></i>
-                    <span class="side-menu-label">Hồ sơ</span>
-                </a>
-            </li>
-            <li>
-                <a class="side-menu-link" href="notification.html">
-                    <i class="bi bi-bell"></i>
-                    <span class="side-menu-label">Thông báo</span>
-                    <span class="side-menu-badge" data-notification-badge hidden>0</span>
-                </a>
-            </li>
+    </div>
 
-        </ul>
-
-    </nav>
+</aside>
 
 
     <!-- =====================================================
