@@ -29,24 +29,6 @@
        ===================================================== */
 
     const HOME_MOCK_DATA = {
-
-        weather: {
-
-            location: "Cao Bằng",
-
-            temperature: "31°C",
-
-            description: "Trời quang nhẹ",
-
-            humidity: "68%",
-
-            rainChance: "51%",
-
-            wind: "3 km/h"
-
-        },
-
-
         statistics: {
 
             managedFields: 3,
@@ -56,7 +38,6 @@
             monthlyDiary: 4,
 
             aiQuestions: 4
-
         },
 
 
@@ -217,93 +198,248 @@
        WEATHER
        ===================================================== */
 
-    function renderWeather() {
+  async function renderWeather() {
 
-        const weather =
-            HOME_MOCK_DATA.weather;
+    const location =
+        document.getElementById("weatherLocation");
+
+    const temperature =
+        document.getElementById("weatherTemperature");
+
+    const description =
+        document.getElementById("weatherDescription");
+
+    const humidity =
+        document.getElementById("humidityValue");
+
+    const rain =
+        document.getElementById("rainValue");
+
+    const wind =
+        document.getElementById("windValue");
 
 
-        const location =
-            document.getElementById(
-                "weatherLocation"
+    function displayWeather(weather) {
+
+        if (
+            !weather ||
+            !weather.current ||
+            typeof weather.current.temp !== "number"
+        ) {
+            throw new Error(
+                "Dữ liệu thời tiết không hợp lệ."
             );
-
-        const temperature =
-            document.getElementById(
-                "weatherTemperature"
-            );
-
-        const description =
-            document.getElementById(
-                "weatherDescription"
-            );
-
-        const humidity =
-            document.getElementById(
-                "humidityValue"
-            );
-
-        const rain =
-            document.getElementById(
-                "rainValue"
-            );
-
-        const wind =
-            document.getElementById(
-                "windValue"
-            );
-
+        }
 
         if (location) {
-
             location.textContent =
-                weather.location;
-
+                weather.region || "Cần Thơ";
         }
-
 
         if (temperature) {
-
             temperature.textContent =
-                weather.temperature;
-
+                Math.round(weather.current.temp) + "°C";
         }
-
 
         if (description) {
-
             description.textContent =
-                weather.description;
-
+                weather.current.condition ||
+                "Chưa có dữ liệu trạng thái";
         }
-
 
         if (humidity) {
-
             humidity.textContent =
-                weather.humidity;
-
+                weather.current.humidity !== null &&
+                weather.current.humidity !== undefined
+                    ? Math.round(weather.current.humidity) + "%"
+                    : "--";
         }
-
 
         if (rain) {
-
             rain.textContent =
-                weather.rainChance;
-
+                weather.current.rain !== null &&
+                weather.current.rain !== undefined
+                    ? Math.round(weather.current.rain) + "%"
+                    : "--";
         }
-
 
         if (wind) {
-
             wind.textContent =
-                weather.wind;
+                weather.current.wind !== null &&
+                weather.current.wind !== undefined
+                    ? Math.round(weather.current.wind) + " km/h"
+                    : "--";
+        }
+    const warningTitle =
+    document.getElementById("weatherWarningTitle");
+
+const warningText =
+    document.getElementById("weatherWarningText");
+
+if (warningTitle && warningText) {
+
+    const rainChance =
+        weather.current.rain;
+
+    if (
+        typeof rainChance === "number" &&
+        Number.isFinite(rainChance)
+    ) {
+
+        if (rainChance >= 60) {
+
+            warningTitle.textContent =
+                "Khả năng mưa cao";
+
+            warningText.textContent =
+                "Khả năng mưa hiện tại khoảng " +
+                Math.round(rainChance) +
+                "%. Nên theo dõi thời tiết trước khi tưới, " +
+                "bón phân hoặc phun thuốc.";
+
+        } else if (rainChance >= 30) {
+
+            warningTitle.textContent =
+                "Có khả năng mưa";
+
+            warningText.textContent =
+                "Khả năng mưa hiện tại khoảng " +
+                Math.round(rainChance) +
+                "%. Nên theo dõi thời tiết trước các hoạt động ngoài đồng.";
+
+        } else {
+
+            warningTitle.textContent =
+                "Khả năng mưa thấp";
+
+            warningText.textContent =
+                "Khả năng mưa hiện tại khoảng " +
+                Math.round(rainChance) +
+                "%. Điều kiện thời tiết hiện chưa có cảnh báo mưa đáng chú ý.";
 
         }
 
+    } else {
+
+        warningTitle.textContent =
+            "Theo dõi thời tiết";
+
+        warningText.textContent =
+            "Chưa có đủ dữ liệu để đưa ra cảnh báo về mưa.";
+
     }
+}
+}
+
+    try {
+
+        /*
+         * Ưu tiên dữ liệu Weather FE3 đã tải thành công.
+         */
+        const cached =
+            localStorage.getItem("agrismart_weather");
+
+        if (cached) {
+
+            try {
+
+                const weather =
+                    JSON.parse(cached);
+
+                displayWeather(weather);
+
+                console.log(
+                    "Home weather loaded from cache:",
+                    weather
+                );
+
+                return;
+
+            } catch (cacheError) {
+
+                console.warn(
+                    "Weather cache không hợp lệ:",
+                    cacheError
+                );
+
+                localStorage.removeItem(
+                    "agrismart_weather"
+                );
+            }
+        }
 
 
+        /*
+         * Chưa từng mở FE3 hoặc chưa có cache:
+         * Home tự lấy dữ liệu qua cùng weather-service của FE3.
+         *
+         * Cần Thơ là DEFAULT_LOCATION của FE3.
+         */
+        if (!window.AgriWeather) {
+            throw new Error(
+                "AgriWeather service chưa được tải."
+            );
+        }
+
+
+        const weather =
+            await window.AgriWeather.loadWeather({
+                name: "Cần Thơ"
+            });
+
+
+        displayWeather(weather);
+
+
+        /*
+         * Lưu cùng key với FE3 để Home và Weather
+         * dùng chung dữ liệu.
+         */
+        localStorage.setItem(
+            "agrismart_weather",
+            JSON.stringify(weather)
+        );
+
+
+        console.log(
+            "Home weather loaded from Backend:",
+            weather
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "Không tải được thời tiết cho Home:",
+            error
+        );
+
+        if (location) {
+            location.textContent = "--";
+        }
+
+        if (temperature) {
+            temperature.textContent = "--°C";
+        }
+
+        if (description) {
+            description.textContent =
+                "Không tải được dữ liệu thời tiết";
+        }
+
+        if (humidity) {
+            humidity.textContent = "--";
+        }
+
+        if (rain) {
+            rain.textContent = "--";
+        }
+
+        if (wind) {
+            wind.textContent = "--";
+        }
+    }
+}
     /* =====================================================
        STATISTICS
        ===================================================== */
@@ -313,19 +449,14 @@
         const data =
             HOME_MOCK_DATA.statistics;
 
-
         const values =
             document.querySelectorAll(
                 ".stat-value"
             );
 
-
         if (values.length < 4) {
-
             return;
-
         }
-
 
         values[0].textContent =
             data.managedFields;
@@ -338,10 +469,7 @@
 
         values[3].textContent =
             data.aiQuestions;
-
     }
-
-
     /* =====================================================
        CROP INTERACTIONS
        ===================================================== */
@@ -414,31 +542,26 @@
 
     function setupForecastButton() {
 
-        const button =
-            document.querySelector(
-                ".forecast-button"
-            );
-
-
-        if (!button) {
-
-            return;
-
-        }
-
-
-        button.addEventListener(
-            "click",
-            function () {
-
-                alert(
-                    "Weather API đang được BE2 phát triển. Hiện tại trang sử dụng dữ liệu thời tiết mẫu."
-                );
-
-            }
+    const button =
+        document.querySelector(
+            ".forecast-button"
         );
 
+    if (!button) {
+        return;
     }
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            window.location.href =
+                "weather.html";
+
+        }
+    );
+
+}
 
 
     /* =====================================================
