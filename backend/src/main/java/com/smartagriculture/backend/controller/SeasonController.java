@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
 @RequestMapping("/api/seasons")
 public class SeasonController {
 
@@ -21,7 +22,7 @@ public class SeasonController {
         this.seasonService = seasonService;
     }
 
-    // Danh sách mùa vụ theo nông dân
+    // Danh sÃ¡ch mÃ¹a vá»¥ theo nÃ´ng dÃ¢n
     @GetMapping
     public List<SeasonResponse> getAll(
             @RequestParam Long farmerId) {
@@ -29,7 +30,7 @@ public class SeasonController {
         return seasonService.getByFarmer(farmerId);
     }
 
-    // Xem chi tiết mùa vụ
+    // Xem chi tiáº¿t mÃ¹a vá»¥
     @GetMapping("/{id}")
     public SeasonResponse getById(
             @PathVariable Long id,
@@ -38,7 +39,7 @@ public class SeasonController {
         return seasonService.getById(id, farmerId);
     }
 
-    // Thêm mùa vụ
+    // ThÃªm mÃ¹a vá»¥
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public SeasonResponse create(
@@ -48,7 +49,7 @@ public class SeasonController {
         return seasonService.create(farmerId, request);
     }
 
-    // Sửa mùa vụ
+    // Sá»­a mÃ¹a vá»¥
     @PutMapping("/{id}")
     public SeasonResponse update(
             @PathVariable Long id,
@@ -58,7 +59,7 @@ public class SeasonController {
         return seasonService.update(id, farmerId, request);
     }
 
-    // Xóa mùa vụ
+    // XÃ³a mÃ¹a vá»¥
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(
@@ -68,3 +69,4 @@ public class SeasonController {
         seasonService.delete(id, farmerId);
     }
 }
+

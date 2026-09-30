@@ -14,11 +14,11 @@ public class Season {
     private Long id;
 
     @NotBlank(message = "Tên mùa vụ không được để trống")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String name;
 
     @NotBlank(message = "Tên cây trồng không được để trống")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String crop;
 
     @NotNull(message = "Diện tích không được để trống")
@@ -35,7 +35,7 @@ public class Season {
     private LocalDate end;
 
     @NotBlank(message = "Trạng thái không được để trống")
-    @Column(nullable = false)
+    @Column(nullable = false, columnDefinition = "NVARCHAR(255)")
     private String status;
 
     @ManyToOne(fetch = FetchType.LAZY)
