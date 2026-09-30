@@ -6,30 +6,26 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.server.ResponseStatusException;
-
+import org.springframework.http.HttpStatusCode;
 import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    // ==============================
-    // LỖI VALIDATION
-    // ==============================
+    // Lỗi validation
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationException(
             MethodArgumentNotValidException exception) {
 
         Map<String, Object> response = new HashMap<>();
+
         Map<String, String> errors = new HashMap<>();
 
         exception.getBindingResult()
                 .getFieldErrors()
                 .forEach(error ->
-                        errors.put(
-                                error.getField(),
-                                error.getDefaultMessage()
-                        )
+                        errors.put(error.getField(), error.getDefaultMessage())
                 );
 
         response.put("success", false);
@@ -41,9 +37,7 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    // ==============================
-    // LỖI NGHIỆP VỤ
-    // ==============================
+    // Lỗi nghiệp vụ
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgumentException(
             IllegalArgumentException exception) {
@@ -51,21 +45,13 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
 
         response.put("success", false);
-        response.put(
-                "message",
-                exception.getMessage() != null
-                        ? exception.getMessage()
-                        : "Invalid request"
-        );
+        response.put("message", exception.getMessage());
 
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(response);
     }
-
-    // ==============================
-    // LỖI HTTP 404 / 403 / ...
-    // ==============================
+    // Xử lý lỗi HTTP 403, 404
     @ExceptionHandler(ResponseStatusException.class)
     public ResponseEntity<Map<String, Object>> handleResponseStatusException(
             ResponseStatusException exception) {
@@ -73,48 +59,28 @@ public class GlobalExceptionHandler {
         Map<String, Object> response = new HashMap<>();
 
         response.put("success", false);
-        response.put(
-                "message",
-                exception.getReason() != null
-                        ? exception.getReason()
-                        : "Request failed"
-        );
+        response.put("message", exception.getReason());
+
+        HttpStatusCode status = exception.getStatusCode();
 
         return ResponseEntity
-                .status(exception.getStatusCode())
+                .status(status)
                 .body(response);
     }
 
-    // ==============================
-    // LỖI KHÔNG XÁC ĐỊNH
-    // ==============================
+
+    // Lỗi không xác định
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, Object>> handleException(
             Exception exception) {
 
-        // In lỗi thật ra Console Spring Boot
-        exception.printStackTrace();
-
         Map<String, Object> response = new HashMap<>();
 
         response.put("success", false);
-
-        // Trả nguyên nhân lỗi để dễ debug Postman
-        response.put(
-                "message",
-                exception.getMessage() != null
-                        ? exception.getMessage()
-                        : "Internal server error"
-        );
-
-        response.put(
-                "error",
-                exception.getClass().getSimpleName()
-        );
+        response.put("message", "Internal server error");
 
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
                 .body(response);
     }
 }
-
