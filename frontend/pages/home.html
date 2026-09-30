@@ -38,14 +38,29 @@
 
     <header class="home-header">
 
-        <div class="header-left">
+        <div class="header-brand">
 
-            <h1>Trang chủ</h1>
+            <button
+                id="menuButton"
+                class="menu-button"
+                type="button"
+                aria-label="Mở menu"
+                aria-controls="sideMenu"
+                aria-expanded="false"
+            >
+                <i class="bi bi-list"></i>
+            </button>
 
-            <p>Tổng quan canh tác hôm nay</p>
-            <p id="userGreeting" class="user-greeting">
-                Xin chào, Nông dân!
-            </p>
+            <div class="header-left">
+
+                <h1>Trang chủ</h1>
+
+                <p>Tổng quan canh tác hôm nay</p>
+                <p id="userGreeting" class="user-greeting">
+                    Xin chào, Nông dân!
+                </p>
+
+            </div>
 
         </div>
 
@@ -64,6 +79,20 @@
             </span>
 
             <a
+                href="notification.html"
+                class="notification-button"
+                aria-label="Thông báo"
+            >
+                <i class="bi bi-bell"></i>
+
+                <span
+                    class="notification-badge"
+                    data-notification-badge
+                    hidden
+                >0</span>
+            </a>
+
+            <a
                 href="profile.html"
                 class="profile-button"
                 title="Hồ sơ cá nhân"
@@ -77,10 +106,109 @@
 
 
     <!-- =====================================================
+         SIDE MENU (mở bằng nút menu trên header)
+         ===================================================== -->
+
+    <!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+
+    <div class="brand">
+        <span class="dot"></span>
+        AgriSmart
+    </div>
+
+    <div class="sidebar-scroll">
+
+        <a class="nav-link-app active" href="home.html">
+            <i class="bi bi-house-door"></i>
+            <span>Trang chủ</span>
+        </a>
+
+        <a class="nav-link-app" href="#">
+            <i class="bi bi-flower2"></i>
+            <span>Cây trồng</span>
+        </a>
+
+        <a class="nav-link-app" href="../../muavu-index.html">
+            <i class="bi bi-calendar3-range"></i>
+            <span>Mùa vụ</span>
+        </a>
+
+        <a class="nav-link-app" href="coming-soon.html?module=diary">
+            <i class="bi bi-journal-text"></i>
+            <span>Nhật ký canh tác</span>
+        </a>
+
+        <a class="nav-link-app" href="weather.html">
+            <i class="bi bi-cloud-sun"></i>
+            <span>Thời tiết</span>
+        </a>
+
+        <a class="nav-link-app" href="ai.html">
+            <i class="bi bi-robot"></i>
+            <span>AI chẩn đoán &amp; tư vấn</span>
+        </a>
+
+        <div class="nav-section-label">KHÁC</div>
+
+        <a class="nav-link-app" href="#">
+            <i class="bi bi-graph-up-arrow"></i>
+            <span>Giá nông sản</span>
+        </a>
+
+        <a class="nav-link-app" href="profile.html">
+            <i class="bi bi-person-circle"></i>
+            <span>Tài khoản</span>
+        </a>
+
+        <a class="nav-link-app" href="notification.html">
+            <i class="bi bi-bell"></i>
+            <span>Thông báo</span>
+
+            <span
+                class="sidebar-notification-badge"
+                data-notification-badge
+                hidden
+            >0</span>
+        </a>
+
+    </div>
+
+    <div class="sidebar-foot">
+
+        <div class="mini-user">
+
+            <div class="mini-avatar">N</div>
+
+            <div class="mini-user-info">
+                <div class="mini-user-name">Nông dân</div>
+                <div class="mini-user-location">
+                    <i class="bi bi-geo-alt-fill"></i>
+                    AgriSmart
+                </div>
+            </div>
+
+        </div>
+
+        <button
+            class="sidebar-logout"
+            type="button"
+        >
+            <i class="bi bi-box-arrow-left"></i>
+            Đăng xuất
+        </button>
+
+    </div>
+
+</aside>
+
+
+    <!-- =====================================================
          MAIN
          ===================================================== -->
 
     <main class="home-container">
+
 
         <!-- =================================================
              ROW 1: WEATHER + WARNING
@@ -98,9 +226,7 @@
 
                     <div class="weather-location">
                         THỜI TIẾT HÔM NAY ·
-                        <strong id="weatherLocation">
-                            Cao Bằng
-                        </strong>
+                        <strong id="weatherLocation">--</strong>
                     </div>
 
                     <div class="weather-main">
@@ -111,14 +237,14 @@
                                 class="weather-temperature"
                                 id="weatherTemperature"
                             >
-                                31°C
+                               --°C
                             </div>
 
                             <div
                                 class="weather-description"
                                 id="weatherDescription"
                             >
-                                Trời quang nhẹ
+                               Đang tải dữ liệu...
                             </div>
 
                         </div>
@@ -138,7 +264,7 @@
 
                             <div>
                                 <strong id="humidityValue">
-                                    68%
+                                    --
                                 </strong>
 
                                 <span>
@@ -155,7 +281,7 @@
 
                             <div>
                                 <strong id="rainValue">
-                                    51%
+                                    --
                                 </strong>
 
                                 <span>
@@ -172,7 +298,7 @@
 
                             <div>
                                 <strong id="windValue">
-                                    3 km/h
+                                    --
                                 </strong>
 
                                 <span>
@@ -220,14 +346,12 @@
 
                     <div class="warning-content">
 
-                        <h3>
-                            Khả năng mưa khá cao
+                        <h3 id="weatherWarningTitle">
+                            Đang kiểm tra thời tiết...
                         </h3>
 
-                        <p>
-                            Xác suất mưa cao nhất khoảng 67%.
-                            Nên bố trí tưới bón, phân và phun thuốc
-                            vào thời điểm khô ráo.
+                        <p id="weatherWarningText">
+                           Đang phân tích dữ liệu thời tiết hiện tại.
                         </p>
 
                     </div>
@@ -887,6 +1011,9 @@
          JAVASCRIPT
          ===================================================== -->
 
+    <script src="../js/config.js"></script>
+    <script src="../js/services/notification-service.js"></script>
+    <script src="../js/services/weather-service.js"></script>
     <script src="../js/home.js"></script>
 
 </body>

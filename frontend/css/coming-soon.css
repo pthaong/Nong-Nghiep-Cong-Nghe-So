@@ -1,0 +1,144 @@
+/* =========================================================
+   AGRISMART - COMING SOON (placeholder)
+   ========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+
+    margin: 0;
+
+    min-height: 100vh;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 16px;
+
+    background: #0b120d;
+
+    color: #f1f3eb;
+
+    font-family:
+        Inter,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+}
+
+.soon-card {
+
+    width: 100%;
+
+    max-width: 440px;
+
+    padding: 40px 28px;
+
+    border: 1px solid #29362a;
+
+    border-radius: 18px;
+
+    background: #131d15;
+
+    text-align: center;
+}
+
+.soon-icon {
+
+    width: 68px;
+
+    height: 68px;
+
+    margin: 0 auto 16px;
+
+    border-radius: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    background: rgba(33, 164, 91, 0.18);
+
+    color: #5bc66f;
+
+    font-size: 30px;
+}
+
+.soon-tag {
+
+    display: inline-block;
+
+    padding: 4px 12px;
+
+    border-radius: 999px;
+
+    background: rgba(231, 173, 63, 0.18);
+
+    color: #e7ad3f;
+
+    font-size: 12px;
+
+    font-weight: 700;
+}
+
+.soon-card h1 {
+
+    margin: 14px 0 8px;
+
+    font-size: 22px;
+
+    overflow-wrap: anywhere;
+}
+
+.soon-card p {
+
+    margin: 0 0 24px;
+
+    color: #c0c9bb;
+
+    line-height: 1.5;
+}
+
+.soon-back {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 9px 16px;
+
+    border-radius: 8px;
+
+    background: #21a45b;
+
+    color: white;
+
+    text-decoration: none;
+
+    font-weight: 600;
+
+    transition: 0.2s;
+}
+
+.soon-back:hover {
+    background: #1b8f4e;
+}
+
+.soon-back:focus-visible {
+
+    outline: 2px solid #5bc66f;
+
+    outline-offset: 2px;
+}
