@@ -1,251 +1,334 @@
-body {
-    margin: 0;
-    background: #0b120d;
-    color: #f1f3eb;
-    font-family: "Segoe UI", sans-serif;
-}
+/* =========================================================
+   AGRISMART - NOTIFICATION PAGE
+   Chỉ xử lý giao diện. Dữ liệu lấy qua NotificationService.
+   ========================================================= */
 
-.notification-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background: #101a12;
-    border-bottom: 1px solid #29362a;
-    padding: 24px 28px;
-}
+(function () {
 
-.notification-header h1 {
-    margin: 0;
-    font-size: 30px;
-    font-weight: 700;
-}
+    "use strict";
 
-.notification-header p {
-    margin: 6px 0 0;
-    color: #a7b9a5;
-    font-size: 14px;
-}
+    const service = window.NotificationService;
 
-.header-actions {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
+    const elements = {
+        loading: document.getElementById("stateLoading"),
+        error: document.getElementById("stateError"),
+        empty: document.getElementById("stateEmpty"),
+        list: document.getElementById("notificationList"),
+        retry: document.getElementById("retryButton"),
+        resetMock: document.getElementById("resetMockButton"),
+        badge: document.getElementById("unreadBadge"),
+        summary: document.getElementById("unreadSummary"),
+        actionError: document.getElementById("actionError")
+    };
 
-.back-home {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    text-decoration: none;
-    color: #dfe8dc;
-    background: rgba(255,255,255,0.04);
-    border: 1px solid #324333;
-    border-radius: 10px;
-    padding: 8px 12px;
-}
+    const TYPE_META = {
+        WEATHER: { label: "Thời tiết", icon: "bi-cloud-rain" },
+        DISEASE: { label: "Sâu bệnh", icon: "bi-bug" },
+        SEASON: { label: "Mùa vụ", icon: "bi-flower1" },
+        DIARY: { label: "Nhật ký", icon: "bi-journal-text" },
+        AI: { label: "AI chẩn đoán", icon: "bi-cpu" },
+        SYSTEM: { label: "Hệ thống", icon: "bi-info-circle" }
+    };
 
-.notification-container {
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: 24px 20px 48px;
-}
+    const DEFAULT_META = { label: "Thông báo", icon: "bi-bell" };
 
-.summary-row {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 16px;
-    margin-bottom: 22px;
-}
+    let notifications = [];
 
-.summary-card {
-    background: #131d15;
-    border: 1px solid #29362a;
-    border-radius: 16px;
-    padding: 18px 20px;
-    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.18);
-}
 
-.summary-card strong {
-    display: block;
-    margin-top: 8px;
-    font-size: 32px;
-    font-weight: 800;
-    line-height: 1;
-}
+    /* -----------------------------------------------------
+       HELPERS
+       ----------------------------------------------------- */
 
-.summary-label {
-    color: #a7b9a5;
-    font-size: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-}
+    function createElement(tag, className, text) {
 
-.summary-card-total strong { color: #eaf7ef; }
-.summary-card-warning strong { color: #ffbf69; }
-.summary-card-success strong { color: #61db8f; }
+        const node = document.createElement(tag);
 
-.filter-panel {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 18px;
-}
+        if (className) {
+            node.className = className;
+        }
 
-.filter-btn {
-    border: 1px solid #324333;
-    background: transparent;
-    color: #eaf7ef;
-    padding: 9px 16px;
-    border-radius: 999px;
-    font-size: 13px;
-    cursor: pointer;
-}
+        if (text !== undefined) {
+            node.textContent = text;
+        }
 
-.filter-btn.active {
-    background: #1f8f5d;
-    border-color: #1f8f5d;
-}
-
-.notification-panel {
-    background: #131d15;
-    border: 1px solid #29362a;
-    border-radius: 18px;
-    padding: 18px;
-}
-
-.notification-list {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.notification-item {
-    display: grid;
-    grid-template-columns: auto 1fr auto;
-    gap: 14px;
-    align-items: center;
-    background: #18241a;
-    border: 1px solid #2d3a2d;
-    border-radius: 14px;
-    padding: 16px 16px;
-}
-
-.notification-icon {
-    width: 42px;
-    height: 42px;
-    border-radius: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 18px;
-    background: rgba(33, 164, 91, 0.12);
-    color: #72d8a2;
-}
-
-.notification-item.unread .notification-icon {
-    background: rgba(255, 191, 105, 0.12);
-    color: #ffbf69;
-}
-
-.notification-content {
-    min-width: 0;
-}
-
-.notification-content h3 {
-    margin: 0 0 6px;
-    font-size: 16px;
-    font-weight: 700;
-}
-
-.notification-content p {
-    margin: 0 0 8px;
-    color: #c5d1c3;
-    line-height: 1.6;
-    font-size: 14px;
-}
-
-.notification-meta {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    color: #8f9c8d;
-    font-size: 11px;
-}
-
-.notification-actions {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.notification-pill {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 5px 8px;
-    border-radius: 999px;
-    font-size: 11px;
-    font-weight: 700;
-    border: 1px solid #324333;
-}
-
-.notification-pill.unread {
-    background: rgba(255, 191, 105, 0.12);
-    color: #ffbf69;
-}
-
-.notification-pill.read {
-    background: rgba(33, 164, 91, 0.12);
-    color: #72d8a2;
-}
-
-.notification-item button {
-    border: 1px solid #324333;
-    background: transparent;
-    color: #eaf7ef;
-    border-radius: 10px;
-    padding: 7px 10px;
-    cursor: pointer;
-}
-
-.notification-item button.delete-btn {
-    color: #ff8a80;
-    border-color: rgba(255, 138, 128, 0.5);
-}
-
-.notification-state {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 120px;
-    border-radius: 12px;
-    border: 1px dashed #435741;
-    color: #cad6cc;
-    background: rgba(255,255,255,0.02);
-}
-
-.hidden {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .notification-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 14px;
+        return node;
     }
 
-    .summary-row {
-        grid-template-columns: 1fr;
+    function formatTime(value) {
+
+        if (!value) {
+            return "";
+        }
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+            return "";
+        }
+
+        const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
+
+        if (minutes < 1) {
+            return "Vừa xong";
+        }
+
+        if (minutes < 60) {
+            return minutes + " phút trước";
+        }
+
+        if (minutes < 60 * 24) {
+            return Math.floor(minutes / 60) + " giờ trước";
+        }
+
+        if (minutes < 60 * 24 * 7) {
+            return Math.floor(minutes / (60 * 24)) + " ngày trước";
+        }
+
+        return date.toLocaleDateString("vi-VN");
     }
 
-    .notification-item {
-        grid-template-columns: auto 1fr;
+    function sortByNewest(list) {
+
+        return list.slice().sort(function (a, b) {
+            return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        });
     }
 
-    .notification-actions {
-        grid-column: 2 / 3;
-        justify-content: flex-end;
-    }
-}
 
+    /* -----------------------------------------------------
+       VIEW STATE
+       ----------------------------------------------------- */
+
+    function showOnly(name) {
+
+        elements.loading.hidden = name !== "loading";
+        elements.error.hidden = name !== "error";
+        elements.empty.hidden = name !== "empty";
+        elements.list.hidden = name !== "list";
+    }
+
+    function showActionError(message) {
+
+        elements.actionError.textContent = message;
+        elements.actionError.hidden = false;
+    }
+
+    function clearActionError() {
+
+        elements.actionError.hidden = true;
+        elements.actionError.textContent = "";
+    }
+
+    function updateSummary() {
+
+        const unread = notifications.filter(function (item) {
+            return !item.read;
+        }).length;
+
+        if (unread > 0) {
+            elements.badge.textContent = unread > 99 ? "99+" : String(unread);
+            elements.badge.hidden = false;
+            elements.summary.textContent =
+                "Bạn có " + unread + " thông báo chưa đọc";
+        } else {
+            elements.badge.hidden = true;
+            elements.summary.textContent = notifications.length > 0
+                ? "Bạn đã đọc tất cả thông báo"
+                : "Cập nhật mới nhất từ AgriSmart";
+        }
+    }
+
+
+    /* -----------------------------------------------------
+       RENDER
+       ----------------------------------------------------- */
+
+    function buildItem(item) {
+
+        const meta = TYPE_META[item.type] || DEFAULT_META;
+
+        const row = createElement(
+            "li",
+            "notif-item " + (item.read ? "is-read" : "is-unread")
+        );
+
+        const icon = createElement("div", "notif-icon type-" + item.type.toLowerCase());
+        icon.appendChild(createElement("i", "bi " + meta.icon));
+
+        const body = createElement("div", "notif-body");
+
+        const titleRow = createElement("div", "notif-title-row");
+        titleRow.appendChild(createElement("h2", "notif-title", item.title));
+
+        if (!item.read) {
+            titleRow.appendChild(createElement("span", "notif-status", "Chưa đọc"));
+        }
+
+        const metaRow = createElement("div", "notif-meta");
+        metaRow.appendChild(createElement("span", "notif-type", meta.label));
+
+        const time = formatTime(item.createdAt);
+
+        if (time) {
+            metaRow.appendChild(createElement("time", "notif-time", time));
+        }
+
+        body.appendChild(titleRow);
+        body.appendChild(createElement("p", "notif-message", item.message));
+        body.appendChild(metaRow);
+
+        const actions = createElement("div", "notif-actions");
+
+        if (!item.read) {
+
+            const readButton = createElement("button", "notif-btn");
+            readButton.type = "button";
+            readButton.dataset.action = "read";
+            readButton.dataset.id = item.id;
+            readButton.appendChild(createElement("i", "bi bi-check2"));
+            readButton.appendChild(document.createTextNode(" Đánh dấu đã đọc"));
+
+            actions.appendChild(readButton);
+        }
+
+        const deleteButton = createElement("button", "notif-btn danger");
+        deleteButton.type = "button";
+        deleteButton.dataset.action = "delete";
+        deleteButton.dataset.id = item.id;
+        deleteButton.setAttribute("aria-label", "Xóa thông báo: " + item.title);
+        deleteButton.appendChild(createElement("i", "bi bi-trash"));
+
+        actions.appendChild(deleteButton);
+
+        row.appendChild(icon);
+        row.appendChild(body);
+        row.appendChild(actions);
+
+        return row;
+    }
+
+    function render() {
+
+        updateSummary();
+
+        if (notifications.length === 0) {
+            elements.resetMock.hidden = !service.isMock();
+            showOnly("empty");
+            return;
+        }
+
+        elements.list.replaceChildren();
+
+        sortByNewest(notifications).forEach(function (item) {
+            elements.list.appendChild(buildItem(item));
+        });
+
+        showOnly("list");
+    }
+
+
+    /* -----------------------------------------------------
+       ACTIONS
+       ----------------------------------------------------- */
+
+    async function loadNotifications() {
+
+        clearActionError();
+        showOnly("loading");
+
+        try {
+
+            notifications = await service.getNotifications();
+            render();
+
+        } catch (error) {
+
+            console.error("Không thể tải thông báo:", error);
+            notifications = [];
+            updateSummary();
+            showOnly("error");
+        }
+    }
+
+    async function handleAction(button) {
+
+        const id = button.dataset.id;
+        const action = button.dataset.action;
+        const row = button.closest(".notif-item");
+
+        clearActionError();
+
+        row.querySelectorAll("button").forEach(function (node) {
+            node.disabled = true;
+        });
+
+        try {
+
+            if (action === "read") {
+
+                await service.markAsRead(id);
+
+                notifications.forEach(function (item) {
+                    if (String(item.id) === String(id)) {
+                        item.read = true;
+                    }
+                });
+
+            } else {
+
+                await service.deleteNotification(id);
+
+                notifications = notifications.filter(function (item) {
+                    return String(item.id) !== String(id);
+                });
+            }
+
+            render();
+
+        } catch (error) {
+
+            console.error("Thao tác thông báo thất bại:", error);
+
+            row.querySelectorAll("button").forEach(function (node) {
+                node.disabled = false;
+            });
+
+            showActionError("Không thể thực hiện thao tác. Vui lòng thử lại.");
+        }
+    }
+
+
+    /* -----------------------------------------------------
+       INITIALIZE
+       ----------------------------------------------------- */
+
+    function init() {
+
+        if (!service) {
+            console.error("Thiếu NotificationService.");
+            showOnly("error");
+            return;
+        }
+
+        elements.list.addEventListener("click", function (event) {
+
+            const button = event.target.closest("button[data-action]");
+
+            if (button && !button.disabled) {
+                handleAction(button);
+            }
+        });
+
+        elements.retry.addEventListener("click", loadNotifications);
+
+        elements.resetMock.addEventListener("click", function () {
+            service.resetMockData();
+            loadNotifications();
+        });
+
+        loadNotifications();
+    }
+
+    document.addEventListener("DOMContentLoaded", init);
+
+})();
