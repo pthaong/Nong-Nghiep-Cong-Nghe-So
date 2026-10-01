@@ -4,7 +4,10 @@ import com.smartagriculture.backend.dto.CommodityPriceRequest;
 import com.smartagriculture.backend.dto.CommodityPriceResponse;
 import com.smartagriculture.backend.entity.CommodityPrice;
 import com.smartagriculture.backend.repository.CommodityPriceRepository;
+
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -48,9 +51,9 @@ public class CommodityPriceService {
         CommodityPrice price =
                 repository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Không tìm thấy giá nông sản với id: "
-                                                + id
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Không tìm thấy giá nông sản với id: " + id
                                 )
                         );
 
@@ -89,9 +92,9 @@ public class CommodityPriceService {
         CommodityPrice price =
                 repository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Không tìm thấy giá nông sản với id: "
-                                                + id
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Không tìm thấy giá nông sản với id: " + id
                                 )
                         );
 
@@ -117,9 +120,9 @@ public class CommodityPriceService {
 
         if (!repository.existsById(id)) {
 
-            throw new RuntimeException(
-                    "Không tìm thấy giá nông sản với id: "
-                            + id
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy giá nông sản với id: " + id
             );
         }
 
