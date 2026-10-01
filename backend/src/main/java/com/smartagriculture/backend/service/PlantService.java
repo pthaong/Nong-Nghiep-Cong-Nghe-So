@@ -6,7 +6,10 @@ import com.smartagriculture.backend.entity.Plant;
 import com.smartagriculture.backend.entity.User;
 import com.smartagriculture.backend.repository.PlantRepository;
 import com.smartagriculture.backend.repository.UserRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,170 +19,94 @@ public class PlantService {
     private final PlantRepository plantRepository;
     private final UserRepository userRepository;
 
-    public PlantService(
-            PlantRepository plantRepository,
-            UserRepository userRepository) {
-
+    public PlantService(PlantRepository plantRepository, UserRepository userRepository) {
         this.plantRepository = plantRepository;
         this.userRepository = userRepository;
     }
 
-    // =========================
-    // GET ALL
-    // =========================
-    public List<PlantResponse> getAll() {
+    @Transactional(readOnly = true)
+    public List<PlantResponse> getAll(Long farmerId) {
+        requireActiveUser(farmerId);
 
-        return plantRepository.findAll()
+        return plantRepository.findByUserId(farmerId)
                 .stream()
                 .map(this::toResponse)
                 .toList();
     }
 
-    // =========================
-    // GET BY USER
-    // =========================
-    public List<PlantResponse> getByUser(Long userId) {
-
-        checkUser(userId);
-
-        return plantRepository.findByUserId(userId)
-                .stream()
-                .map(this::toResponse)
-                .toList();
+    @Transactional(readOnly = true)
+    public PlantResponse getById(Long plantId, Long farmerId) {
+        return toResponse(findOwnedPlant(plantId, farmerId));
     }
 
-    // =========================
-    // GET DETAIL
-    // =========================
-    public PlantResponse getById(Long id) {
-
-        Plant plant = plantRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Không tìm thấy cây trồng với id: " + id
-                        )
-                );
-
-        return toResponse(plant);
-    }
-
-    // =========================
-    // CREATE
-    // =========================
-    public PlantResponse create(PlantRequest request) {
-
-        validate(request);
-
-        User user = checkUser(request.getUserId());
+    @Transactional
+    public PlantResponse create(Long farmerId, PlantRequest request) {
+        User farmer = requireActiveUser(farmerId);
 
         Plant plant = new Plant();
+        copyFields(plant, request);
+        plant.setUser(farmer);
 
-        plant.setName(request.getName());
-        plant.setPlantType(request.getPlantType());
+        return toResponse(plantRepository.save(plant));
+    }
+
+    @Transactional
+    public PlantResponse update(Long plantId, Long farmerId, PlantRequest request) {
+        Plant plant = findOwnedPlant(plantId, farmerId);
+        copyFields(plant, request);
+
+        return toResponse(plantRepository.save(plant));
+    }
+
+    @Transactional
+    public void delete(Long plantId, Long farmerId) {
+        Plant plant = findOwnedPlant(plantId, farmerId);
+        plantRepository.delete(plant);
+    }
+
+    private User requireActiveUser(Long farmerId) {
+        if (farmerId == null) {
+            throw new IllegalArgumentException("Thiếu ID tài khoản nông dân");
+        }
+
+        User user = userRepository.findById(farmerId)
+                .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy tài khoản"));
+
+        if (!"active".equalsIgnoreCase(user.getStatus())) {
+            throw new IllegalArgumentException("Tài khoản không hoạt động");
+        }
+
+        return user;
+    }
+
+    private Plant findOwnedPlant(Long plantId, Long farmerId) {
+        requireActiveUser(farmerId);
+
+        Plant plant = plantRepository.findById(plantId)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "Không tìm thấy cây trồng"
+                ));
+
+        if (!plant.getUser().getId().equals(farmerId)) {
+            throw new ResponseStatusException(
+                    HttpStatus.FORBIDDEN,
+                    "Cây trồng không thuộc tài khoản này"
+            );
+        }
+
+        return plant;
+    }
+
+    private void copyFields(Plant plant, PlantRequest request) {
+        plant.setName(request.getName().trim());
+        plant.setPlantType(request.getPlantType().trim());
         plant.setVariety(request.getVariety());
         plant.setGrowthStage(request.getGrowthStage());
         plant.setDescription(request.getDescription());
-        plant.setUser(user);
-
-        return toResponse(
-                plantRepository.save(plant)
-        );
     }
 
-    // =========================
-    // UPDATE
-    // =========================
-    public PlantResponse update(
-            Long id,
-            PlantRequest request) {
-
-        validate(request);
-
-        Plant plant = plantRepository.findById(id)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Không tìm thấy cây trồng với id: " + id
-                        )
-                );
-
-        User user = checkUser(request.getUserId());
-
-        plant.setName(request.getName());
-        plant.setPlantType(request.getPlantType());
-        plant.setVariety(request.getVariety());
-        plant.setGrowthStage(request.getGrowthStage());
-        plant.setDescription(request.getDescription());
-        plant.setUser(user);
-
-        return toResponse(
-                plantRepository.save(plant)
-        );
-    }
-
-    // =========================
-    // DELETE
-    // =========================
-    public void delete(Long id) {
-
-        if (!plantRepository.existsById(id)) {
-            throw new IllegalArgumentException(
-                    "Không tìm thấy cây trồng với id: " + id
-            );
-        }
-
-        plantRepository.deleteById(id);
-    }
-
-    // =========================
-    // VALIDATE
-    // =========================
-    private void validate(PlantRequest request) {
-
-        if (request == null) {
-            throw new IllegalArgumentException(
-                    "Dữ liệu cây trồng không được để trống."
-            );
-        }
-
-        if (request.getName() == null
-                || request.getName().isBlank()) {
-
-            throw new IllegalArgumentException(
-                    "Tên cây không được để trống."
-            );
-        }
-
-        if (request.getPlantType() == null
-                || request.getPlantType().isBlank()) {
-
-            throw new IllegalArgumentException(
-                    "Loại cây không được để trống."
-            );
-        }
-
-        if (request.getUserId() == null) {
-
-            throw new IllegalArgumentException(
-                    "userId không được để trống."
-            );
-        }
-    }
-
-    private User checkUser(Long userId) {
-
-        return userRepository.findById(userId)
-                .orElseThrow(() ->
-                        new IllegalArgumentException(
-                                "Không tìm thấy user với id: " + userId
-                        )
-                );
-    }
-
-    // =========================
-    // CONVERT
-    // =========================
     private PlantResponse toResponse(Plant plant) {
-
         PlantResponse response = new PlantResponse();
 
         response.setId(plant.getId());
@@ -191,9 +118,7 @@ public class PlantService {
         response.setCreatedAt(plant.getCreatedAt());
 
         if (plant.getUser() != null) {
-            response.setUserId(
-                    plant.getUser().getId()
-            );
+            response.setUserId(plant.getUser().getId());
         }
 
         return response;

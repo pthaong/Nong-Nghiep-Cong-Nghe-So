@@ -3,8 +3,8 @@ package com.smartagriculture.backend.controller;
 import com.smartagriculture.backend.dto.PlantRequest;
 import com.smartagriculture.backend.dto.PlantResponse;
 import com.smartagriculture.backend.service.PlantService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,75 +19,45 @@ public class PlantController {
         this.plantService = plantService;
     }
 
-    // =========================
-    // GET ALL
-    // =========================
     @GetMapping
-    public ResponseEntity<List<PlantResponse>> getAll() {
+    public List<PlantResponse> getAll(
+            @RequestParam Long farmerId) {
 
-        return ResponseEntity.ok(
-                plantService.getAll()
-        );
+        return plantService.getAll(farmerId);
     }
 
-    // =========================
-    // GET BY USER
-    // =========================
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<PlantResponse>> getByUser(
-            @PathVariable Long userId) {
+    @GetMapping("/{plantId}")
+    public PlantResponse getById(
+            @PathVariable Long plantId,
+            @RequestParam Long farmerId) {
 
-        return ResponseEntity.ok(
-                plantService.getByUser(userId)
-        );
+        return plantService.getById(plantId, farmerId);
     }
 
-    // =========================
-    // GET DETAIL
-    // =========================
-    @GetMapping("/{id}")
-    public ResponseEntity<PlantResponse> getById(
-            @PathVariable Long id) {
-
-        return ResponseEntity.ok(
-                plantService.getById(id)
-        );
-    }
-
-    // =========================
-    // CREATE
-    // =========================
     @PostMapping
-    public ResponseEntity<PlantResponse> create(
-            @RequestBody PlantRequest request) {
+    @ResponseStatus(HttpStatus.CREATED)
+    public PlantResponse create(
+            @RequestParam Long farmerId,
+            @Valid @RequestBody PlantRequest request) {
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(plantService.create(request));
+        return plantService.create(farmerId, request);
     }
 
-    // =========================
-    // UPDATE
-    // =========================
-    @PutMapping("/{id}")
-    public ResponseEntity<PlantResponse> update(
-            @PathVariable Long id,
-            @RequestBody PlantRequest request) {
+    @PutMapping("/{plantId}")
+    public PlantResponse update(
+            @PathVariable Long plantId,
+            @RequestParam Long farmerId,
+            @Valid @RequestBody PlantRequest request) {
 
-        return ResponseEntity.ok(
-                plantService.update(id, request)
-        );
+        return plantService.update(plantId, farmerId, request);
     }
 
-    // =========================
-    // DELETE
-    // =========================
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(
-            @PathVariable Long id) {
+    @DeleteMapping("/{plantId}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(
+            @PathVariable Long plantId,
+            @RequestParam Long farmerId) {
 
-        plantService.delete(id);
-
-        return ResponseEntity.noContent().build();
+        plantService.delete(plantId, farmerId);
     }
 }
