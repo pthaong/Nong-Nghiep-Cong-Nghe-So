@@ -161,9 +161,9 @@ public List<CommodityPriceResponse> getLatestExternalPrices() {
             return result;
         }
 
-        for (int i = 1;
-             i < lines.length && result.size() < 20;
-             i++) {
+       for (int i = 1;
+     i < lines.length;
+     i++) {
 
             try {
                 List<String> values =
