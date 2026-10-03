@@ -1,31 +1,16 @@
 /**
  * app.js — Module "AI chẩn đoán bệnh cây"
- * Kết nối Backend thật: POST /api/diagnosis (HTTP JSON)
  *
- * Backend contract:
- *   Request:
- *     {
- *       "plantType": "Lúa",
- *       "symptoms": "Lá có đốm nâu, lá khô và chuyển vàng"
- *     }
+ * Kết nối Backend thật:
+ * - POST /api/diagnosis/text  : chẩn đoán bằng triệu chứng
+ * - POST /api/diagnosis/image : chẩn đoán bằng ảnh + triệu chứng
  *
- *   Response:
- *     {
- *       "cause": "Do nấm Magnaporthe oryzae gây ra.",
- *       "diseaseName": "Bệnh đạo ôn",
- *       "prevention": "Sử dụng giống khỏe, bón phân cân đối và giữ ruộng thông thoáng",
- *       "result": "Có dấu hiệu bệnh",
- *       "severity": "Thấp",
- *       "treatment": "Loại bỏ lá bệnh và sử dụng thuốc phòng trị phù hợp"
- *     }
- *
- * Lưu ý: API /api/diagnosis nhận application/json, không nhận multipart/form-data.
- * Giao diện vẫn giữ khu vực upload ảnh để không phá vỡ UI hiện tại, nhưng ảnh
- * không được gửi lên /api/diagnosis vì contract BE hiện tại không có field image.
+ * Không sử dụng mock result.
  */
 const AIService = (function () {
   const API_BASE_URL = 'http://localhost:8080';
-  const DIAGNOSIS_ENDPOINT = '/api/diagnosis';
+ const TEXT_DIAGNOSIS_ENDPOINT = '/api/diagnosis/text';
+const IMAGE_DIAGNOSIS_ENDPOINT = '/api/diagnosis/image';
 
   function authHeaders() {
     const token = localStorage.getItem('agrismart_token');
@@ -83,7 +68,7 @@ const AIService = (function () {
         symptoms: payload.symptoms || ''
       };
 
-      const response = await fetch(API_BASE_URL + DIAGNOSIS_ENDPOINT, {
+      const response = await fetch(API_BASE_URL + TEXT_DIAGNOSIS_ENDPOINT, {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -104,8 +89,44 @@ const AIService = (function () {
       }
 
       return responseBody;
+},
+
+async diagnoseByImage(payload) {
+  const formData = new FormData();
+
+  formData.append('plantType', payload.plantType || '');
+  formData.append('symptoms', payload.symptoms || '');
+  formData.append('image', payload.image);
+
+  const response = await fetch(
+    API_BASE_URL + IMAGE_DIAGNOSIS_ENDPOINT,
+    {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        ...authHeaders()
+      },
+      body: formData
     }
-  };
+  );
+
+  const responseBody = await parseResponse(response);
+
+  if (!response.ok) {
+    throw new Error(
+      getErrorMessage(response.status, responseBody)
+    );
+  }
+
+  if (!responseBody || typeof responseBody !== 'object') {
+    throw new Error(
+      'BE trả về dữ liệu chẩn đoán không hợp lệ.'
+    );
+  }
+
+  return responseBody;
+}
+};
 })();
 
 /* =====================================================================
@@ -303,7 +324,16 @@ const AIService = (function () {
     renderLoading();
 
     try {
-      const result = await AIService.diagnose({ plantType, symptoms });
+     const result = selectedImage
+  ? await AIService.diagnoseByImage({
+      plantType,
+      symptoms,
+      image: selectedImage
+    })
+  : await AIService.diagnose({
+      plantType,
+      symptoms
+    });
       renderResult(plantType, result);
     } catch (err) {
       console.error('AI Diagnosis API error:', err);
