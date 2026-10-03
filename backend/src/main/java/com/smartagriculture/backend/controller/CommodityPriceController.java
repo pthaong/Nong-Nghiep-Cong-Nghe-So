@@ -43,6 +43,14 @@ public class CommodityPriceController {
                 externalPriceService.getExternalPrices(itemCode)
         );
     }
+    @GetMapping("/external/search")
+public ResponseEntity<List<CommodityPriceResponse>> searchExternalPrices(
+        @RequestParam String query
+) {
+    return ResponseEntity.ok(
+            externalPriceService.searchExternalPrices(query)
+    );
+}
     @GetMapping("/external/latest")
     public ResponseEntity<List<CommodityPriceResponse>> getLatestExternalPrices() {
         return ResponseEntity.ok(

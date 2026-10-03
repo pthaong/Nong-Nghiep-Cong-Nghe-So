@@ -114,9 +114,65 @@
 
     return realItems;
   }
+async function searchExternalPrices(keyword) {
+  const query = String(keyword || '').trim();
 
+  if (!query) {
+    return [];
+  }
+
+  const url = getBaseUrl() +
+    '/prices/external/search?query=' +
+    encodeURIComponent(query);
+
+  const controller = new AbortController();
+  const timer = setTimeout(function () {
+    controller.abort();
+  }, REQUEST_TIMEOUT_MS);
+
+  let response;
+
+  try {
+    response = await fetch(url, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal: controller.signal
+    });
+  } catch (cause) {
+    throw createError(
+      'NETWORK',
+      'Không kết nối được tới Backend.',
+      { cause: cause }
+    );
+  } finally {
+    clearTimeout(timer);
+  }
+
+  if (!response.ok) {
+    throw createError(
+      'HTTP',
+      'Backend trả về lỗi HTTP ' + response.status + '.',
+      { status: response.status }
+    );
+  }
+
+  const data = await response.json();
+
+  if (!Array.isArray(data)) {
+    throw createError(
+      'INVALID_SHAPE',
+      'Backend không trả về danh sách giá nông sản.'
+    );
+  }
+
+  return data.filter(function (item) {
+    return item &&
+      typeof item === 'object' &&
+      !isFallbackItem(item);
+  });
+}
   global.PriceService = {
-    getPrices: getPrices
-  };
-
+  getPrices: getPrices,
+  searchExternalPrices: searchExternalPrices
+};
 })(window);

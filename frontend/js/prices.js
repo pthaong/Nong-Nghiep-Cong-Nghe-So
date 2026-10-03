@@ -250,9 +250,51 @@
   function bindEvents() {
     els.btnRefresh.addEventListener('click', loadPrices);
     els.btnRetry.addEventListener('click', loadPrices);
-    els.searchInput.addEventListener('input', function () {
-      if (allPrices.length) renderList();
-    });
+    let searchTimer;
+
+els.searchInput.addEventListener('input', function () {
+  clearTimeout(searchTimer);
+
+  searchTimer = setTimeout(async function () {
+    const keyword = els.searchInput.value.trim();
+
+    if (!keyword) {
+      loadPrices();
+      return;
+    }
+
+    try {
+      const data = await window.PriceService.searchExternalPrices(keyword);
+
+      allPrices = Array.isArray(data) ? data : [];
+
+      if (allPrices.length === 0) {
+        els.summaryCount.textContent = '0';
+        showOnly('nomatch');
+        return;
+      }
+
+      updateSummary();
+
+els.grid.replaceChildren();
+
+const fragment = document.createDocumentFragment();
+
+allPrices.forEach(function (item) {
+  fragment.appendChild(buildCard(item));
+});
+
+els.grid.appendChild(fragment);
+els.summaryCount.textContent = String(allPrices.length);
+
+showOnly('list');
+
+    } catch (error) {
+      console.error('Không tìm được nông sản:', error);
+      showError(error);
+    }
+  }, 500);
+});
     els.btnTheme.addEventListener('click', toggleTheme);
     els.btnSidebar.addEventListener('click', function () {
       setSidebar(!els.sidebar.classList.contains('open'));
