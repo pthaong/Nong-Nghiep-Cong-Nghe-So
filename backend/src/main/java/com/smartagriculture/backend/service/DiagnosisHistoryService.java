@@ -3,57 +3,65 @@ package com.smartagriculture.backend.service;
 import com.smartagriculture.backend.entity.DiagnosisHistory;
 import com.smartagriculture.backend.repository.DiagnosisHistoryRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.server.ResponseStatusException;
+
 import java.util.List;
 
 @Service
 public class DiagnosisHistoryService {
 
-private final DiagnosisHistoryRepository repository;
+    private final DiagnosisHistoryRepository repository;
 
-public DiagnosisHistoryService(
-        DiagnosisHistoryRepository repository) {
-    this.repository = repository;
-}
-
-/**
- * Lưu lịch sử chẩn đoán.
- */
-public DiagnosisHistory save(DiagnosisHistory history) {
-
-    if (history == null) {
-        throw new IllegalArgumentException(
-                "Dữ liệu lịch sử chẩn đoán không được để trống."
-        );
+    public DiagnosisHistoryService(
+            DiagnosisHistoryRepository repository) {
+        this.repository = repository;
     }
 
-    return repository.save(history);
-}
-
-/**
- * Lấy toàn bộ lịch sử của một user.
- */
-public List<DiagnosisHistory> getByUserId(Long userId) {
-
-    if (userId == null) {
-        throw new IllegalArgumentException(
-                "User ID không được để trống."
-        );
+    // =========================
+    // LƯU LỊCH SỬ CHẨN ĐOÁN
+    // =========================
+    public DiagnosisHistory save(DiagnosisHistory history) {
+        return repository.save(history);
     }
 
-    return repository.findByUserIdOrderByCreatedAtDesc(userId);
+    // =========================
+    // LẤY TẤT CẢ LỊCH SỬ
+    // =========================
+    public List<DiagnosisHistory> getAll() {
+        return repository.findAll();
+    }
+
+    // =========================
+    // LẤY LỊCH SỬ THEO USER
+    // =========================
+    public List<DiagnosisHistory> getByUserId(Long userId) {
+        return repository.findByUserIdOrderByCreatedAtDesc(userId);
+    }
+
+    // =========================
+    // XEM CHI TIẾT LỊCH SỬ
+    // =========================
+    public DiagnosisHistory getById(Long id) {
+
+        return repository.findById(id)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "Không tìm thấy lịch sử chẩn đoán với id: " + id
+                        )
+                );
+    }
+
+    // =========================
+    // XÓA LỊCH SỬ
+    // =========================
+    public void delete(Long id) {
+
+        if (!repository.existsById(id)) {
+            throw new RuntimeException(
+                    "Không tìm thấy lịch sử chẩn đoán với id: " + id
+            );
+        }
+
+        repository.deleteById(id);
+    }
 }
 
-/**
- * Lấy chi tiết một lần chẩn đoán.
- */
-public DiagnosisHistory getById(Long id) {
-    return repository.findById(id)
-            .orElseThrow(() -> new ResponseStatusException(
-                    HttpStatus.NOT_FOUND,
-                    "Không tìm thấy lịch sử chẩn đoán với ID: " + id
-            ));
-}
-
-}

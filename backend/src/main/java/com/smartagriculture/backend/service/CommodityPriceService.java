@@ -4,7 +4,9 @@ import com.smartagriculture.backend.dto.CommodityPriceRequest;
 import com.smartagriculture.backend.dto.CommodityPriceResponse;
 import com.smartagriculture.backend.entity.CommodityPrice;
 import com.smartagriculture.backend.repository.CommodityPriceRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -19,6 +21,10 @@ public class CommodityPriceService {
         this.repository = repository;
     }
 
+    // =========================
+    // GET ALL / FILTER
+    // =========================
+
     public List<CommodityPriceResponse> getAll(
             String commodityType
     ) {
@@ -28,10 +34,9 @@ public class CommodityPriceService {
         if (commodityType != null &&
                 !commodityType.isBlank()) {
 
-            prices = repository
-                    .findByCommodityTypeIgnoreCase(
-                            commodityType
-                    );
+            prices = repository.findByCommodityTypeIgnoreCase(
+                    commodityType
+            );
 
         } else {
 
@@ -43,19 +48,27 @@ public class CommodityPriceService {
                 .toList();
     }
 
+    // =========================
+    // GET BY ID
+    // =========================
+
     public CommodityPriceResponse getById(Long id) {
 
         CommodityPrice price =
                 repository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Không tìm thấy giá nông sản với id: "
-                                                + id
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Không tìm thấy giá nông sản với id: " + id
                                 )
                         );
 
         return toResponse(price);
     }
+
+    // =========================
+    // CREATE
+    // =========================
 
     public CommodityPriceResponse create(
             CommodityPriceRequest request
@@ -81,6 +94,10 @@ public class CommodityPriceService {
         return toResponse(saved);
     }
 
+    // =========================
+    // UPDATE
+    // =========================
+
     public CommodityPriceResponse update(
             Long id,
             CommodityPriceRequest request
@@ -89,9 +106,9 @@ public class CommodityPriceService {
         CommodityPrice price =
                 repository.findById(id)
                         .orElseThrow(() ->
-                                new RuntimeException(
-                                        "Không tìm thấy giá nông sản với id: "
-                                                + id
+                                new ResponseStatusException(
+                                        HttpStatus.NOT_FOUND,
+                                        "Không tìm thấy giá nông sản với id: " + id
                                 )
                         );
 
@@ -113,18 +130,26 @@ public class CommodityPriceService {
         return toResponse(updated);
     }
 
+    // =========================
+    // DELETE
+    // =========================
+
     public void delete(Long id) {
 
         if (!repository.existsById(id)) {
 
-            throw new RuntimeException(
-                    "Không tìm thấy giá nông sản với id: "
-                            + id
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy giá nông sản với id: " + id
             );
         }
 
         repository.deleteById(id);
     }
+
+    // =========================
+    // CONVERT ENTITY -> RESPONSE
+    // =========================
 
     private CommodityPriceResponse toResponse(
             CommodityPrice price
