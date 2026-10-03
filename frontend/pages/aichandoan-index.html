@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI chẩn đoán bệnh cây | AgriSmart</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌾</text></svg>">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../css/aichandoan-style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR (đầy đủ icon, "AI chẩn đoán & tư vấn" đang active) ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> AgriSmart</div>
+    <div class="sidebar-scroll">
+      <div class="nav-link-app"><i class="bi bi-house-door"></i> Trang chủ</div>
+      <div class="nav-link-app"><i class="bi bi-flower2"></i> Cây trồng</div>
+      <div class="nav-link-app"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
+      <div class="nav-link-app"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
+      <div class="nav-link-app"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
+      <div class="nav-link-app active"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
+      <div class="nav-section-label">Khác</div>
+      <div class="nav-link-app"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
+      <div class="nav-link-app"><i class="bi bi-person-circle"></i> Tài khoản</div>
+    </div>
+    <div class="sidebar-foot">
+      <div class="mini-user">
+        <div class="mini-avatar">N</div>
+        <div style="min-width:0;">
+          <div style="color:#fff; font-weight:600; font-size:.85rem;">Nguyễn Văn An</div>
+          <div style="color:#9FB99A; font-size:.72rem;"><i class="bi bi-geo-alt-fill me-1"></i>Cần Thơ</div>
+        </div>
+      </div>
+      <button class="btn btn-sm btn-outline-light w-100 mt-3"><i class="bi bi-box-arrow-left me-1"></i>Đăng xuất</button>
+    </div>
+  </aside>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main-col">
+    <div class="topbar">
+      <button class="sidebar-toggle-btn" id="btnToggleSidebar"><i class="bi bi-list"></i></button>
+      <div>
+        <p class="page-title"><i class="bi bi-robot me-2"></i>AI chẩn đoán &amp; tư vấn</p>
+        <p class="page-sub">Hỏi AI về bệnh cây và cách chăm sóc</p>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <button class="btn btn-sm btn-outline-secondary" id="btnToggleTheme" title="Đổi giao diện sáng/tối"><i class="bi bi-moon-stars" id="themeIcon"></i></button>
+        <span class="badge-role user"><i class="bi bi-person-check-fill me-1"></i>Nông dân</span>
+      </div>
+    </div>
+
+    <div class="content">
+      <!-- ===== Tabs ===== -->
+      <div class="d-flex gap-2 mb-3 flex-wrap">
+        <button class="ai-tab-btn active" data-tab="diag"><i class="bi bi-bug me-1"></i>Chẩn đoán bệnh</button>
+        <button class="ai-tab-btn" data-tab="advice"><i class="bi bi-lightbulb me-1"></i>Tư vấn chăm sóc</button>
+        <button class="ai-tab-btn" data-tab="history"><i class="bi bi-clock-history me-1"></i>Lịch sử tư vấn</button>
+      </div>
+
+      <!-- ===== Tab: Chẩn đoán bệnh (module chính của trang này) ===== -->
+      <div class="ai-tabpane" id="tab-diag">
+        <div class="row g-3">
+          <div class="col-lg-5">
+            <div class="card-x">
+              <div class="card-x-head"><h6 class="mb-0"><i class="bi bi-clipboard2-pulse me-1"></i>Mô tả tình trạng cây</h6></div>
+              <div class="card-x-body">
+                <form id="diagForm" novalidate>
+                  <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-flower2 me-1"></i>Loại cây</label>
+                    <input type="text" class="form-control" id="diagCrop" list="cropSuggestions" value="Lúa" placeholder="VD: Lúa, Cà chua, Xoài...">
+                    <datalist id="cropSuggestions">
+                      <option value="Lúa"></option>
+                      <option value="Cà chua"></option>
+                      <option value="Xoài"></option>
+                      <option value="Rau muống"></option>
+                      <option value="Thanh long"></option>
+                      <option value="Cà phê"></option>
+                    </datalist>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-card-text me-1"></i>Triệu chứng quan sát được</label>
+                    <textarea class="form-control" id="diagSymptom" rows="4" placeholder="Ví dụ: lá vàng từ mép lá lan vào trong gân, xuất hiện đốm nâu, cây héo vào buổi trưa..."></textarea>
+                  </div>
+
+                  <div class="mb-3">
+                    <label class="form-label"><i class="bi bi-image me-1"></i>Tải ảnh lá / cây bị bệnh (tuỳ chọn)</label>
+                    <div class="upload-drop" id="uploadDrop">
+                      <i class="bi bi-cloud-arrow-up"></i>
+                      <div class="small mt-2">Nhấn để chọn ảnh, hoặc kéo thả vào đây</div>
+                      <input type="file" id="diagImgInput" accept="image/*" style="display:none">
+                    </div>
+                    <div class="img-preview-wrap" id="imgPreviewWrap" style="display:none;">
+                      <img id="diagImgPreview" alt="Ảnh xem trước">
+                      <button type="button" class="btn btn-sm btn-outline-danger" id="btnRemoveImg"><i class="bi bi-x-lg me-1"></i>Bỏ ảnh</button>
+                    </div>
+                  </div>
+
+                  <div class="alert alert-warning py-2 px-3 small d-none" id="diagValidationMsg">
+                    <i class="bi bi-exclamation-triangle me-1"></i>Vui lòng nhập triệu chứng hoặc tải ảnh lên để AI phân tích.
+                  </div>
+
+                  <button type="submit" class="btn btn-forest w-100" id="btnAnalyze">
+                    <i class="bi bi-robot me-1"></i>Phân tích bằng AI
+                  </button>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-7">
+            <div id="diagResultWrap">
+              <div class="empty-state">
+                <i class="bi bi-clipboard2-pulse d-block mb-2"></i>
+                Kết quả chẩn đoán AI sẽ hiển thị tại đây.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== Tab: Tư vấn chăm sóc (ngoài phạm vi module này) ===== -->
+      <div class="ai-tabpane" id="tab-advice" style="display:none;">
+        <div class="empty-state">
+          <i class="bi bi-lightbulb d-block mb-2"></i>
+          Tính năng "Tư vấn chăm sóc" thuộc một module riêng, chưa nằm trong phạm vi tách giao diện này.
+        </div>
+      </div>
+
+      <!-- ===== Tab: Lịch sử tư vấn (ngoài phạm vi module này) ===== -->
+      <div class="ai-tabpane" id="tab-history" style="display:none;">
+        <div class="empty-state">
+          <i class="bi bi-clock-history d-block mb-2"></i>
+          Tính năng "Lịch sử tư vấn" thuộc một module riêng, chưa nằm trong phạm vi tách giao diện này.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="../js/aichandoan-app.js"></script>
+</body>
+</html>
