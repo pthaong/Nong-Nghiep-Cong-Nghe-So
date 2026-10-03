@@ -34,7 +34,47 @@ public class ExternalPriceService {
         this.requestFactory.setConnectTimeout(5000);
         this.requestFactory.setReadTimeout(30000);
     }
+public List<CommodityPriceResponse> getLatestExternalPrices() {
 
+    // Các mặt hàng FAOSTAT dùng cho trang Giá nông sản.
+    List<Integer> itemCodes = List.of(
+            15,   // Wheat
+            221   // Almonds, in shell
+    );
+
+    List<CommodityPriceResponse> latestPrices =
+            new ArrayList<>();
+
+    for (Integer itemCode : itemCodes) {
+
+        List<CommodityPriceResponse> prices =
+                getExternalPrices(itemCode);
+
+        CommodityPriceResponse latest = prices.stream()
+                // Không đưa fallback/sample lên màn hình dữ liệu thật.
+                .filter(price ->
+                        "FAOSTAT".equalsIgnoreCase(
+                                price.getSource()
+                        )
+                )
+                .filter(price ->
+                        price.getUpdatedAt() != null
+                )
+                .max((first, second) ->
+                        first.getUpdatedAt()
+                                .compareTo(
+                                        second.getUpdatedAt()
+                                )
+                )
+                .orElse(null);
+
+        if (latest != null) {
+            latestPrices.add(latest);
+        }
+    }
+
+    return latestPrices;
+}
     public List<CommodityPriceResponse> getExternalPrices(
             Integer itemCode
     ) {

@@ -43,6 +43,12 @@ public class CommodityPriceController {
                 externalPriceService.getExternalPrices(itemCode)
         );
     }
+    @GetMapping("/external/latest")
+    public ResponseEntity<List<CommodityPriceResponse>> getLatestExternalPrices() {
+        return ResponseEntity.ok(
+                externalPriceService.getLatestExternalPrices()
+        );
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<CommodityPriceResponse> getById(
