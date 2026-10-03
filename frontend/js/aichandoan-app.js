@@ -270,7 +270,7 @@ async diagnoseByImage(payload) {
             <div class="rc-label">
               <i class="bi bi-clipboard2-check"></i>Kết quả
             </div>
-            <div>${escapeHtml(result.diagnosis || 'Chưa có thông tin')}</div>
+            <div>${escapeHtml(result.symptoms || 'Chưa có thông tin')}</div>
           </div>
 
           <div class="rc-section">
