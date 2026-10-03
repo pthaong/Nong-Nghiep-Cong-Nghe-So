@@ -1,0 +1,17 @@
+/* AI Care - bổ sung cho ai.css (tái sử dụng token màu, .card-x, .btn-forest) */
+body{background:var(--bg); color:var(--text);}
+.care-page{max-width:1200px; margin:0 auto;}
+.care-topnav a{color:var(--forest); text-decoration:none; font-weight:600; font-size:.9rem;}
+.care-topnav a:hover{text-decoration:underline;}
+.care-result-text{white-space:pre-line; overflow-wrap:anywhere; margin:0;}
+.care-section{background:var(--surface); border:1px solid var(--border); border-left:4px solid var(--rice);
+  border-radius:var(--radius-md); padding:14px 16px; height:100%;}
+.care-section h6{font-weight:700; margin-bottom:8px;}
+.care-section.water{border-left-color:var(--sky);}
+.care-section.fert{border-left-color:var(--soil);}
+.care-section.prevent{border-left-color:var(--danger);}
+.care-section.stage{border-left-color:var(--rice);}
+.care-loading{display:flex; align-items:center; gap:12px; padding:14px 16px; border-radius:var(--radius-md);
+  background:var(--surface-2); border:1px solid var(--border); margin-bottom:16px;}
+.care-note{font-size:.8rem; color:var(--text-muted);}
+#careSubmit{white-space:normal;}
