@@ -43,7 +43,7 @@
   async function getPrices(options) {
     const opts = options || {};
 
-    let url = getBaseUrl() + '/prices';
+    let url = getBaseUrl() + '/prices/external/latest';
 
     if (opts.commodityType && String(opts.commodityType).trim()) {
       url += '?commodityType=' +

@@ -38,9 +38,10 @@ public List<CommodityPriceResponse> getLatestExternalPrices() {
 
     // Các mặt hàng FAOSTAT dùng cho trang Giá nông sản.
     List<Integer> itemCodes = List.of(
-            15,   // Wheat
-            221   // Almonds, in shell
-    );
+        15,   // Wheat
+        56,   // Maize (corn)
+        221   // Almonds, in shell
+);
 
     List<CommodityPriceResponse> latestPrices =
             new ArrayList<>();
@@ -178,6 +179,13 @@ public List<CommodityPriceResponse> getLatestExternalPrices() {
 
                 String item =
                         values.get(itemIndex);
+                if ("Wheat".equalsIgnoreCase(item)) {
+    item = "Lúa mì";
+} else if ("Maize (corn)".equalsIgnoreCase(item)) {
+    item = "Ngô";
+} else if ("Almonds, in shell".equalsIgnoreCase(item)) {
+    item = "Hạnh nhân nguyên vỏ";
+}
 
                 String priceText =
                         values.get(priceIndex);
