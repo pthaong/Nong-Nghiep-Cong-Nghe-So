@@ -8,7 +8,7 @@
 (function () {
   'use strict';
 
-  const API_BASE = window.location.origin;
+  const API_BASE = 'http://localhost:8080';
 
   const WMO = {
     0: ['Trời quang', 'bi-sun'],
@@ -183,20 +183,14 @@
 
     let response;
 
-    try {
-     const backendLocation = name
-  .normalize('NFD')
-  .replace(/[\u0300-\u036f]/g, '')
-  .replace(/đ/g, 'd')
-  .replace(/Đ/g, 'D')
-  .replace(/\s+/g, '')
-  .toLowerCase();
+try {
+  const backendLocation = name.trim();
 
-response = await fetch(
-  API_BASE + '/api/weather?location=' +
-  encodeURIComponent(backendLocation)
-);
-    } catch (error) {
+  response = await fetch(
+    API_BASE + '/api/weather?location=' +
+    encodeURIComponent(backendLocation)
+  );
+} catch (error) {
       throw Error(
         'Không kết nối được Backend thời tiết tại localhost:8080.'
       );
