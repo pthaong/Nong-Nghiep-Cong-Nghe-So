@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = {"http://127.0.0.1:5500", "http://localhost:5500"})
 @RequestMapping("/api/prices")
 public class CommodityPriceController {
 
@@ -40,6 +41,20 @@ public class CommodityPriceController {
     ) {
         return ResponseEntity.ok(
                 externalPriceService.getExternalPrices(itemCode)
+        );
+    }
+    @GetMapping("/external/search")
+public ResponseEntity<List<CommodityPriceResponse>> searchExternalPrices(
+        @RequestParam String query
+) {
+    return ResponseEntity.ok(
+            externalPriceService.searchExternalPrices(query)
+    );
+}
+    @GetMapping("/external/latest")
+    public ResponseEntity<List<CommodityPriceResponse>> getLatestExternalPrices() {
+        return ResponseEntity.ok(
+                externalPriceService.getLatestExternalPrices()
         );
     }
 

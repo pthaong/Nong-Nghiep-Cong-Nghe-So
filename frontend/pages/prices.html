@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Giá nông sản | AgriSmart</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../css/prices.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand"><span class="dot"></span> AgriSmart</div>
+    <nav class="sidebar-scroll" aria-label="Điều hướng chính">
+      <a class="nav-link-app" href="home.html"><i class="bi bi-house-door"></i><span>Trang chủ</span></a>
+      <a class="nav-link-app" href="../../muavu-index.html"><i class="bi bi-calendar3-range"></i><span>Mùa vụ</span></a>
+      <a class="nav-link-app" href="coming-soon.html?module=diary"><i class="bi bi-journal-text"></i><span>Nhật ký canh tác</span></a>
+      <a class="nav-link-app" href="weather.html"><i class="bi bi-cloud-sun"></i><span>Thời tiết</span></a>
+      <a class="nav-link-app" href="ai.html"><i class="bi bi-robot"></i><span>AI chẩn đoán &amp; tư vấn</span></a>
+      <div class="nav-section-label">Khác</div>
+      <a class="nav-link-app active" href="prices.html" aria-current="page"><i class="bi bi-graph-up-arrow"></i><span>Giá nông sản</span></a>
+      <a class="nav-link-app" href="profile.html"><i class="bi bi-person-circle"></i><span>Tài khoản</span></a>
+      <a class="nav-link-app" href="notification.html"><i class="bi bi-bell"></i><span>Thông báo</span></a>
+    </nav>
+  </aside>
+  <div class="sidebar-backdrop" id="sidebarBackdrop"></div>
+
+  <!-- ============ MAIN ============ -->
+  <div class="main-col">
+    <header class="topbar">
+      <button type="button" class="sidebar-toggle-btn" id="btnToggleSidebar" aria-label="Mở menu điều hướng" aria-controls="sidebar" aria-expanded="false">
+        <i class="bi bi-list"></i>
+      </button>
+      <div class="min-w-0">
+        <h1 class="page-title"><i class="bi bi-graph-up-arrow me-2"></i>Giá nông sản</h1>
+        <p class="page-sub">Giá hiện tại và thời gian cập nhật từ hệ thống</p>
+      </div>
+      <div class="ms-auto d-flex align-items-center gap-2">
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnRefresh" aria-label="Tải lại giá nông sản">
+          <i class="bi bi-arrow-clockwise"></i><span class="d-none d-sm-inline ms-1">Tải lại</span>
+        </button>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="btnToggleTheme" aria-label="Đổi giao diện sáng/tối">
+          <i class="bi bi-moon-stars" id="themeIcon"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="content">
+
+      <!-- Thanh tóm tắt + tìm kiếm (chỉ hiện khi có dữ liệu) -->
+      <div class="toolbar" id="toolbar" hidden>
+        <div class="summary">
+          <span class="summary-item"><i class="bi bi-basket3"></i><span id="summaryCount">0</span> nông sản</span>
+          <span class="summary-item"><i class="bi bi-clock-history"></i>Cập nhật gần nhất: <strong id="summaryUpdated">Chưa xác định</strong></span>
+        </div>
+        <div class="search-box">
+          <i class="bi bi-search"></i>
+          <input type="search" id="searchInput" class="form-control" placeholder="Tìm nông sản..." aria-label="Tìm nông sản theo tên" autocomplete="off">
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="state-box" id="stateLoading" role="status" aria-live="polite">
+        <div class="spinner-border" aria-hidden="true"></div>
+        <p class="state-title mb-0">Đang tải giá nông sản...</p>
+      </div>
+
+      <!-- Error -->
+      <div class="state-box" id="stateError" role="alert" hidden>
+        <i class="bi bi-exclamation-triangle state-icon state-icon-danger"></i>
+        <p class="state-title mb-1" id="errorTitle">Không thể tải dữ liệu giá nông sản.</p>
+        <p class="state-desc" id="errorDesc">Vui lòng thử lại sau.</p>
+        <button type="button" class="btn btn-forest btn-sm" id="btnRetry"><i class="bi bi-arrow-clockwise me-1"></i>Thử lại</button>
+      </div>
+
+      <!-- Empty -->
+      <div class="state-box" id="stateEmpty" hidden>
+        <i class="bi bi-inbox state-icon"></i>
+        <p class="state-title mb-0">Chưa có dữ liệu giá nông sản.</p>
+      </div>
+
+      <!-- Không khớp tìm kiếm -->
+      <div class="state-box" id="stateNoMatch" hidden>
+        <i class="bi bi-search state-icon"></i>
+        <p class="state-title mb-0">Không tìm thấy nông sản phù hợp.</p>
+      </div>
+
+      <!-- Danh sách -->
+      <div class="price-grid" id="priceGrid" hidden></div>
+
+    </main>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/services/price-service.js"></script>
+<script src="../js/prices.js"></script>
+</body>
+</html>

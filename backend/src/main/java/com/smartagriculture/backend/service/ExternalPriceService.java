@@ -4,7 +4,8 @@ import com.smartagriculture.backend.dto.CommodityPriceResponse;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
-
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.net.URI;
@@ -26,15 +27,122 @@ public class ExternalPriceService {
 
     private static final String API_URL =
             "https://api.data.apps.fao.org/api/v2/bigquery";
+    private static final String SCHEMA_URL =
+        "https://data.apps.fao.org/catalog/dataset/" +
+        "ab62e545-a3ce-44d7-ab0d-9728cb638cc2/resource/" +
+        "477cbd8b-e7e8-4bbf-a0cd-ddc6162b6809/download/" +
+        "prices-pp-schema.json";
 
     private final SimpleClientHttpRequestFactory requestFactory;
-
+    private final ObjectMapper objectMapper = new ObjectMapper();
     public ExternalPriceService() {
         this.requestFactory = new SimpleClientHttpRequestFactory();
         this.requestFactory.setConnectTimeout(5000);
         this.requestFactory.setReadTimeout(30000);
     }
+    private JsonNode getItemCatalog() throws Exception {
 
+    URI requestUri = URI.create(SCHEMA_URL);
+
+    try (var response = requestFactory
+            .createRequest(requestUri, HttpMethod.GET)
+            .execute()) {
+
+        try (InputStream inputStream = response.getBody()) {
+
+            JsonNode root =
+                    objectMapper.readTree(inputStream);
+            return root.path("dimension")
+        .path("item_code")
+        .path("category")
+        .path("label");
+        }
+    }
+}
+private Integer findItemCode(String keyword) throws Exception {
+
+   String search = java.text.Normalizer
+        .normalize(keyword.trim().toLowerCase(), java.text.Normalizer.Form.NFC);
+
+    // Hỗ trợ tìm kiếm bằng tiếng Việt
+    switch (search) {
+        case "cà chua":
+            search = "tomatoes";
+            break;
+        case "ngô":
+        case "bắp":
+            search = "maize";
+            break;
+        case "lúa mì":
+            search = "wheat";
+            break;
+        case "khoai tây":
+            search = "potatoes";
+            break;
+        case "chuối":
+            search = "bananas";
+            break;
+        case "cam":
+            search = "oranges";
+            break;
+        case "dứa":
+        case "thơm":
+            search = "pineapples";
+            break;
+        case "dưa hấu":
+            search = "watermelons";
+            break;
+        case "đậu nành":
+        case "đậu tương":
+            search = "soybeans";
+            break;
+        case "mía":
+            search = "sugar cane";
+            break;
+    }
+
+    JsonNode items = getItemCatalog();
+    var fields = items.fields();
+
+    while (fields.hasNext()) {
+        var entry = fields.next();
+
+        String code = entry.getKey();
+        String name = entry.getValue().asText();
+
+        if (name.equalsIgnoreCase(search)) {
+            return Integer.valueOf(code);
+        }
+    }
+
+    return null;
+}
+public List<CommodityPriceResponse> searchExternalPrices(String keyword) {
+    try {
+        Integer itemCode = findItemCode(keyword);
+
+        if (itemCode == null) {
+            return List.of();
+        }
+
+        List<CommodityPriceResponse> prices =
+                getExternalPrices(itemCode);
+
+        return prices.stream()
+                .filter(price ->
+                        "FAOSTAT".equalsIgnoreCase(price.getSource())
+                )
+                .filter(price -> price.getUpdatedAt() != null)
+                .max((a, b) ->
+                        a.getUpdatedAt().compareTo(b.getUpdatedAt())
+                )
+                .map(List::of)
+                .orElse(List.of());
+
+    } catch (Exception exception) {
+        return List.of();
+    }
+}
     public List<CommodityPriceResponse> getExternalPrices(
             Integer itemCode
     ) {
@@ -84,6 +192,27 @@ public class ExternalPriceService {
             return fallbackData();
         }
     }
+    public List<CommodityPriceResponse> getLatestExternalPrices() {
+    List<Integer> itemCodes = List.of(
+        15,   // Wheat
+        56,   // Maize
+        221   // Almonds
+    );
+
+    List<CommodityPriceResponse> latestPrices = new ArrayList<>();
+
+    for (Integer itemCode : itemCodes) {
+        List<CommodityPriceResponse> prices = getExternalPrices(itemCode);
+
+        prices.stream()
+            .filter(price -> "FAOSTAT".equalsIgnoreCase(price.getSource()))
+            .filter(price -> price.getUpdatedAt() != null)
+            .max((a, b) -> a.getUpdatedAt().compareTo(b.getUpdatedAt()))
+            .ifPresent(latestPrices::add);
+    }
+
+    return latestPrices;
+}
 
     private List<CommodityPriceResponse> parseCsv(String csv) {
 
@@ -121,9 +250,9 @@ public class ExternalPriceService {
             return result;
         }
 
-        for (int i = 1;
-             i < lines.length && result.size() < 20;
-             i++) {
+       for (int i = 1;
+     i < lines.length;
+     i++) {
 
             try {
                 List<String> values =
@@ -138,6 +267,13 @@ public class ExternalPriceService {
 
                 String item =
                         values.get(itemIndex);
+                if ("Wheat".equalsIgnoreCase(item)) {
+    item = "Lúa mì";
+} else if ("Maize (corn)".equalsIgnoreCase(item)) {
+    item = "Ngô";
+} else if ("Almonds, in shell".equalsIgnoreCase(item)) {
+    item = "Hạnh nhân nguyên vỏ";
+}
 
                 String priceText =
                         values.get(priceIndex);
