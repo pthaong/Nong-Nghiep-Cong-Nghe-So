@@ -26,7 +26,7 @@ public class AdminUserService {
     public List<AdminUserResponse> getAllFarmers() {
 
         return userRepository
-                .findByRoleIgnoreCase("FARMER")
+                .findByRoleIgnoreCase("user")
                 .stream()
                 .map(this::toResponse)
                 .toList();
@@ -46,9 +46,9 @@ public class AdminUserService {
 
     return userRepository
             .findByRoleIgnoreCaseAndNameContainingIgnoreCaseOrRoleIgnoreCaseAndPhoneContaining(
-                    "FARMER",
+                    "user",
                     searchKeyword,
-                    "FARMER",
+                    "user",
                     searchKeyword
             )
             .stream()
@@ -107,7 +107,7 @@ public class AdminUserService {
                         )
                 );
 
-        if (!"FARMER".equalsIgnoreCase(user.getRole())) {
+        if (!"user".equalsIgnoreCase(user.getRole())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "User này không phải Farmer"

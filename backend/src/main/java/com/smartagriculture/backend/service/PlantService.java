@@ -42,7 +42,7 @@ public List<PlantResponse> getAllForAdmin(Long farmerId) {
                     "Không tìm thấy Farmer với id: " + farmerId
             ));
 
-    if (!"FARMER".equalsIgnoreCase(farmer.getRole())) {
+    if (!"user".equalsIgnoreCase(farmer.getRole())) {
         throw new ResponseStatusException(
                 HttpStatus.BAD_REQUEST,
                 "User này không phải Farmer"
