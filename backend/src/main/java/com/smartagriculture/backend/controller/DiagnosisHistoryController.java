@@ -23,6 +23,10 @@ public DiagnosisHistoryController(
  *
  * Lấy lịch sử chẩn đoán của user.
  */
+@GetMapping
+public List<DiagnosisHistory> getAllHistory() {
+    return historyService.getAll();
+}
 @GetMapping("/user/{userId}")
 public List<DiagnosisHistory> getHistoryByUser(
         @PathVariable Long userId) {

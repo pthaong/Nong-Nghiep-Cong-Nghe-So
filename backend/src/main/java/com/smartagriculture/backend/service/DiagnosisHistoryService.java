@@ -34,6 +34,13 @@ public DiagnosisHistory save(DiagnosisHistory history) {
 /**
  * Lấy toàn bộ lịch sử của một user.
  */
+/**
+ * Admin: lấy toàn bộ lịch sử chẩn đoán,
+ * sắp xếp mới nhất trước.
+ */
+public List<DiagnosisHistory> getAll() {
+    return repository.findAllByOrderByCreatedAtDesc();
+}
 public List<DiagnosisHistory> getByUserId(Long userId) {
 
     if (userId == null) {

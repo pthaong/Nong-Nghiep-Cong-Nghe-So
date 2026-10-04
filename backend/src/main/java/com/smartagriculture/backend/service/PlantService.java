@@ -33,7 +33,27 @@ public class PlantService {
                 .map(this::toResponse)
                 .toList();
     }
+@Transactional(readOnly = true)
+public List<PlantResponse> getAllForAdmin(Long farmerId) {
 
+    User farmer = userRepository.findById(farmerId)
+            .orElseThrow(() -> new ResponseStatusException(
+                    HttpStatus.NOT_FOUND,
+                    "Không tìm thấy Farmer với id: " + farmerId
+            ));
+
+    if (!"FARMER".equalsIgnoreCase(farmer.getRole())) {
+        throw new ResponseStatusException(
+                HttpStatus.BAD_REQUEST,
+                "User này không phải Farmer"
+        );
+    }
+
+    return plantRepository.findByUserId(farmerId)
+            .stream()
+            .map(this::toResponse)
+            .toList();
+}
     @Transactional(readOnly = true)
     public PlantResponse getById(Long plantId, Long farmerId) {
         return toResponse(findOwnedPlant(plantId, farmerId));
