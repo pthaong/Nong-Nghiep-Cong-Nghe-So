@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quản lý tài khoản nông dân | AgriSmart Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+
+<!-- Ẩn cho tới khi admin-users.js xác nhận phiên Admin hợp lệ -->
+<div class="admin-app" id="adminApp">
+
+  <header class="admin-header">
+    <div class="admin-brand"><span class="dot"></span> AgriSmart <small>Admin</small></div>
+
+    <nav class="admin-menu" aria-label="Menu quản trị">
+      <a class="admin-menu-link active" href="admin-users.html" aria-current="page">
+        <i class="bi bi-people"></i><span>Quản lý người dùng</span>
+      </a>
+    </nav>
+
+    <div class="admin-user">
+      <span class="admin-user-name" id="adminName"><i class="bi bi-person-circle me-1"></i>Admin</span>
+      <button type="button" class="btn btn-sm btn-outline-light" id="btnLogout">
+        <i class="bi bi-box-arrow-right"></i><span class="d-none d-sm-inline ms-1">Đăng xuất</span>
+      </button>
+    </div>
+  </header>
+
+  <main class="admin-content">
+    <div class="page-head">
+      <div>
+        <h1 class="page-title"><i class="bi bi-people me-2"></i>Quản lý tài khoản nông dân</h1>
+        <p class="page-sub">Danh sách tài khoản nông dân lấy trực tiếp từ hệ thống.</p>
+      </div>
+      <button type="button" class="btn btn-sm btn-outline-secondary" id="btnRefresh" aria-label="Tải lại danh sách">
+        <i class="bi bi-arrow-clockwise"></i><span class="d-none d-sm-inline ms-1">Tải lại</span>
+      </button>
+    </div>
+
+    <div class="toolbar">
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="search" id="searchInput" class="form-control"
+               placeholder="Tìm kiếm người dùng..." aria-label="Tìm kiếm người dùng theo họ tên hoặc số điện thoại"
+               autocomplete="off">
+      </div>
+      <span class="search-hint">Tìm theo họ tên hoặc số điện thoại</span>
+      <span class="summary" id="summaryCount" hidden></span>
+    </div>
+
+    <!-- Thông báo kết quả thao tác khóa / mở khóa / xóa -->
+    <div class="action-alert" id="actionAlert" role="alert" hidden></div>
+
+    <!-- Loading -->
+    <div class="state-box" id="stateLoading" role="status" aria-live="polite">
+      <div class="spinner-border" aria-hidden="true"></div>
+      <p class="state-title mb-0" id="loadingText">Đang tải danh sách người dùng...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="state-box" id="stateError" role="alert" hidden>
+      <i class="bi bi-exclamation-triangle state-icon state-icon-danger"></i>
+      <p class="state-title mb-1" id="errorTitle">Không thể tải danh sách người dùng.</p>
+      <p class="state-desc" id="errorDesc"></p>
+      <button type="button" class="btn btn-forest btn-sm" id="btnRetry">
+        <i class="bi bi-arrow-clockwise me-1"></i>Thử lại
+      </button>
+    </div>
+
+    <!-- Empty: chưa có Farmer -->
+    <div class="state-box" id="stateEmpty" hidden>
+      <i class="bi bi-inbox state-icon"></i>
+      <p class="state-title mb-0">Chưa có tài khoản nông dân.</p>
+    </div>
+
+    <!-- Empty: search không có kết quả -->
+    <div class="state-box" id="stateNoMatch" hidden>
+      <i class="bi bi-search state-icon"></i>
+      <p class="state-title mb-0">Không tìm thấy người dùng phù hợp.</p>
+    </div>
+
+    <!-- Bảng Farmer -->
+    <div class="table-card" id="tableCard" hidden>
+      <div class="table-scroll">
+        <table class="user-table">
+          <thead>
+            <tr>
+              <th scope="col" class="col-stt">STT</th>
+              <th scope="col">Họ tên</th>
+              <th scope="col">Email</th>
+              <th scope="col">Số điện thoại</th>
+              <th scope="col">Trạng thái</th>
+              <th scope="col" class="col-actions">Thao tác</th>
+            </tr>
+          </thead>
+          <tbody id="userTableBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal xác nhận dùng chung -->
+<div class="modal fade" id="confirmModal" tabindex="-1" aria-labelledby="confirmTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="confirmTitle">Xác nhận</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
+      </div>
+      <div class="modal-body" id="confirmBody"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Hủy</button>
+        <button type="button" class="btn btn-forest" id="confirmOk">Xác nhận</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="../js/config.js"></script>
+<script src="../js/services/admin-user-service.js"></script>
+<script src="../js/admin-users.js"></script>
+</body>
+</html>
