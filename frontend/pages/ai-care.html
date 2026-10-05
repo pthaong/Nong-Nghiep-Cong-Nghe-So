@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgriSmart - AI Tư vấn chăm sóc</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="../css/ai.css">
+    <link rel="stylesheet" href="../css/ai-care.css">
+</head>
+<body>
+<div class="container-fluid py-4 care-page">
+
+    <div class="care-topnav d-flex flex-wrap gap-3 mb-3">
+        <a href="home.html"><i class="bi bi-house me-1"></i>Trang chủ</a>
+        <a href="ai.html"><i class="bi bi-robot me-1"></i>AI chẩn đoán</a>
+    </div>
+
+    <div class="mb-4">
+        <h3 class="fw-bold mb-1"><i class="bi bi-lightbulb me-2"></i>AI Tư vấn chăm sóc cây trồng</h3>
+        <p class="text-muted mb-0">Chọn cây trồng, giai đoạn sinh trưởng và mô tả vấn đề để nhận khuyến nghị chăm sóc.</p>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12 col-lg-5">
+            <div class="card-x">
+                <div class="card-x-head">
+                    <h6 class="mb-0"><i class="bi bi-clipboard2-check me-1"></i>Thông tin tư vấn</h6>
+                </div>
+                <div class="card-x-body">
+                    <form id="careForm" novalidate>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="carePlant">Cây trồng</label>
+                            <select class="form-select" id="carePlant" required>
+                                <option value="">-- Chọn cây trồng --</option>
+                                <option value="Lúa">Lúa</option>
+                                <option value="Cà chua">Cà chua</option>
+                                <option value="Xoài">Xoài</option>
+                                <option value="Rau muống">Rau muống</option>
+                                <option value="Thanh long">Thanh long</option>
+                                <option value="Cà phê">Cà phê</option>
+                            </select>
+                            <div class="invalid-feedback" id="carePlantError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="careStage">Giai đoạn sinh trưởng</label>
+                            <select class="form-select" id="careStage" required>
+                                <option value="">-- Chọn giai đoạn --</option>
+                                <option value="Mạ non / cây con">Mạ non / cây con</option>
+                                <option value="Đẻ nhánh">Đẻ nhánh</option>
+                                <option value="Ra hoa">Ra hoa</option>
+                                <option value="Đậu quả / làm hạt">Đậu quả / làm hạt</option>
+                                <option value="Thu hoạch">Thu hoạch</option>
+                            </select>
+                            <div class="invalid-feedback" id="careStageError"></div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold" for="careProblem">Vấn đề cần tư vấn</label>
+                            <textarea class="form-control" id="careProblem" rows="5" required
+                                placeholder="Ví dụ: cây bị vàng lá, lá xuất hiện đốm, cây phát triển chậm..."></textarea>
+                            <div class="invalid-feedback" id="careProblemError"></div>
+                        </div>
+
+                        <button type="submit" class="btn btn-forest w-100" id="careSubmit">
+                            <span class="spinner-border spinner-border-sm me-2 d-none" id="careSpinner" aria-hidden="true"></span>
+                            <span id="careSubmitLabel">Nhận tư vấn</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-7">
+            <div class="care-loading d-none" id="careLoading" role="status" aria-live="polite">
+                <div class="spinner-border spinner-border-sm" aria-hidden="true"></div>
+                <div>Đang phân tích... AI đang tạo tư vấn, vui lòng chờ trong giây lát.</div>
+            </div>
+
+            <div class="alert alert-danger d-none align-items-center justify-content-between flex-wrap gap-2" id="careError" role="alert">
+                <span id="careErrorText"></span>
+                <button type="button" class="btn btn-sm btn-outline-danger" id="careRetry">Thử lại</button>
+            </div>
+
+            <div id="careResult">
+                <div class="empty-state text-center py-5">
+                    <i class="bi bi-lightbulb d-block mb-2" style="font-size:2rem;"></i>
+                    <div class="fw-semibold">Kết quả tư vấn</div>
+                    <div class="small text-muted mt-1">Khuyến nghị của AI sẽ hiển thị tại đây.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="../js/config.js"></script>
+<script src="../js/services/ai-care-service.js"></script>
+<script src="../js/ai-care.js"></script>
+</body>
+</html>
