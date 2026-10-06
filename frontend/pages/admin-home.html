@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Dashboard Admin | AgriSmart</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/admin.css">
+
+    <style>
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+
+        .dashboard-card {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,.04);
+        }
+
+        .dashboard-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            background: #f0fdf4;
+            color: #198754;
+            flex-shrink: 0;
+        }
+
+        .dashboard-card h3 {
+            margin: 0;
+            font-size: 28px;
+            font-weight: 700;
+        }
+
+        .dashboard-card p {
+            margin: 3px 0 0;
+            color: #6b7280;
+        }
+
+        .dashboard-section {
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+        }
+
+        .dashboard-section-header {
+            padding: 18px 20px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .dashboard-section-header h5 {
+            margin: 0;
+            font-weight: 700;
+        }
+
+        .notification-row {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .notification-row:last-child {
+            border-bottom: none;
+        }
+
+        .notification-row strong {
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .notification-row p {
+            margin: 0 0 5px;
+            color: #6b7280;
+        }
+
+        .notification-time {
+            font-size: 13px;
+            color: #9ca3af;
+        }
+
+        .dashboard-loading {
+            padding: 40px;
+            text-align: center;
+        }
+
+        @media (max-width: 1000px) {
+
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+        }
+
+        @media (max-width: 600px) {
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="admin-app ready">
+
+
+    <!-- =========================
+         SIDEBAR
+    ========================== -->
+
+    <aside class="admin-sidebar">
+
+        <div class="admin-sidebar-brand">
+
+            <span class="dot"></span>
+
+            <span>AgriSmart</span>
+
+            <small>ADMIN</small>
+
+        </div>
+
+
+        <nav
+            class="admin-sidebar-menu"
+            aria-label="Menu quản trị"
+        >
+
+            <a
+                href="admin-home.html"
+                class="admin-sidebar-link active"
+            >
+                <i class="bi bi-house-door"></i>
+                <span>Trang chủ</span>
+            </a>
+
+
+            <a
+                href="admin-users.html"
+                class="admin-sidebar-link"
+            >
+                <i class="bi bi-people"></i>
+                <span>Quản lý người dùng</span>
+            </a>
+
+
+            <a
+                href="admin-seasons.html"
+                class="admin-sidebar-link"
+            >
+                <i class="bi bi-calendar3"></i>
+                <span>Quản lý mùa vụ</span>
+            </a>
+
+
+            <a
+                href="admin-diagnosis.html"
+                class="admin-sidebar-link"
+            >
+                <i class="bi bi-robot"></i>
+                <span>Lịch sử chẩn đoán bệnh</span>
+            </a>
+
+
+            <a
+                href="admin-notifications.html"
+                class="admin-sidebar-link"
+            >
+                <i class="bi bi-bell"></i>
+                <span>Thông báo</span>
+            </a>
+
+
+            <a
+                href="admin-diaries.html"
+                class="admin-sidebar-link"
+            >
+                <i class="bi bi-journal-text"></i>
+                <span>Nhật ký canh tác</span>
+            </a>
+
+        </nav>
+
+
+        <div class="admin-sidebar-footer">
+
+            <div class="admin-sidebar-user">
+
+                <i class="bi bi-person-circle"></i>
+
+                <div>
+
+                    <strong id="adminName">
+                        Admin
+                    </strong>
+
+                    <small>
+                        Quản trị viên
+                    </small>
+
+                </div>
+
+            </div>
+
+
+            <button
+                type="button"
+                id="btnLogout"
+                class="admin-sidebar-logout"
+            >
+
+                <i class="bi bi-box-arrow-right"></i>
+
+                <span>
+                    Đăng xuất
+                </span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- =========================
+         CONTENT
+    ========================== -->
+
+    <main class="admin-content">
+
+    <div class="container-fluid py-4">
+
+        <!-- =========================
+             DASHBOARD HEADER
+        ========================== -->
+        <div class="dashboard-topbar">
+
+            <div>
+                <div class="dashboard-welcome">
+                    <span class="dashboard-welcome-icon">
+                        <i class="bi bi-grid-1x2-fill"></i>
+                    </span>
+
+                    <div>
+                        <h1>Dashboard</h1>
+                        <p>
+                            Tổng quan và theo dõi hoạt động hệ thống AgriSmart
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="dashboard-header-right">
+
+                <div class="dashboard-date">
+                    <i class="bi bi-calendar3"></i>
+
+                    <div>
+                        <small>Hôm nay</small>
+                        <strong id="dashboardDate">--/--/----</strong>
+                    </div>
+                </div>
+
+                <a
+                    href="admin-notifications.html"
+                    class="dashboard-notification-button"
+                    title="Thông báo"
+                >
+                    <i class="bi bi-bell"></i>
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <!-- =========================
+             LOADING
+        ========================== -->
+        <div
+            id="dashboardLoading"
+            class="dashboard-loading"
+        >
+            <div class="spinner-border text-success"></div>
+
+            <p class="mt-3 mb-0">
+                Đang tải dữ liệu Dashboard...
+            </p>
+        </div>
+
+
+        <!-- =========================
+             DASHBOARD CONTENT
+        ========================== -->
+        <div id="dashboardContent" hidden>
+
+
+            <!-- =========================
+                 STATISTIC CARDS
+            ========================== -->
+            <div class="dashboard-grid">
+
+
+                <!-- USERS -->
+                <a
+                    href="admin-users.html"
+                    class="dashboard-card dashboard-card-users"
+                >
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-people-fill"></i>
+                    </div>
+
+                    <div class="dashboard-card-info">
+                        <span>Người dùng</span>
+
+                        <div class="dashboard-card-number">
+                            <h3 id="totalUsers">0</h3>
+                        </div>
+
+                        <small>
+                            <i class="bi bi-person-check"></i>
+                            Đang quản lý
+                        </small>
+                    </div>
+
+                    <div class="dashboard-card-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+                </a>
+
+
+                <!-- SEASONS -->
+                <a
+                    href="admin-seasons.html"
+                    class="dashboard-card dashboard-card-seasons"
+                >
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-calendar2-week-fill"></i>
+                    </div>
+
+                    <div class="dashboard-card-info">
+                        <span>Mùa vụ</span>
+
+                        <div class="dashboard-card-number">
+                            <h3 id="totalSeasons">0</h3>
+                        </div>
+
+                        <small>
+                            <i class="bi bi-flower1"></i>
+                            Dữ liệu mùa vụ
+                        </small>
+                    </div>
+
+                    <div class="dashboard-card-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+                </a>
+
+
+                <!-- DIAGNOSIS -->
+                <a
+                    href="admin-diagnosis.html"
+                    class="dashboard-card dashboard-card-diagnosis"
+                >
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+
+                    <div class="dashboard-card-info">
+                        <span>Chẩn đoán bệnh</span>
+
+                        <div class="dashboard-card-number">
+                            <h3 id="totalDiagnoses">0</h3>
+                        </div>
+
+                        <small>
+                            <i class="bi bi-cpu"></i>
+                            Phân tích AI
+                        </small>
+                    </div>
+
+                    <div class="dashboard-card-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+                </a>
+
+
+                <!-- DIARIES -->
+                <a
+                    href="admin-diaries.html"
+                    class="dashboard-card dashboard-card-diaries"
+                >
+                    <div class="dashboard-card-icon">
+                        <i class="bi bi-journal-text"></i>
+                    </div>
+
+                    <div class="dashboard-card-info">
+                        <span>Nhật ký canh tác</span>
+
+                        <div class="dashboard-card-number">
+                            <h3 id="totalDiaries">0</h3>
+                        </div>
+
+                        <small>
+                            <i class="bi bi-clock-history"></i>
+                            Hoạt động canh tác
+                        </small>
+                    </div>
+
+                    <div class="dashboard-card-arrow">
+                        <i class="bi bi-arrow-up-right"></i>
+                    </div>
+                </a>
+
+            </div>
+
+
+            <!-- =========================
+                 DASHBOARD MIDDLE
+            ========================== -->
+            <div class="dashboard-middle-grid">
+
+
+                <!-- SYSTEM OVERVIEW -->
+                <section class="dashboard-panel">
+
+                    <div class="dashboard-panel-header">
+
+                        <div>
+                            <h2>
+                                <i class="bi bi-bar-chart-line"></i>
+                                Hoạt động hệ thống
+                            </h2>
+
+                            <p>
+                                Thống kê dữ liệu hiện tại
+                            </p>
+                        </div>
+
+                        <span class="dashboard-live">
+                            <span></span>
+                            Trực tuyến
+                        </span>
+
+                    </div>
+
+
+                    <div class="dashboard-progress-list">
+
+                        <div class="dashboard-progress-item">
+
+                            <div class="dashboard-progress-title">
+                                <span>
+                                    <i class="bi bi-people"></i>
+                                    Người dùng
+                                </span>
+
+                                <strong id="overviewUsers">0</strong>
+                            </div>
+
+                            <div class="dashboard-progress">
+                                <div
+                                    id="barUsers"
+                                    class="dashboard-progress-bar"
+                                ></div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-item">
+
+                            <div class="dashboard-progress-title">
+                                <span>
+                                    <i class="bi bi-calendar3"></i>
+                                    Mùa vụ
+                                </span>
+
+                                <strong id="overviewSeasons">0</strong>
+                            </div>
+
+                            <div class="dashboard-progress">
+                                <div
+                                    id="barSeasons"
+                                    class="dashboard-progress-bar"
+                                ></div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-item">
+
+                            <div class="dashboard-progress-title">
+                                <span>
+                                    <i class="bi bi-robot"></i>
+                                    Chẩn đoán AI
+                                </span>
+
+                                <strong id="overviewDiagnoses">0</strong>
+                            </div>
+
+                            <div class="dashboard-progress">
+                                <div
+                                    id="barDiagnoses"
+                                    class="dashboard-progress-bar"
+                                ></div>
+                            </div>
+
+                        </div>
+
+
+                        <div class="dashboard-progress-item">
+
+                            <div class="dashboard-progress-title">
+                                <span>
+                                    <i class="bi bi-journal-text"></i>
+                                    Nhật ký
+                                </span>
+
+                                <strong id="overviewDiaries">0</strong>
+                            </div>
+
+                            <div class="dashboard-progress">
+                                <div
+                                    id="barDiaries"
+                                    class="dashboard-progress-bar"
+                                ></div>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- QUICK ACTIONS -->
+                <section class="dashboard-panel">
+
+                    <div class="dashboard-panel-header">
+
+                        <div>
+                            <h2>
+                                <i class="bi bi-lightning-charge"></i>
+                                Truy cập nhanh
+                            </h2>
+
+                            <p>
+                                Các chức năng quản trị
+                            </p>
+                        </div>
+
+                    </div>
+
+
+                    <div class="dashboard-quick-grid">
+
+                        <a
+                            href="admin-users.html"
+                            class="dashboard-quick-item"
+                        >
+                            <span>
+                                <i class="bi bi-people"></i>
+                            </span>
+
+                            <div>
+                                <strong>Người dùng</strong>
+                                <small>Quản lý tài khoản</small>
+                            </div>
+
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+
+                        <a
+                            href="admin-seasons.html"
+                            class="dashboard-quick-item"
+                        >
+                            <span>
+                                <i class="bi bi-calendar3"></i>
+                            </span>
+
+                            <div>
+                                <strong>Mùa vụ</strong>
+                                <small>Theo dõi mùa vụ</small>
+                            </div>
+
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+
+                        <a
+                            href="admin-diagnosis.html"
+                            class="dashboard-quick-item"
+                        >
+                            <span>
+                                <i class="bi bi-robot"></i>
+                            </span>
+
+                            <div>
+                                <strong>Chẩn đoán</strong>
+                                <small>Lịch sử AI</small>
+                            </div>
+
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+
+                        <a
+                            href="admin-notifications.html"
+                            class="dashboard-quick-item"
+                        >
+                            <span>
+                                <i class="bi bi-bell"></i>
+                            </span>
+
+                            <div>
+                                <strong>Thông báo</strong>
+                                <small>Quản lý thông báo</small>
+                            </div>
+
+                            <i class="bi bi-chevron-right"></i>
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </div>
+
+
+            <!-- =========================
+                 LATEST NOTIFICATIONS
+            ========================== -->
+            <section class="dashboard-panel dashboard-notification-panel">
+
+                <div class="dashboard-panel-header">
+
+                    <div>
+                        <h2>
+                            <i class="bi bi-bell"></i>
+                            Thông báo mới nhất
+                        </h2>
+
+                        <p>
+                            Các thông báo gần đây trong hệ thống
+                        </p>
+                    </div>
+
+                    <a
+                        href="admin-notifications.html"
+                        class="dashboard-view-all"
+                    >
+                        Xem tất cả
+                        <i class="bi bi-arrow-right"></i>
+                    </a>
+
+                </div>
+
+
+                <div id="latestNotifications"></div>
+
+            </section>
+
+        </div>
+
+
+        <!-- =========================
+             ERROR
+        ========================== -->
+        <div
+            id="dashboardError"
+            class="dashboard-error"
+            hidden
+        >
+            <i class="bi bi-exclamation-triangle"></i>
+
+            <div>
+                <strong>Không thể tải Dashboard</strong>
+                <p>
+                    Không thể kết nối đến dữ liệu hệ thống.
+                </p>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                onclick="location.reload()"
+            >
+                Thử lại
+            </button>
+        </div>
+
+    </div>
+
+</main>
+
+</div>
+
+
+<script src="../js/admin-home.js"></script>
+
+</body>
+
+</html>
