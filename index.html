@@ -172,6 +172,7 @@ label.form-label{font-size:.82rem; font-weight:600; color:var(--text-muted);}
 =======
   <link rel="stylesheet" href="style.css">
 >>>>>>> Stashed changes
+<link rel="stylesheet" href="frontend/css/farmer-nav.css">
 </head>
 <body>
 
@@ -181,15 +182,18 @@ label.form-label{font-size:.82rem; font-weight:600; color:var(--text-muted);}
   <aside class="sidebar" id="sidebar">
     <div class="brand"><span class="dot"></span> AgriSmart</div>
     <div class="sidebar-scroll">
-      <div class="nav-link-app"><i class="bi bi-house-door"></i> Trang chủ</div>
-      <div class="nav-link-app active"><i class="bi bi-flower2"></i> Cây trồng</div>
-      <div class="nav-link-app"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
-      <div class="nav-link-app"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
-      <div class="nav-link-app"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
-      <div class="nav-link-app"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
+      <a class="nav-link-app" href="frontend/pages/home.html"><i class="bi bi-house-door"></i> Trang chủ</a>
+      <a class="nav-link-app active" href="index.html" aria-current="page"><i class="bi bi-flower2"></i> Cây trồng</a>
+      <a class="nav-link-app" href="frontend/pages/seasons.html"><i class="bi bi-calendar3-range"></i> Mùa vụ</a>
+      <a class="nav-link-app" href="frontend/pages/nhatky-index.html"><i class="bi bi-journal-text"></i> Nhật ký canh tác</a>
+      <a class="nav-link-app" href="frontend/pages/weather.html"><i class="bi bi-cloud-sun"></i> Thời tiết</a>
+      <a class="nav-link-app" href="frontend/pages/aichandoan-index.html"><i class="bi bi-robot"></i> AI chẩn đoán</a>
+      <a class="nav-link-app" href="frontend/pages/coming-soon.html?module=ai-history"><i class="bi bi-clock-history"></i> Lịch sử AI</a>
+      <a class="nav-link-app" href="frontend/pages/coming-soon.html?module=knowledge"><i class="bi bi-book"></i> Kiến thức nông nghiệp</a>
       <div class="nav-section-label">Khác</div>
-      <div class="nav-link-app"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
-      <div class="nav-link-app"><i class="bi bi-person-circle"></i> Tài khoản</div>
+      <a class="nav-link-app" href="frontend/pages/prices.html"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</a>
+      <a class="nav-link-app" href="frontend/pages/profile.html"><i class="bi bi-person-circle"></i> Hồ sơ</a>
+      <a class="nav-link-app" href="frontend/pages/notification.html"><i class="bi bi-bell"></i> Thông báo</a>
     </div>
     <div class="sidebar-foot">
       <div class="mini-user">
@@ -514,5 +518,6 @@ loadCrops();
 =======
   <script src="script.js"></script>
 >>>>>>> Stashed changes
+<script src="frontend/js/farmer-nav.js"></script>
 </body>
 </html>

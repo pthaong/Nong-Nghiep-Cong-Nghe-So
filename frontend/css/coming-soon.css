@@ -142,3 +142,8 @@ body {
 
     outline-offset: 2px;
 }
+
+/* Điều hướng chung (farmer-nav.js): body là flex nên xếp theo cột, card vẫn căn giữa */
+body { flex-direction: column; }
+.soon-card { margin: auto; }
+.fnav-topbar { align-self: stretch; margin: -16px -16px 16px; }

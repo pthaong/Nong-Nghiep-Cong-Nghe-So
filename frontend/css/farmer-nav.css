@@ -1,0 +1,62 @@
+/* farmer-nav.css — style dùng chung cho điều hướng Farmer.
+ * Chỉ bổ sung (link trong sidebar + thanh điều hướng cho trang chưa có sidebar).
+ * Không ghi đè layout của từng module. */
+
+/* Sidebar: mục menu là <a> thay vì <div> */
+.sidebar a.nav-link-app,
+.sidebar a.nav-link-app:hover,
+.sidebar a.nav-link-app:focus-visible { text-decoration: none; }
+.sidebar a.nav-link-app { cursor: pointer !important; }
+.sidebar a.nav-link-app:not(.active):hover {
+  background: rgba(255, 255, 255, .06) !important;
+  color: #fff !important;
+}
+.sidebar a.nav-link-app:focus-visible { outline: 2px solid #F2C14E; outline-offset: 2px; }
+
+/* Nút đăng xuất tạo thêm trong sidebar (trang chưa có sẵn) */
+.sidebar .fnav-logout {
+  width: 100%; margin-top: 12px; padding: 7px 10px; border-radius: 8px; cursor: pointer;
+  background: transparent; color: #fff; border: 1px solid rgba(255, 255, 255, .5);
+  font-size: .85rem; font-family: inherit;
+}
+.sidebar .fnav-logout:hover { background: rgba(255, 255, 255, .12); }
+
+/* Thanh điều hướng cho trang không có sidebar (Hồ sơ, Thông báo, AI, Coming Soon) */
+.fnav-topbar {
+  position: sticky; top: 0; z-index: 1000; background: #1F3D2B; color: #fff;
+  font-family: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, .15);
+}
+.fnav-bar { display: flex; align-items: center; gap: 12px; padding: 8px 16px; max-width: 1400px; margin: 0 auto; }
+.fnav-brand { display: flex; align-items: center; gap: 8px; font-weight: 700; color: #fff; text-decoration: none; white-space: nowrap; }
+.fnav-brand .fnav-dot { width: 10px; height: 10px; border-radius: 50%; background: #F2C14E; display: inline-block; }
+.fnav-toggle {
+  margin-left: auto; display: none; background: transparent; color: #fff; cursor: pointer;
+  border: 1px solid rgba(255, 255, 255, .4); border-radius: 8px; padding: 4px 10px; font-size: 1.1rem;
+}
+.fnav-menu { display: flex; align-items: center; gap: 2px; flex: 1; min-width: 0; overflow-x: auto; scrollbar-width: thin; }
+.fnav-link {
+  display: inline-flex; align-items: center; gap: 6px; padding: 7px 10px; border-radius: 8px; white-space: nowrap;
+  color: #C6DABC; text-decoration: none; font-size: .85rem; font-weight: 500; background: transparent; border: 0; font-family: inherit; cursor: pointer;
+}
+.fnav-link:hover, .fnav-link:focus-visible { background: rgba(255, 255, 255, .1); color: #fff; text-decoration: none; }
+.fnav-link.active { background: #2F6B47; color: #fff; font-weight: 600; }
+.fnav-sep { flex: 1; }
+.fnav-logout-top { color: #fff; border: 1px solid rgba(255, 255, 255, .4); }
+
+@media (max-width: 991.98px) {
+  .fnav-toggle { display: inline-block; }
+  .fnav-menu { display: none; position: absolute; left: 0; right: 0; top: 100%; background: #1F3D2B; flex-direction: column;
+    align-items: stretch; padding: 8px 12px 12px; overflow: visible; max-height: calc(100vh - 56px); overflow-y: auto; }
+  .fnav-topbar.open .fnav-menu { display: flex; }
+  .fnav-sep { display: none; }
+  .fnav-link { padding: 10px 12px; }
+}
+
+/* Trang chủ: dưới 992px sidebar mặc định bị ẩn và nút menu cũng bị ẩn -> không có cách điều hướng.
+ * Hiện nút menu và cho sidebar mở dạng ngăn kéo (farmer-nav.js bật/tắt class .open). */
+@media (max-width: 991.98px) {
+  #menuButton.menu-button { display: inline-flex !important; align-items: center; justify-content: center; }
+  #sidebar.open { display: flex !important; position: fixed; top: 0; bottom: 0; left: 0; width: 260px; max-width: 85vw; z-index: 1100; flex-direction: column; }
+  .fnav-drawer-backdrop { position: fixed; inset: 0; background: rgba(0, 0, 0, .45); z-index: 1090; }
+}
