@@ -16,22 +16,60 @@
 <!-- Ẩn cho tới khi admin-users.js xác nhận phiên Admin hợp lệ -->
 <div class="admin-app" id="adminApp">
 
-  <header class="admin-header">
-    <div class="admin-brand"><span class="dot"></span> AgriSmart <small>Admin</small></div>
+ <aside class="admin-sidebar">
+  <div class="admin-sidebar-brand">
+    <span class="dot"></span>
+    <span>AgriSmart</span>
+    <small>ADMIN</small>
+  </div>
 
-    <nav class="admin-menu" aria-label="Menu quản trị">
-      <a class="admin-menu-link active" href="admin-users.html" aria-current="page">
-        <i class="bi bi-people"></i><span>Quản lý người dùng</span>
-      </a>
-    </nav>
+  <nav class="admin-sidebar-menu" aria-label="Menu quản trị">
+    <a href="admin-home.html" class="admin-sidebar-link">
+      <i class="bi bi-house-door"></i>
+      <span>Trang chủ</span>
+    </a>
 
-    <div class="admin-user">
-      <span class="admin-user-name" id="adminName"><i class="bi bi-person-circle me-1"></i>Admin</span>
-      <button type="button" class="btn btn-sm btn-outline-light" id="btnLogout">
-        <i class="bi bi-box-arrow-right"></i><span class="d-none d-sm-inline ms-1">Đăng xuất</span>
-      </button>
+    <a href="admin-users.html" class="admin-sidebar-link active">
+      <i class="bi bi-people"></i>
+      <span>Quản lý người dùng</span>
+    </a>
+
+    <a href="admin-seasons.html" class="admin-sidebar-link">
+      <i class="bi bi-calendar3"></i>
+      <span>Quản lý mùa vụ</span>
+    </a>
+
+    <a href="admin-diagnosis.html" class="admin-sidebar-link">
+      <i class="bi bi-robot"></i>
+      <span>Lịch sử chẩn đoán bệnh</span>
+    </a>
+
+    <a href="admin-notifications.html" class="admin-sidebar-link">
+      <i class="bi bi-bell"></i>
+      <span>Thông báo</span>
+    </a>
+
+    <a href="admin-diaries.html" class="admin-sidebar-link">
+      <i class="bi bi-journal-text"></i>
+      <span>Nhật ký canh tác</span>
+    </a>
+  </nav>
+
+  <div class="admin-sidebar-footer">
+    <div class="admin-sidebar-user">
+      <i class="bi bi-person-circle"></i>
+      <div>
+        <strong id="adminName">Admin</strong>
+        <small>Quản trị viên</small>
+      </div>
     </div>
-  </header>
+
+    <button type="button" id="btnLogout" class="admin-sidebar-logout">
+      <i class="bi bi-box-arrow-right"></i>
+      <span>Đăng xuất</span>
+    </button>
+  </div>
+</aside>
 
   <main class="admin-content">
     <div class="page-head">

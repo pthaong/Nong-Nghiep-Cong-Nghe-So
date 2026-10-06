@@ -137,3 +137,199 @@ h1,h5{font-weight:700; letter-spacing:-0.01em; color:var(--text);}
   .user-table td.cell-actions{justify-content:flex-end; padding-top:8px;}
   .user-table td.cell-actions::before{content:none;}
 }
+/* =========================================================
+   ADMIN SIDEBAR
+   ========================================================= */
+
+.admin-app.ready{
+  display:flex;
+  flex-direction:row;
+  min-height:100vh;
+}
+
+/* Sidebar */
+.admin-sidebar{
+  width:255px;
+  min-height:100vh;
+  background:var(--forest-dark);
+  color:#fff;
+  display:flex;
+  flex-direction:column;
+  flex-shrink:0;
+
+  position:fixed;
+  left:0;
+  top:0;
+  bottom:0;
+  z-index:1000;
+}
+
+.admin-sidebar-brand{
+  height:82px;
+  padding:0 24px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+
+  font-size:20px;
+  font-weight:800;
+  border-bottom:1px solid rgba(255,255,255,.1);
+}
+
+.admin-sidebar-brand .dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--sun);
+}
+
+.admin-sidebar-brand small{
+  font-size:10px;
+  color:#9CC09A;
+  letter-spacing:1px;
+}
+
+/* Menu */
+.admin-sidebar-menu{
+  flex:1;
+  padding:16px 12px;
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+}
+
+.admin-sidebar-link{
+  display:flex;
+  align-items:center;
+  gap:12px;
+
+  padding:11px 13px;
+  border-radius:10px;
+
+  color:#C6DABC;
+  text-decoration:none;
+  font-size:14px;
+  font-weight:500;
+}
+
+.admin-sidebar-link i{
+  width:21px;
+  text-align:center;
+  font-size:17px;
+}
+
+.admin-sidebar-link:hover{
+  background:rgba(255,255,255,.08);
+  color:#fff;
+}
+
+.admin-sidebar-link.active{
+  background:var(--forest-light);
+  color:#fff;
+  font-weight:600;
+}
+
+/* Footer Admin */
+.admin-sidebar-footer{
+  padding:15px;
+  border-top:1px solid rgba(255,255,255,.12);
+}
+
+.admin-sidebar-user{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.admin-sidebar-user > i{
+  font-size:28px;
+  color:var(--sun);
+}
+
+.admin-sidebar-user div{
+  display:flex;
+  flex-direction:column;
+  min-width:0;
+}
+
+.admin-sidebar-user strong{
+  font-size:13px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
+
+.admin-sidebar-user small{
+  color:#9CC09A;
+  font-size:11px;
+}
+
+.admin-sidebar-logout{
+  width:100%;
+  padding:8px 10px;
+
+  border:1px solid rgba(255,255,255,.35);
+  border-radius:7px;
+
+  background:transparent;
+  color:#fff;
+
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+}
+
+.admin-sidebar-logout:hover{
+  background:rgba(255,255,255,.08);
+}
+
+/* Nội dung Admin */
+.admin-content{
+  margin-left:255px;
+  max-width:none;
+  width:calc(100% - 255px);
+  min-height:100vh;
+  padding:24px 30px 60px;
+}
+
+/* Responsive */
+@media (max-width:767px){
+
+  .admin-sidebar{
+    width:72px;
+  }
+
+  .admin-sidebar-brand{
+    justify-content:center;
+    padding:0;
+  }
+
+  .admin-sidebar-brand > span:not(.dot),
+  .admin-sidebar-brand small,
+  .admin-sidebar-link span,
+  .admin-sidebar-user div,
+  .admin-sidebar-logout span{
+    display:none;
+  }
+
+  .admin-sidebar-link{
+    justify-content:center;
+  }
+
+  .admin-sidebar-link i{
+    width:auto;
+    font-size:20px;
+  }
+
+  .admin-sidebar-user{
+    justify-content:center;
+  }
+
+  .admin-content{
+    margin-left:72px;
+    width:calc(100% - 72px);
+    padding:18px 14px 50px;
+  }
+}
