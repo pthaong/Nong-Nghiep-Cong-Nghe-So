@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Quản lý thông báo | AgriSmart</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-app ready">
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar">
+
+        <div class="admin-sidebar-brand">
+            <span class="dot"></span>
+            <span>AgriSmart</span>
+            <small>ADMIN</small>
+        </div>
+
+        <nav class="admin-sidebar-menu" aria-label="Menu quản trị">
+
+            <a href="admin-home.html" class="admin-sidebar-link">
+                <i class="bi bi-house-door"></i>
+                <span>Trang chủ</span>
+            </a>
+
+            <a href="admin-users.html" class="admin-sidebar-link">
+                <i class="bi bi-people"></i>
+                <span>Quản lý người dùng</span>
+            </a>
+
+            <a href="admin-seasons.html" class="admin-sidebar-link">
+                <i class="bi bi-calendar3"></i>
+                <span>Quản lý mùa vụ</span>
+            </a>
+
+            <a href="admin-diagnosis.html" class="admin-sidebar-link">
+                <i class="bi bi-robot"></i>
+                <span>Lịch sử chẩn đoán bệnh</span>
+            </a>
+
+            <a href="admin-notifications.html"
+               class="admin-sidebar-link active">
+                <i class="bi bi-bell"></i>
+                <span>Thông báo</span>
+            </a>
+
+            <a href="admin-diaries.html" class="admin-sidebar-link">
+                <i class="bi bi-journal-text"></i>
+                <span>Nhật ký canh tác</span>
+            </a>
+
+        </nav>
+
+        <div class="admin-sidebar-footer">
+
+            <div class="admin-sidebar-user">
+                <i class="bi bi-person-circle"></i>
+
+                <div>
+                    <strong id="adminName">Admin</strong>
+                    <small>Quản trị viên</small>
+                </div>
+            </div>
+
+            <button
+                type="button"
+                id="btnLogout"
+                class="admin-sidebar-logout">
+
+                <i class="bi bi-box-arrow-right"></i>
+                <span>Đăng xuất</span>
+
+            </button>
+
+        </div>
+
+    </aside>
+
+
+    <!-- CONTENT -->
+    <main class="admin-content">
+
+        <div class="container-fluid py-4">
+
+    <!-- HEADER -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+        <div>
+            <h1 class="mb-1">
+                <i class="bi bi-bell"></i>
+                Quản lý thông báo
+            </h1>
+
+            <p class="text-muted mb-0">
+                Quản lý thông báo gửi đến người dùng
+            </p>
+        </div>
+
+        <div class="d-flex gap-2">
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="btnCreate"
+            >
+                <i class="bi bi-plus-circle"></i>
+                Tạo thông báo
+            </button>
+
+            <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="btnRefresh"
+            >
+                <i class="bi bi-arrow-clockwise"></i>
+                Làm mới
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- ADMIN INFO -->
+    <div class="card mb-3">
+        <div class="card-body d-flex justify-content-between align-items-center">
+
+            <div>
+                <strong>
+                    <i class="bi bi-person-circle"></i>
+                    Admin:
+                </strong>
+
+                <span id="adminName">Quản trị viên</span>
+            </div>
+
+            <button
+                type="button"
+                class="btn btn-outline-danger btn-sm"
+                id="btnLogout"
+            >
+                <i class="bi bi-box-arrow-right"></i>
+                Đăng xuất
+            </button>
+
+        </div>
+    </div>
+
+
+    <!-- LOADING -->
+    <div
+        id="stateLoading"
+        class="card text-center p-5"
+        hidden
+    >
+        <div class="spinner-border text-primary mb-3"></div>
+
+        <div>
+            Đang tải danh sách thông báo...
+        </div>
+    </div>
+
+
+    <!-- ERROR -->
+    <div
+        id="stateError"
+        class="card border-danger p-4"
+        hidden
+    >
+
+        <div class="text-center">
+
+            <i class="bi bi-exclamation-triangle text-danger fs-1"></i>
+
+            <h5 class="mt-3">
+                Không thể tải danh sách thông báo
+            </h5>
+
+            <p
+                id="errorDesc"
+                class="text-muted"
+            >
+                Có lỗi xảy ra.
+            </p>
+
+            <button
+                type="button"
+                class="btn btn-primary"
+                id="btnRetry"
+            >
+                <i class="bi bi-arrow-repeat"></i>
+                Thử lại
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <!-- EMPTY -->
+    <div
+        id="stateEmpty"
+        class="card text-center p-5"
+        hidden
+    >
+
+        <i class="bi bi-bell-slash fs-1 text-muted"></i>
+
+        <h5 class="mt-3">
+            Chưa có thông báo
+        </h5>
+
+        <p class="text-muted">
+            Hệ thống chưa có thông báo nào.
+        </p>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="btnCreateEmpty"
+        >
+            <i class="bi bi-plus-circle"></i>
+            Tạo thông báo
+        </button>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div
+        id="tableCard"
+        class="card"
+        hidden
+    >
+
+        <div class="card-header d-flex justify-content-between">
+
+            <strong>
+                <i class="bi bi-list-ul"></i>
+                Danh sách thông báo
+            </strong>
+
+        </div>
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User ID</th>
+                        <th>Tiêu đề</th>
+                        <th>Nội dung</th>
+                        <th>Loại</th>
+                        <th>Trạng thái</th>
+                        <th>Thời gian</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody id="notificationTableBody">
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     CREATE MODAL
+========================= -->
+
+<div
+    class="modal fade"
+    id="createNotificationModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="bi bi-bell-plus"></i>
+                    Tạo thông báo
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <form id="createNotificationForm">
+
+                <div class="modal-body">
+
+                    <div
+                        id="createError"
+                        class="alert alert-danger d-none"
+                    ></div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="notificationUserId"
+                            class="form-label"
+                        >
+                            User ID
+                        </label>
+
+                        <input
+                            type="number"
+                            class="form-control"
+                            id="notificationUserId"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="notificationTitle"
+                            class="form-label"
+                        >
+                            Tiêu đề
+                        </label>
+
+                        <input
+                            type="text"
+                            class="form-control"
+                            id="notificationTitle"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="notificationType"
+                            class="form-label"
+                        >
+                            Loại thông báo
+                        </label>
+
+                        <select
+                            class="form-select"
+                            id="notificationType"
+                        >
+
+                            <option value="SYSTEM">
+                                Hệ thống
+                            </option>
+
+                            <option value="WEATHER">
+                                Thời tiết
+                            </option>
+
+                            <option value="DISEASE">
+                                Sâu bệnh
+                            </option>
+
+                            <option value="SEASON">
+                                Mùa vụ
+                            </option>
+
+                            <option value="DIARY">
+                                Nhật ký
+                            </option>
+
+                            <option value="AI">
+                                AI chẩn đoán
+                            </option>
+
+                        </select>
+
+                    </div>
+
+
+                    <div class="mb-3">
+
+                        <label
+                            for="notificationMessage"
+                            class="form-label"
+                        >
+                            Nội dung
+                        </label>
+
+                        <textarea
+                            class="form-control"
+                            id="notificationMessage"
+                            rows="4"
+                            required
+                        ></textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="modal-footer">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        data-bs-dismiss="modal"
+                    >
+                        Hủy
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="btnSubmitCreate"
+                    >
+                        <i class="bi bi-send"></i>
+                        Tạo thông báo
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     DETAIL MODAL
+========================= -->
+
+<div
+    class="modal fade"
+    id="notificationDetailModal"
+    tabindex="-1"
+>
+
+    <div class="modal-dialog">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+
+                <h5 class="modal-title">
+                    <i class="bi bi-bell"></i>
+                    Chi tiết thông báo
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                ></button>
+
+            </div>
+
+
+            <div class="modal-body">
+
+                <dl class="row">
+
+                    <dt class="col-sm-4">
+                        ID
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailId"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        User ID
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailUserId"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        Tiêu đề
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailTitle"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        Loại
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailType"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        Nội dung
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailMessage"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        Trạng thái
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailRead"
+                    >
+                        -
+                    </dd>
+
+
+                    <dt class="col-sm-4">
+                        Ngày tạo
+                    </dt>
+
+                    <dd
+                        class="col-sm-8"
+                        id="detailCreatedAt"
+                    >
+                        -
+                    </dd>
+
+                </dl>
+
+            </div>
+
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Đóng
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- =========================
+     JAVASCRIPT
+========================= -->
+        </div>
+    </main>
+
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script src="../js/services/admin-notification-service.js"></script>
+
+<script src="../js/admin-notifications.js"></script>
+
+</body>
+</html>

@@ -16,7 +16,7 @@ private Long id;
 private Long userId;
 
 // Loại cây
-@Column(name = "plant_type", nullable = false)
+@Column(name = "plant_type", nullable = false, columnDefinition = "NVARCHAR(255)")
 private String plantType;
 
 // Triệu chứng người dùng nhập
@@ -28,7 +28,7 @@ private String symptoms;
 private String imageName;
 
 // Kết quả bệnh
-@Column(name = "disease_name")
+@Column(name = "disease_name", columnDefinition = "NVARCHAR(255)")
 private String diseaseName;
 
 // Kết quả chẩn đoán đầy đủ
@@ -36,7 +36,7 @@ private String diseaseName;
 private String result;
 
 // Mức độ nghiêm trọng
-@Column(name = "severity")
+@Column(name = "severity", columnDefinition = "NVARCHAR(255)")
 private String severity;
 
 // Nguyên nhân

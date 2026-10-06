@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Nhật ký canh tác | AgriSmart Admin</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css">
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
+
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+
+<div class="admin-app" id="adminApp">
+
+  <!-- SIDEBAR -->
+  <aside class="admin-sidebar">
+
+    <div class="admin-sidebar-brand">
+      <span class="dot"></span>
+      <span>AgriSmart</span>
+      <small>ADMIN</small>
+    </div>
+
+    <nav class="admin-sidebar-menu" aria-label="Menu quản trị">
+
+      <a href="admin-home.html" class="admin-sidebar-link">
+        <i class="bi bi-house-door"></i>
+        <span>Trang chủ</span>
+      </a>
+
+      <a href="admin-users.html" class="admin-sidebar-link">
+        <i class="bi bi-people"></i>
+        <span>Quản lý người dùng</span>
+      </a>
+
+      <a href="admin-seasons.html" class="admin-sidebar-link">
+        <i class="bi bi-calendar3"></i>
+        <span>Quản lý mùa vụ</span>
+      </a>
+
+      <a href="admin-diagnosis.html" class="admin-sidebar-link">
+        <i class="bi bi-robot"></i>
+        <span>Lịch sử chẩn đoán bệnh</span>
+      </a>
+
+      <a href="admin-notifications.html" class="admin-sidebar-link">
+        <i class="bi bi-bell"></i>
+        <span>Thông báo</span>
+      </a>
+
+      <a href="admin-diaries.html"
+         class="admin-sidebar-link active"
+         aria-current="page">
+        <i class="bi bi-journal-text"></i>
+        <span>Nhật ký canh tác</span>
+      </a>
+
+    </nav>
+
+    <!-- ADMIN FOOTER -->
+    <div class="admin-sidebar-footer">
+
+      <div class="admin-sidebar-user">
+
+        <i class="bi bi-person-circle"></i>
+
+        <div>
+          <strong id="adminName">Admin</strong>
+          <small>Quản trị viên</small>
+        </div>
+
+      </div>
+
+      <button type="button"
+              id="btnLogout"
+              class="admin-sidebar-logout">
+
+        <i class="bi bi-box-arrow-right"></i>
+        <span>Đăng xuất</span>
+
+      </button>
+
+    </div>
+
+  </aside>
+
+
+  <!-- CONTENT -->
+  <main class="admin-content">
+
+    <!-- HEADER -->
+    <div class="page-head">
+
+      <div>
+
+        <h1 class="page-title">
+          <i class="bi bi-journal-text me-2"></i>
+          Nhật ký canh tác
+        </h1>
+
+        <p class="page-sub">
+          Theo dõi nhật ký canh tác của tất cả tài khoản nông dân trong hệ thống.
+        </p>
+
+      </div>
+
+
+      <div class="d-flex gap-2">
+
+        <button type="button"
+                class="btn btn-sm btn-outline-success"
+                id="btnExportExcel">
+
+          <i class="bi bi-file-earmark-excel me-1"></i>
+          Xuất Excel
+
+        </button>
+
+
+        <button type="button"
+                class="btn btn-sm btn-outline-secondary"
+                id="btnRefresh">
+
+          <i class="bi bi-arrow-clockwise"></i>
+
+          <span class="d-none d-sm-inline ms-1">
+            Tải lại
+          </span>
+
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <!-- SEARCH -->
+    <div class="toolbar">
+
+      <div class="search-box">
+
+        <i class="bi bi-search"></i>
+
+        <input
+          type="search"
+          id="searchInput"
+          class="form-control"
+          placeholder="Nhập ID nhật ký..."
+          aria-label="Tìm kiếm nhật ký theo ID"
+          autocomplete="off">
+
+      </div>
+
+      <span class="search-hint">
+        Tìm theo ID nhật ký
+      </span>
+
+      <span class="summary"
+            id="summaryCount"
+            hidden>
+      </span>
+
+    </div>
+
+
+    <!-- LOADING -->
+    <div class="state-box"
+         id="stateLoading"
+         role="status">
+
+      <div class="spinner-border"
+           aria-hidden="true">
+      </div>
+
+      <p class="state-title mb-0">
+        Đang tải dữ liệu nhật ký canh tác...
+      </p>
+
+    </div>
+
+
+    <!-- ERROR -->
+    <div class="state-box"
+         id="stateError"
+         role="alert"
+         hidden>
+
+      <i class="bi bi-exclamation-triangle
+                state-icon
+                state-icon-danger">
+      </i>
+
+      <p class="state-title mb-1">
+        Không thể tải danh sách nhật ký canh tác.
+      </p>
+
+      <p class="state-desc"
+         id="errorDesc">
+      </p>
+
+      <button type="button"
+              class="btn btn-forest btn-sm"
+              id="btnRetry">
+
+        <i class="bi bi-arrow-clockwise me-1"></i>
+        Thử lại
+
+      </button>
+
+    </div>
+
+
+    <!-- EMPTY -->
+    <div class="state-box"
+         id="stateEmpty"
+         hidden>
+
+      <i class="bi bi-inbox state-icon"></i>
+
+      <p class="state-title mb-0">
+        Chưa có dữ liệu nhật ký canh tác.
+      </p>
+
+    </div>
+
+
+    <!-- SEARCH KHÔNG CÓ KẾT QUẢ -->
+    <div class="state-box"
+         id="stateNoMatch"
+         hidden>
+
+      <i class="bi bi-search state-icon"></i>
+
+      <p class="state-title mb-0">
+        Không tìm thấy nhật ký có ID phù hợp.
+      </p>
+
+    </div>
+
+
+    <!-- TABLE -->
+    <div class="table-card"
+         id="tableCard"
+         hidden>
+
+      <div class="table-scroll">
+
+        <table class="user-table">
+
+          <thead>
+            <tr>
+
+              <th>ID</th>
+
+              <th>Người dùng</th>
+
+              <th>Số điện thoại</th>
+
+              <th>Mùa vụ</th>
+
+              <th>Ngày thực hiện</th>
+
+              <th>Hoạt động</th>
+
+              <th>Nội dung</th>
+
+              <th>Lượng nước</th>
+
+              <th>Phân bón</th>
+
+              <th>Thuốc BVTV</th>
+
+              <th>Ghi chú</th>
+
+            </tr>
+          </thead>
+
+          <tbody id="diaryTableBody">
+          </tbody>
+
+        </table>
+
+      </div>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+
+<script src="../js/config.js"></script>
+
+<script src="../js/services/admin-diary-service.js"></script>
+
+<script src="../js/admin-diaries.js"></script>
+
+</body>
+</html>

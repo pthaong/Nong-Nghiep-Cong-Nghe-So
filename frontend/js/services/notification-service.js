@@ -1,352 +1,254 @@
-/* =========================================================
-   AGRISMART - NOTIFICATION SERVICE
-
-   Tầng duy nhất làm việc với dữ liệu thông báo.
-   UI (home.js, notification.js) chỉ gọi các hàm public ở cuối file:
-
-     getNotifications()
-     getUnreadCount()
-     markAsRead(id)
-     deleteNotification(id)
-
-   Hiện BE1 chưa bàn giao Notification API nên USE_MOCK_DATA = true.
-
-   KHI BE1 BÀN GIAO API:
-     1. Đặt USE_MOCK_DATA = false.
-     2. Điền method + path vào API_ROUTES theo contract chính thức.
-     3. Chỉnh normalizeNotification() / extractList() cho khớp JSON thật.
-   UI không phải sửa.
-   ========================================================= */
+/**
+ * AgriSmart - Notification Service
+ * Kết nối Notification API thật của Backend.
+ */
 
 (function (global) {
+  "use strict";
 
-    "use strict";
+  const CONFIG_BASE =
+  global.APP_CONFIG?.API_BASE_URL ||
+  global.API_BASE_URL ||
+  "http://localhost:8080";
 
-    /* -----------------------------------------------------
-       CONFIG
-       ----------------------------------------------------- */
+const API_BASE = CONFIG_BASE.replace(/\/+$/, "").replace(/\/api$/, "");
 
-    const USE_MOCK_DATA = true;
+  const SESSION_KEY = "agrismart_session";
 
-    /*
-     * Chưa có contract từ BE1 nên để null, không đoán URL.
-     * Ví dụ khi đã có:
-     *   list: { method: "GET", path: "/notifications" }
-     *   markAsRead: { method: "PUT", path: (id) => `/notifications/${id}/read` }
-     *   remove: { method: "DELETE", path: (id) => `/notifications/${id}` }
-     */
-    const API_ROUTES = {
-        list: null,
-        markAsRead: null,
-        remove: null
+  // =========================
+  // SESSION
+  // =========================
+
+  function getSession() {
+    const raw =
+      global.localStorage.getItem(SESSION_KEY) ||
+      global.sessionStorage.getItem(SESSION_KEY);
+
+    if (!raw) {
+      throw new Error("Không tìm thấy phiên đăng nhập.");
+    }
+
+    try {
+      return JSON.parse(raw);
+    } catch (error) {
+      throw new Error("Phiên đăng nhập không hợp lệ.");
+    }
+  }
+
+  function getUserId() {
+    const session = getSession();
+    const userId = session?.userId;
+
+    if (
+      userId === undefined ||
+      userId === null ||
+      String(userId).trim() === ""
+    ) {
+      throw new Error("Không tìm thấy userId trong phiên đăng nhập.");
+    }
+
+    return userId;
+  }
+
+  // =========================
+  // REQUEST
+  // =========================
+
+  async function request(url, options = {}) {
+    const response = await fetch(url, {
+      ...options,
+      headers: {
+        Accept: "application/json",
+        ...(options.body
+          ? { "Content-Type": "application/json" }
+          : {}),
+        ...(options.headers || {})
+      }
+    });
+
+    if (!response.ok) {
+      let message = `Notification API lỗi ${response.status}`;
+
+      try {
+        const data = await response.json();
+
+        if (data?.message) {
+          message = data.message;
+        }
+      } catch (_) {
+        // Giữ thông báo mặc định.
+      }
+
+      const error = new Error(message);
+      error.status = response.status;
+
+      throw error;
+    }
+
+    if (response.status === 204) {
+      return null;
+    }
+
+    const text = await response.text();
+
+    return text ? JSON.parse(text) : null;
+  }
+
+  // =========================
+  // NORMALIZE
+  // =========================
+
+  function normalizeNotification(raw) {
+    const source = raw || {};
+
+    return {
+      id: source.id,
+      userId: source.userId,
+
+      title:
+        source.title ||
+        "Thông báo",
+
+      message:
+        source.message ||
+        "",
+
+      type: String(
+        source.type || "SYSTEM"
+      ).toUpperCase(),
+
+      read:
+        source.isRead === true ||
+        source.read === true,
+
+      createdAt:
+        source.createdAt ||
+        source.created_at ||
+        null
     };
+  }
 
-    const MOCK_STORAGE_KEY = "agrismart_mock_notifications";
-    const MOCK_DELAY_MS = 500;
+  // =========================
+  // GET ALL
+  // GET /api/notifications/user/{userId}
+  // =========================
 
+  async function getNotifications() {
+    const userId = getUserId();
 
-    /* -----------------------------------------------------
-       ADAPTER (API JSON -> object dùng trong UI)
-       Sửa ở đây khi biết response thật của BE1.
-       ----------------------------------------------------- */
+    const data = await request(
+      `${API_BASE}/api/notifications/user/${encodeURIComponent(userId)}`
+    );
 
-    function extractList(payload) {
+    const list = Array.isArray(data)
+      ? data
+      : data?.data ||
+        data?.notifications ||
+        data?.content ||
+        [];
 
-        if (Array.isArray(payload)) {
-            return payload;
-        }
+    return list.map(normalizeNotification);
+  }
 
-        if (payload && typeof payload === "object") {
-            return payload.data ||
-                payload.content ||
-                payload.notifications ||
-                [];
-        }
+  // =========================
+  // GET UNREAD
+  // GET /api/notifications/user/{userId}/unread
+  // =========================
 
-        return [];
+  async function getUnreadNotifications() {
+    const userId = getUserId();
+
+    const data = await request(
+      `${API_BASE}/api/notifications/user/${encodeURIComponent(userId)}/unread`
+    );
+
+    const list = Array.isArray(data)
+      ? data
+      : data?.data ||
+        data?.notifications ||
+        data?.content ||
+        [];
+
+    return list.map(normalizeNotification);
+  }
+
+  // =========================
+  // UNREAD COUNT
+  // GET /api/notifications/user/{userId}/unread-count
+  // =========================
+
+  async function getUnreadCount() {
+    const userId = getUserId();
+
+    const data = await request(
+      `${API_BASE}/api/notifications/user/${encodeURIComponent(userId)}/unread-count`
+    );
+
+    if (typeof data === "number") {
+      return data;
     }
 
-    function normalizeNotification(raw) {
+    return Number(data?.count || 0);
+  }
 
-        const source = raw || {};
+  // =========================
+  // MARK AS READ
+  // PUT /api/notifications/{id}/read
+  // =========================
 
-        const readValue =
-            source.read !== undefined ? source.read :
-            source.isRead !== undefined ? source.isRead :
-            source.is_read;
-
-        return {
-            id: source.id !== undefined ? source.id : source.notificationId,
-            title: source.title || "Thông báo",
-            message: source.message || source.content || "",
-            type: String(source.type || "SYSTEM").toUpperCase(),
-            read: Boolean(readValue),
-            createdAt: source.createdAt || source.created_at || null
-        };
+  async function markAsRead(notificationId) {
+    if (
+      notificationId === undefined ||
+      notificationId === null ||
+      String(notificationId).trim() === ""
+    ) {
+      throw new Error("ID thông báo không hợp lệ.");
     }
 
+    const data = await request(
+      `${API_BASE}/api/notifications/${encodeURIComponent(notificationId)}/read`,
+      {
+        method: "PUT"
+      }
+    );
 
-    /* -----------------------------------------------------
-       MOCK DATA (chỉ dùng khi USE_MOCK_DATA = true)
-       ----------------------------------------------------- */
+    return data
+      ? normalizeNotification(data)
+      : null;
+  }
 
-    function minutesAgo(minutes) {
-        return new Date(Date.now() - minutes * 60000).toISOString();
-    }
+  // =========================
+  // DELETE
+  // Backend hiện chưa có DELETE.
+  // =========================
 
-    function createMockSeed() {
+  async function deleteNotification() {
+    throw new Error(
+      "Backend hiện chưa hỗ trợ xóa thông báo."
+    );
+  }
 
-        return [
-            {
-                id: 1,
-                title: "Cảnh báo thời tiết",
-                message: "Dự kiến có mưa lớn trong khu vực trong 2 ngày tới. Nên hoãn bón phân và kiểm tra hệ thống thoát nước.",
-                type: "WEATHER",
-                read: false,
-                createdAt: minutesAgo(30)
-            },
-            {
-                id: 2,
-                title: "Nguy cơ nấm bệnh trên cà chua",
-                message: "Độ ẩm cao kèm mưa liên tục có thể gây sương mai. Nên phun phòng trong 2 ngày tới.",
-                type: "DISEASE",
-                read: false,
-                createdAt: minutesAgo(180)
-            },
-            {
-                id: 3,
-                title: "Sắp đến giai đoạn thu hoạch",
-                message: "Vụ Đông Xuân 2026 sắp bước vào giai đoạn thu hoạch. Hãy kiểm tra lịch mùa vụ của bạn.",
-                type: "SEASON",
-                read: false,
-                createdAt: minutesAgo(60 * 26)
-            },
-            {
-                id: 4,
-                title: "Nhắc cập nhật nhật ký canh tác",
-                message: "Bạn chưa ghi nhật ký canh tác trong 3 ngày gần đây.",
-                type: "DIARY",
-                read: true,
-                createdAt: minutesAgo(60 * 50)
-            },
-            {
-                id: 5,
-                title: "Kết quả chẩn đoán từ AI",
-                message: "AI đã hoàn tất chẩn đoán ảnh lá cây bạn gửi. Xem chi tiết trong mục AI chẩn đoán.",
-                type: "AI",
-                read: true,
-                createdAt: minutesAgo(60 * 24 * 4)
-            },
-            {
-                id: 6,
-                title: "Chào mừng đến với AgriSmart",
-                message: "Cảm ơn bạn đã sử dụng AgriSmart. Hãy hoàn thiện hồ sơ để nhận gợi ý phù hợp hơn.",
-                type: "SYSTEM",
-                read: true,
-                createdAt: minutesAgo(60 * 24 * 6)
-            }
-        ];
-    }
+  // Không còn dùng mock.
+  function isMock() {
+    return false;
+  }
 
-    function readMockStore() {
+  function resetMockData() {
+    // Không làm gì vì đã dùng API thật.
+  }
 
-        try {
+  // =========================
+  // PUBLIC
+  // =========================
 
-            const raw = global.localStorage.getItem(MOCK_STORAGE_KEY);
-
-            if (raw !== null) {
-                return JSON.parse(raw);
-            }
-
-        } catch (error) {
-            console.warn("Không đọc được dữ liệu thông báo mẫu:", error);
-        }
-
-        return createMockSeed();
-    }
-
-    function writeMockStore(list) {
-
-        try {
-            global.localStorage.setItem(MOCK_STORAGE_KEY, JSON.stringify(list));
-        } catch (error) {
-            console.warn("Không lưu được dữ liệu thông báo mẫu:", error);
-        }
-    }
-
-    function wait(ms) {
-        return new Promise(function (resolve) {
-            setTimeout(resolve, ms);
-        });
-    }
-
-    /*
-     * Chỉ để kiểm thử UI ở chế độ mock:
-     *   notification.html?simulate=error   -> hiện trạng thái lỗi
-     *   notification.html?simulate=empty   -> hiện trạng thái rỗng
-     */
-    function getSimulateMode() {
-
-        try {
-            return new URLSearchParams(global.location.search).get("simulate");
-        } catch (error) {
-            return null;
-        }
-    }
-
-    async function mockGetNotifications() {
-
-        await wait(MOCK_DELAY_MS);
-
-        const mode = getSimulateMode();
-
-        if (mode === "error") {
-            throw new Error("Mô phỏng lỗi tải thông báo.");
-        }
-
-        if (mode === "empty") {
-            return [];
-        }
-
-        return readMockStore();
-    }
-
-    async function mockMarkAsRead(id) {
-
-        await wait(200);
-
-        const list = readMockStore().map(function (item) {
-            return String(item.id) === String(id)
-                ? Object.assign({}, item, { read: true })
-                : item;
-        });
-
-        writeMockStore(list);
-    }
-
-    async function mockDelete(id) {
-
-        await wait(200);
-
-        const list = readMockStore().filter(function (item) {
-            return String(item.id) !== String(id);
-        });
-
-        writeMockStore(list);
-    }
-
-
-    /* -----------------------------------------------------
-       REAL API
-       ----------------------------------------------------- */
-
-    function resolveRoute(route, id) {
-
-        if (!route) {
-            throw new Error(
-                "Notification API chưa được cấu hình (chờ BE1 bàn giao)."
-            );
-        }
-
-        const path = typeof route.path === "function"
-            ? route.path(id)
-            : route.path;
-
-        const baseUrl = global.APP_CONFIG && global.APP_CONFIG.API_BASE_URL;
-
-        if (!baseUrl) {
-            throw new Error("Thiếu APP_CONFIG.API_BASE_URL.");
-        }
-
-        return { method: route.method || "GET", url: baseUrl + path };
-    }
-
-    async function request(route, id) {
-
-        const target = resolveRoute(route, id);
-
-        const response = await fetch(target.url, {
-            method: target.method,
-            headers: { "Content-Type": "application/json" }
-        });
-
-        if (!response.ok) {
-            throw new Error("Notification API lỗi " + response.status);
-        }
-
-        if (response.status === 204) {
-            return null;
-        }
-
-        return response.json();
-    }
-
-
-    /* -----------------------------------------------------
-       PUBLIC API
-       ----------------------------------------------------- */
-
-    async function getNotifications() {
-
-        const rawList = USE_MOCK_DATA
-            ? await mockGetNotifications()
-            : extractList(await request(API_ROUTES.list));
-
-        return rawList.map(normalizeNotification);
-    }
-
-    async function getUnreadCount() {
-
-        const list = await getNotifications();
-
-        return list.filter(function (item) {
-            return !item.read;
-        }).length;
-    }
-
-    async function markAsRead(notificationId) {
-
-        if (USE_MOCK_DATA) {
-            return mockMarkAsRead(notificationId);
-        }
-
-        await request(API_ROUTES.markAsRead, notificationId);
-    }
-
-    async function deleteNotification(notificationId) {
-
-        if (USE_MOCK_DATA) {
-            return mockDelete(notificationId);
-        }
-
-        await request(API_ROUTES.remove, notificationId);
-    }
-
-    function isMock() {
-        return USE_MOCK_DATA;
-    }
-
-    /* Chỉ có tác dụng ở chế độ mock: khôi phục dữ liệu mẫu ban đầu. */
-    function resetMockData() {
-
-        if (!USE_MOCK_DATA) {
-            return;
-        }
-
-        try {
-            global.localStorage.removeItem(MOCK_STORAGE_KEY);
-        } catch (error) {
-            console.warn("Không khôi phục được dữ liệu thông báo mẫu:", error);
-        }
-    }
-
-    global.NotificationService = {
-        getNotifications: getNotifications,
-        getUnreadCount: getUnreadCount,
-        markAsRead: markAsRead,
-        deleteNotification: deleteNotification,
-        isMock: isMock,
-        resetMockData: resetMockData
-    };
+  global.NotificationService = {
+    getNotifications,
+    getUnreadNotifications,
+    getUnreadCount,
+    markAsRead,
+    deleteNotification,
+    isMock,
+    resetMockData
+  };
 
 })(window);

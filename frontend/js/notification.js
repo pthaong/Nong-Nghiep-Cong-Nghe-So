@@ -190,16 +190,6 @@
 
             actions.appendChild(readButton);
         }
-
-        const deleteButton = createElement("button", "notif-btn danger");
-        deleteButton.type = "button";
-        deleteButton.dataset.action = "delete";
-        deleteButton.dataset.id = item.id;
-        deleteButton.setAttribute("aria-label", "Xóa thông báo: " + item.title);
-        deleteButton.appendChild(createElement("i", "bi bi-trash"));
-
-        actions.appendChild(deleteButton);
-
         row.appendChild(icon);
         row.appendChild(body);
         row.appendChild(actions);
@@ -212,10 +202,13 @@
         updateSummary();
 
         if (notifications.length === 0) {
-            elements.resetMock.hidden = !service.isMock();
-            showOnly("empty");
-            return;
-        }
+    if (elements.resetMock) {
+        elements.resetMock.hidden = !service.isMock();
+    }
+
+    showOnly("empty");
+    return;
+}
 
         elements.list.replaceChildren();
 
@@ -264,25 +257,17 @@
 
         try {
 
-            if (action === "read") {
+           if (action === "read") {
 
-                await service.markAsRead(id);
+    await service.markAsRead(id);
 
-                notifications.forEach(function (item) {
-                    if (String(item.id) === String(id)) {
-                        item.read = true;
-                    }
-                });
+    notifications.forEach(function (item) {
+        if (String(item.id) === String(id)) {
+            item.read = true;
+        }
+    });
 
-            } else {
-
-                await service.deleteNotification(id);
-
-                notifications = notifications.filter(function (item) {
-                    return String(item.id) !== String(id);
-                });
-            }
-
+}
             render();
 
         } catch (error) {
@@ -319,14 +304,18 @@
             }
         });
 
-        elements.retry.addEventListener("click", loadNotifications);
+        if (elements.retry) {
+    elements.retry.addEventListener("click", loadNotifications);
+}
 
-        elements.resetMock.addEventListener("click", function () {
-            service.resetMockData();
-            loadNotifications();
-        });
-
+if (elements.resetMock) {
+    elements.resetMock.addEventListener("click", function () {
+        service.resetMockData();
         loadNotifications();
+    });
+}
+
+loadNotifications();
     }
 
     document.addEventListener("DOMContentLoaded", init);
