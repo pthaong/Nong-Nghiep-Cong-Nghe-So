@@ -20,6 +20,7 @@
         rel="stylesheet"
         href="../css/coming-soon.css"
     >
+<link rel="stylesheet" href="../css/farmer-nav.css">
 </head>
 
 <body>
@@ -55,7 +56,7 @@
 
         /*
          * Placeholder dùng chung cho các module chưa có trang riêng.
-         * Chọn nội dung bằng ?module=diary | knowledge.
+         * Chọn nội dung bằng ?module=knowledge | ai-history.
          * Khi module thật hoàn thành, chỉ cần đổi link trên Home.
          */
 
@@ -66,6 +67,11 @@
                     title: "Nhật ký canh tác",
                     icon: "bi-journal-text",
                     description: "Ghi chép công việc đồng ruộng hằng ngày sẽ sớm có mặt."
+                },
+                "ai-history": {
+                    title: "Lịch sử AI",
+                    icon: "bi-clock-history",
+                    description: "Lịch sử chẩn đoán và tư vấn của AI đang được chuẩn bị."
                 },
                 knowledge: {
                     title: "Kiến thức nông nghiệp",
@@ -92,6 +98,7 @@
 
     </script>
 
+<script src="../js/farmer-nav.js"></script>
 </body>
 
 </html>

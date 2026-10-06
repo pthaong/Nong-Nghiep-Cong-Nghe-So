@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.3/font/bootstrap-icons.min.css">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link rel="stylesheet" href="../css/weather.css">
+<link rel="stylesheet" href="../css/farmer-nav.css">
 </head>
 <body>
 <div id="app" style="display:block;">
@@ -20,15 +21,18 @@
     <div class="brand"><span class="dot"></span> AgriSmart</div>
     <div class="sidebar-scroll">
       <div id="navUser">
-        <div class="nav-link-app" data-page="home"><i class="bi bi-house-door"></i> Trang chủ</div>
-        <div class="nav-link-app" data-page="crops"><i class="bi bi-flower2"></i> Cây trồng</div>
-        <div class="nav-link-app" data-page="seasons"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
-        <div class="nav-link-app" data-page="log"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
-        <div class="nav-link-app active" data-page="weather"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
-        <div class="nav-link-app" data-page="ai"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
+        <a class="nav-link-app" href="home.html"><i class="bi bi-house-door"></i> Trang chủ</a>
+        <a class="nav-link-app" href="../../index.html"><i class="bi bi-flower2"></i> Cây trồng</a>
+        <a class="nav-link-app" href="seasons.html"><i class="bi bi-calendar3-range"></i> Mùa vụ</a>
+        <a class="nav-link-app" href="nhatky-index.html"><i class="bi bi-journal-text"></i> Nhật ký canh tác</a>
+        <a class="nav-link-app active" href="weather.html" aria-current="page"><i class="bi bi-cloud-sun"></i> Thời tiết</a>
+        <a class="nav-link-app" href="aichandoan-index.html"><i class="bi bi-robot"></i> AI chẩn đoán</a>
+        <a class="nav-link-app" href="coming-soon.html?module=ai-history"><i class="bi bi-clock-history"></i> Lịch sử AI</a>
+        <a class="nav-link-app" href="coming-soon.html?module=knowledge"><i class="bi bi-book"></i> Kiến thức nông nghiệp</a>
         <div class="nav-section-label">Khác</div>
-        <div class="nav-link-app" data-page="prices"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
-        <div class="nav-link-app" data-page="account"><i class="bi bi-person-circle"></i> Tài khoản</div>
+        <a class="nav-link-app" href="prices.html"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</a>
+        <a class="nav-link-app" href="profile.html"><i class="bi bi-person-circle"></i> Hồ sơ</a>
+        <a class="nav-link-app" href="notification.html"><i class="bi bi-bell"></i> Thông báo</a>
       </div>
       <div class="sidebar-foot">
       <div class="mini-user">
@@ -158,5 +162,6 @@
 
 <script src="../js/services/weather-service.js"></script>
 <script src="../js/weather.js"></script>
+<script src="../js/farmer-nav.js"></script>
 </body>
 </html>

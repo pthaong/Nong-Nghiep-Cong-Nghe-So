@@ -28,6 +28,7 @@
         rel="stylesheet"
         href="../css/home.css"
     >
+<link rel="stylesheet" href="../css/farmer-nav.css">
 </head>
 
 <body>
@@ -119,22 +120,22 @@
 
     <div class="sidebar-scroll">
 
-        <a class="nav-link-app active" href="home.html">
+        <a class="nav-link-app active" href="home.html" aria-current="page">
             <i class="bi bi-house-door"></i>
             <span>Trang chủ</span>
         </a>
 
-        <a class="nav-link-app" href="#">
+        <a class="nav-link-app" href="../../index.html">
             <i class="bi bi-flower2"></i>
             <span>Cây trồng</span>
         </a>
 
-        <a class="nav-link-app" href="../../muavu-index.html">
+        <a class="nav-link-app" href="seasons.html">
             <i class="bi bi-calendar3-range"></i>
             <span>Mùa vụ</span>
         </a>
 
-        <a class="nav-link-app" href="coming-soon.html?module=diary">
+        <a class="nav-link-app" href="nhatky-index.html">
             <i class="bi bi-journal-text"></i>
             <span>Nhật ký canh tác</span>
         </a>
@@ -144,13 +145,22 @@
             <span>Thời tiết</span>
         </a>
 
-        <a class="nav-link-app" href="ai.html">
+        <a class="nav-link-app" href="aichandoan-index.html">
             <i class="bi bi-robot"></i>
-            <span>AI chẩn đoán &amp; tư vấn</span>
+            <span>AI chẩn đoán</span>
         </a>
 
-        <div class="nav-section-label">KHÁC</div>
+        <a class="nav-link-app" href="coming-soon.html?module=ai-history">
+            <i class="bi bi-clock-history"></i>
+            <span>Lịch sử AI</span>
+        </a>
 
+        <a class="nav-link-app" href="coming-soon.html?module=knowledge">
+            <i class="bi bi-book"></i>
+            <span>Kiến thức nông nghiệp</span>
+        </a>
+
+        <div class="nav-section-label">Khác</div>
         <a class="nav-link-app" href="prices.html">
             <i class="bi bi-graph-up-arrow"></i>
             <span>Giá nông sản</span>
@@ -158,13 +168,12 @@
 
         <a class="nav-link-app" href="profile.html">
             <i class="bi bi-person-circle"></i>
-            <span>Tài khoản</span>
+            <span>Hồ sơ</span>
         </a>
 
         <a class="nav-link-app" href="notification.html">
             <i class="bi bi-bell"></i>
             <span>Thông báo</span>
-
             <span
                 class="sidebar-notification-badge"
                 data-notification-badge
@@ -907,7 +916,7 @@
                 </div>
 
                 <a
-                    href="ai.html"
+                    href="aichandoan-index.html"
                     class="ai-question-button"
                 >
                     Hỏi AI ngay
@@ -1017,6 +1026,7 @@
     <script src="../js/services/weather-service.js"></script>
     <script src="../js/home.js"></script>
 
+<script src="../js/farmer-nav.js"></script>
 </body>
 
 </html>
