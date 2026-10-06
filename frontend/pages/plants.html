@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>AgriSmart - Cây trồng của tôi</title>
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+    >
+
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css"
+        rel="stylesheet"
+    >
+<link rel="stylesheet" href="../css/home.css">
+<link rel="stylesheet" href="../css/plants.css">
+</head>
+
+<body>
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+
+        <div class="brand">
+            <span class="dot"></span>
+            AgriSmart
+        </div>
+
+        <div class="sidebar-scroll">
+
+            <a class="nav-link-app" href="home.html">
+                <i class="bi bi-house-door"></i>
+                <span>Trang chủ</span>
+            </a>
+
+            <a class="nav-link-app active" href="plants.html">
+                <i class="bi bi-flower2"></i>
+                <span>Cây trồng</span>
+            </a>
+
+            <a class="nav-link-app" href="seasons.html">
+                <i class="bi bi-calendar3-range"></i>
+                <span>Mùa vụ</span>
+            </a>
+
+            <a class="nav-link-app" href="nhatky-index.html">
+                <i class="bi bi-journal-text"></i>
+                <span>Nhật ký canh tác</span>
+            </a>
+
+            <a class="nav-link-app" href="weather.html">
+                <i class="bi bi-cloud-sun"></i>
+                <span>Thời tiết</span>
+            </a>
+
+            <a class="nav-link-app" href="ai.html">
+                <i class="bi bi-robot"></i>
+                <span>AI chẩn đoán &amp; tư vấn</span>
+            </a>
+
+            <div class="nav-section-label">
+                KHÁC
+            </div>
+
+            <a class="nav-link-app" href="prices.html">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Giá nông sản</span>
+            </a>
+
+            <a class="nav-link-app" href="profile.html">
+                <i class="bi bi-person-circle"></i>
+                <span>Tài khoản</span>
+            </a>
+
+            <a class="nav-link-app" href="notification.html">
+                <i class="bi bi-bell"></i>
+                <span>Thông báo</span>
+            </a>
+
+        </div>
+
+        <div class="sidebar-foot">
+
+            <div class="mini-user">
+                <div class="mini-avatar">N</div>
+
+                <div>
+                    <div class="mini-user-name">
+                        Nông dân
+                    </div>
+
+                    <div class="mini-user-location">
+                        AgriSmart
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- MAIN -->
+    <main class="plants-main">
+
+        <!-- HEADER -->
+        <header class="plants-header">
+
+            <div>
+                <h1>Cây trồng của tôi</h1>
+
+                <p>
+                    Quản lý cây trồng của tài khoản nông dân
+                </p>
+            </div>
+
+            <div class="plants-header-actions">
+
+    <button
+        id="btnTheme"
+        class="theme-button"
+        type="button"
+        title="Chuyển chế độ sáng/tối"
+    >
+        <i id="themeIcon" class="bi bi-sun"></i>
+    </button>
+
+    <button
+        id="btnAddPlant"
+        class="btn-add-plant"
+        type="button"
+    >
+        <i class="bi bi-plus-lg"></i>
+        Thêm cây trồng
+    </button>
+
+</div>
+
+        </header>
+
+
+        <!-- SUMMARY -->
+        <section class="plant-summary">
+
+            <div class="summary-card">
+
+                <div class="summary-icon">
+                    <i class="bi bi-flower2"></i>
+                </div>
+
+                <div>
+                    <span>Tổng cây trồng</span>
+                    <strong id="totalPlants">0</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- MESSAGE -->
+        <div
+            id="plantMessage"
+            class="plant-message"
+            hidden
+        ></div>
+
+
+        <!-- LIST -->
+        <section class="plants-panel">
+
+            <div class="panel-heading">
+
+                <div>
+                    <h2>Danh sách cây trồng</h2>
+                    <p>Dữ liệu được lấy từ hệ thống AgriSmart</p>
+                </div>
+
+                <button
+                    id="btnReloadPlants"
+                    class="btn-reload"
+                    type="button"
+                    title="Tải lại"
+                >
+                    <i class="bi bi-arrow-clockwise"></i>
+                    Tải lại
+                </button>
+
+            </div>
+
+
+            <div
+                id="plantsLoading"
+                class="plants-state"
+            >
+                <div class="spinner-border spinner-border-sm"></div>
+                <span>Đang tải cây trồng...</span>
+            </div>
+
+
+            <div
+                id="plantsEmpty"
+                class="plants-state empty-state"
+                hidden
+            >
+                <i class="bi bi-flower2"></i>
+
+                <h3>Chưa có cây trồng</h3>
+
+                <p>
+                    Hãy thêm cây trồng đầu tiên của bạn.
+                </p>
+            </div>
+
+
+            <div
+                id="plantsGrid"
+                class="plants-grid"
+            ></div>
+
+        </section>
+
+    </main>
+
+
+    <!-- MODAL ADD / EDIT -->
+    <div
+        id="plantModal"
+        class="plant-modal"
+        hidden
+    >
+
+        <div
+            id="plantModalBackdrop"
+            class="plant-modal-backdrop"
+        ></div>
+
+        <div
+            class="plant-modal-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="plantModalTitle"
+        >
+
+            <div class="plant-modal-header">
+
+                <div>
+                    <h2 id="plantModalTitle">
+                        Thêm cây trồng
+                    </h2>
+
+                    <p>
+                        Nhập thông tin cây trồng
+                    </p>
+                </div>
+
+                <button
+                    id="btnClosePlantModal"
+                    class="modal-close"
+                    type="button"
+                    aria-label="Đóng"
+                >
+                    <i class="bi bi-x-lg"></i>
+                </button>
+
+            </div>
+
+
+            <form id="plantForm">
+
+                <input
+                    id="plantId"
+                    type="hidden"
+                >
+
+
+                <div class="form-group">
+
+                    <label for="plantName">
+                        Tên cây / khu trồng
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        id="plantName"
+                        class="plant-input"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Ví dụ: Vườn cà chua sau nhà"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="plantType">
+                        Loại cây
+                        <span>*</span>
+                    </label>
+
+                    <input
+                        id="plantType"
+                        class="plant-input"
+                        type="text"
+                        maxlength="255"
+                        placeholder="Ví dụ: Cà chua"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-row">
+
+                    <div class="form-group">
+
+                        <label for="plantVariety">
+                            Giống cây
+                        </label>
+
+                        <input
+                            id="plantVariety"
+                            class="plant-input"
+                            type="text"
+                            maxlength="255"
+                            placeholder="Ví dụ: Cà chua bi"
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="plantGrowthStage">
+                            Giai đoạn sinh trưởng
+                        </label>
+
+                        <input
+                            id="plantGrowthStage"
+                            class="plant-input"
+                            type="text"
+                            maxlength="255"
+                            placeholder="Ví dụ: Ra hoa"
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="plantDescription">
+                        Mô tả
+                    </label>
+
+                    <textarea
+                        id="plantDescription"
+                        class="plant-input plant-textarea"
+                        rows="4"
+                        placeholder="Ghi chú thêm về cây trồng..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="form-actions">
+
+                    <button
+                        id="btnCancelPlant"
+                        class="btn-cancel"
+                        type="button"
+                    >
+                        Hủy
+                    </button>
+
+                    <button
+                        id="btnSavePlant"
+                        class="btn-save"
+                        type="submit"
+                    >
+                        <i class="bi bi-check-lg"></i>
+                        <span id="savePlantText">
+                            Lưu cây trồng
+                        </span>
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+
+    <!-- DELETE CONFIRMATION -->
+    <div
+        id="deleteModal"
+        class="plant-modal"
+        hidden
+    >
+
+        <div
+            id="deleteModalBackdrop"
+            class="plant-modal-backdrop"
+        ></div>
+
+        <div class="plant-modal-dialog delete-dialog">
+
+            <div class="delete-icon">
+                <i class="bi bi-trash3"></i>
+            </div>
+
+            <h2>Xóa cây trồng?</h2>
+
+            <p>
+                Bạn có chắc muốn xóa
+                <strong id="deletePlantName"></strong>?
+                Thao tác này không thể hoàn tác.
+            </p>
+
+            <div class="form-actions">
+
+                <button
+                    id="btnCancelDelete"
+                    class="btn-cancel"
+                    type="button"
+                >
+                    Hủy
+                </button>
+
+                <button
+                    id="btnConfirmDelete"
+                    class="btn-delete-confirm"
+                    type="button"
+                >
+                    <i class="bi bi-trash"></i>
+                    Xóa
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- JAVASCRIPT -->
+    <script src="../js/config.js"></script>
+    <script src="../js/services/plant-service.js"></script>
+    <script src="../js/plants.js"></script>
+
+</body>
+</html>

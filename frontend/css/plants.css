@@ -1,0 +1,1012 @@
+* {
+    box-sizing: border-box;
+}
+
+:root {
+    --bg: #f5f3ea;
+    --panel: #ffffff;
+    --panel-2: #ffffff;
+    --border: #ddd9c9;
+    --text: #17211b;
+    --muted: #66756d;
+    --green: #22c55e;
+    --green-dark: #16a34a;
+    --danger: #ef4444;
+    --sidebar-width: 250px;
+}
+
+html[data-theme="dark"] {
+    --bg: #07111f;
+    --panel: #0d1b2a;
+    --panel-2: #102235;
+    --border: rgba(255, 255, 255, 0.09);
+    --text: #f3f7fb;
+    --muted: #8fa3b8;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family:
+        Inter,
+        system-ui,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        sans-serif;
+}
+
+body.modal-open {
+    overflow: hidden;
+}
+/* =========================
+   MAIN
+   ========================= */
+
+.plants-main {
+    min-height: 100vh;
+
+    margin-left: var(--sidebar-width);
+
+    padding: 32px;
+}
+
+.plants-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 26px;
+}
+
+.plants-header h1 {
+    margin: 0 0 7px;
+
+    font-size: 29px;
+    font-weight: 800;
+}
+
+.plants-header p {
+    margin: 0;
+
+    color: var(--muted);
+}
+
+.btn-add-plant {
+    min-height: 44px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 8px;
+
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 10px;
+
+    background: var(--green);
+    color: #04150a;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: 0.2s ease;
+}
+
+.btn-add-plant:hover {
+    background: #35d66e;
+    transform: translateY(-1px);
+}
+
+/* =========================
+   SUMMARY
+   ========================= */
+
+.plant-summary {
+    margin-bottom: 22px;
+}
+
+.summary-card {
+    width: 260px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    padding: 18px;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    background: var(--panel);
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 12px;
+
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--green);
+
+    font-size: 22px;
+}
+
+.summary-card span {
+    display: block;
+
+    margin-bottom: 2px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.summary-card strong {
+    font-size: 25px;
+}
+
+/* =========================
+   MESSAGE
+   ========================= */
+
+.plant-message {
+    margin-bottom: 20px;
+    padding: 13px 16px;
+
+    border-radius: 10px;
+
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.plant-message.success {
+    border: 1px solid rgba(34, 197, 94, 0.28);
+
+    background: rgba(34, 197, 94, 0.1);
+    color: #86efac;
+}
+
+.plant-message.error {
+    border: 1px solid rgba(239, 68, 68, 0.3);
+
+    background: rgba(239, 68, 68, 0.1);
+    color: #fca5a5;
+}
+
+/* =========================
+   PANEL
+   ========================= */
+
+.plants-panel {
+    padding: 22px;
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    background: var(--panel);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.panel-heading h2 {
+    margin: 0 0 4px;
+
+    font-size: 19px;
+}
+
+.panel-heading p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.btn-reload {
+    min-height: 38px;
+
+    display: inline-flex;
+    align-items: center;
+
+    gap: 7px;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--panel-2);
+    color: var(--text);
+
+    cursor: pointer;
+}
+
+.btn-reload:hover {
+    border-color: rgba(34, 197, 94, 0.4);
+}
+
+/* =========================
+   STATES
+   ========================= */
+
+.plants-state {
+    min-height: 150px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 10px;
+
+    color: var(--muted);
+}
+
+.empty-state {
+    flex-direction: column;
+
+    text-align: center;
+}
+
+.empty-state i {
+    margin-bottom: 5px;
+
+    color: var(--green);
+
+    font-size: 42px;
+}
+
+.empty-state h3 {
+    margin: 0;
+
+    color: var(--text);
+
+    font-size: 18px;
+}
+
+.empty-state p {
+    margin: 4px 0 0;
+}
+
+/* Quan trọng:
+   thuộc tính hidden phải thực sự ẩn phần tử,
+   kể cả khi phần tử có display:flex ở class khác.
+*/
+[hidden] {
+    display: none !important;
+}
+
+/* =========================
+   PLANT GRID
+   ========================= */
+
+.plants-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(auto-fill, minmax(280px, 1fr));
+
+    gap: 18px;
+}
+
+.plant-card {
+    overflow: hidden;
+
+    border: 1px solid var(--border);
+    border-radius: 14px;
+
+    background: var(--panel-2);
+
+    transition: 0.2s ease;
+}
+
+.plant-card:hover {
+    border-color: rgba(34, 197, 94, 0.32);
+
+    transform: translateY(-2px);
+}
+
+.plant-card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 17px 17px 0;
+}
+
+.plant-card-icon {
+    width: 42px;
+    height: 42px;
+
+    display: grid;
+    place-items: center;
+
+    border-radius: 11px;
+
+    background: rgba(34, 197, 94, 0.12);
+    color: var(--green);
+
+    font-size: 20px;
+}
+
+.growth-badge {
+    max-width: 160px;
+
+    overflow: hidden;
+
+    padding: 5px 9px;
+
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    border-radius: 999px;
+
+    background: rgba(34, 197, 94, 0.08);
+    color: #86efac;
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.plant-card-body {
+    padding: 16px 17px;
+}
+
+.plant-card-body h3 {
+    margin: 0 0 5px;
+
+    font-size: 18px;
+    line-height: 1.35;
+}
+
+.plant-type {
+    margin-bottom: 17px;
+
+    color: var(--green);
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.plant-details {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 12px;
+}
+
+.plant-details div {
+    min-width: 0;
+}
+
+.plant-details span {
+    display: block;
+
+    margin-bottom: 3px;
+
+    color: var(--muted);
+
+    font-size: 11px;
+}
+
+.plant-details strong {
+    display: block;
+
+    overflow: hidden;
+
+    font-size: 13px;
+    font-weight: 600;
+
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.plant-description {
+    margin: 16px 0 0;
+    padding-top: 14px;
+
+    border-top: 1px solid var(--border);
+
+    color: #aebccc;
+
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.plant-card-actions {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    border-top: 1px solid var(--border);
+}
+
+.plant-card-actions button {
+    min-height: 42px;
+
+    border: 0;
+
+    background: transparent;
+
+    font-size: 13px;
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.btn-edit-plant {
+    color: #93c5fd;
+
+    border-right: 1px solid var(--border) !important;
+}
+
+.btn-delete-plant {
+    color: #fca5a5;
+}
+
+.btn-edit-plant:hover {
+    background: rgba(59, 130, 246, 0.08);
+}
+
+.btn-delete-plant:hover {
+    background: rgba(239, 68, 68, 0.08);
+}
+
+/* =========================
+   MODAL
+   ========================= */
+
+.plant-modal {
+    position: fixed;
+
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    z-index: 1000;
+}
+
+.plant-modal-backdrop {
+    position: absolute;
+
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.68);
+
+    backdrop-filter: blur(3px);
+}
+
+.plant-modal-dialog {
+    position: relative;
+
+    width: min(620px, 100%);
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    padding: 24px;
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    background: var(--panel);
+
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+
+    z-index: 1;
+}
+
+.plant-modal-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+.plant-modal-header h2 {
+    margin: 0 0 4px;
+
+    font-size: 21px;
+}
+
+.plant-modal-header p {
+    margin: 0;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+.modal-close {
+    width: 36px;
+    height: 36px;
+
+    display: grid;
+    place-items: center;
+
+    flex-shrink: 0;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: var(--panel-2);
+    color: var(--text);
+
+    cursor: pointer;
+}
+
+.form-group {
+    margin-bottom: 17px;
+}
+
+.form-group label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.form-group label span {
+    color: #f87171;
+}
+
+.form-row {
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+}
+
+.plant-input {
+    width: 100%;
+
+    padding: 11px 12px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    outline: none;
+
+    background: var(--panel-2);
+    color: var(--text);
+
+    font: inherit;
+
+    font-size: 14px;
+
+    transition: 0.2s ease;
+}
+
+.plant-input::placeholder {
+    color: #60748a;
+}
+
+.plant-input:focus {
+    border-color: rgba(34, 197, 94, 0.65);
+
+    box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.08);
+}
+
+.plant-textarea {
+    resize: vertical;
+    min-height: 100px;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 23px;
+}
+
+.btn-cancel,
+.btn-save,
+.btn-delete-confirm {
+    min-height: 41px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 0 16px;
+
+    border-radius: 9px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.btn-cancel {
+    border: 1px solid var(--border);
+
+    background: var(--panel-2);
+    color: var(--text);
+}
+
+.btn-save {
+    border: 0;
+
+    background: var(--green);
+    color: #04150a;
+}
+
+.btn-delete-confirm {
+    border: 0;
+
+    background: var(--danger);
+    color: #fff;
+}
+
+.btn-save:disabled,
+.btn-delete-confirm:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+}
+
+/* =========================
+   DELETE MODAL
+   ========================= */
+
+.delete-dialog {
+    width: min(430px, 100%);
+
+    text-align: center;
+}
+
+.delete-icon {
+    width: 58px;
+    height: 58px;
+
+    display: grid;
+    place-items: center;
+
+    margin: 0 auto 16px;
+
+    border-radius: 50%;
+
+    background: rgba(239, 68, 68, 0.12);
+    color: #f87171;
+
+    font-size: 24px;
+}
+
+.delete-dialog h2 {
+    margin: 0 0 10px;
+
+    font-size: 21px;
+}
+
+.delete-dialog p {
+    margin: 0;
+
+    color: var(--muted);
+
+    line-height: 1.6;
+}
+
+.delete-dialog .form-actions {
+    justify-content: center;
+}
+
+/* =========================
+   RESPONSIVE
+   ========================= */
+
+@media (max-width: 900px) {
+    :root {
+        --sidebar-width: 210px;
+    }
+
+    .plants-main {
+        padding: 24px;
+    }
+}
+
+@media (max-width: 720px) {
+    .plants-main {
+        margin-left: 0;
+        padding: 18px;
+    }
+
+    .plants-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .btn-add-plant {
+        justify-content: center;
+    }
+
+    .summary-card {
+        width: 100%;
+    }
+
+    .panel-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .btn-reload {
+        justify-content: center;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+/* =========================
+   PLANTS UI POLISH
+   ========================= */
+
+/* Main */
+.plants-main {
+    padding: 38px 32px;
+    background:
+        radial-gradient(circle at 92% 3%, rgba(34, 197, 94, 0.06), transparent 26%),
+        var(--bg);
+}
+
+/* Header */
+.plants-header {
+    margin-bottom: 28px;
+}
+
+.plants-header h1 {
+    font-size: 31px;
+    letter-spacing: -0.5px;
+}
+
+.plants-header p {
+    margin-top: 6px;
+    font-size: 14px;
+}
+
+.plants-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Theme */
+.theme-button {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    background: var(--panel);
+    color: var(--text);
+
+    font-size: 17px;
+    cursor: pointer;
+
+    box-shadow: 0 3px 10px rgba(15, 23, 42, 0.05);
+    transition: 0.2s ease;
+}
+
+.theme-button:hover {
+    border-color: rgba(34, 197, 94, 0.45);
+    transform: translateY(-2px);
+}
+
+/* Add plant */
+.btn-add-plant {
+    min-height: 44px;
+    padding: 0 20px;
+
+    border-radius: 12px;
+
+    background: #22c55e;
+    color: #062b15;
+
+    box-shadow: 0 5px 14px rgba(34, 197, 94, 0.18);
+}
+
+.btn-add-plant:hover {
+    background: #16b854;
+    box-shadow: 0 7px 18px rgba(34, 197, 94, 0.24);
+}
+
+/* Summary */
+.plant-summary {
+    margin-bottom: 22px;
+}
+
+.summary-card {
+    width: 280px;
+    min-height: 96px;
+
+    padding: 19px 20px;
+
+    border-radius: 16px;
+
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.045);
+}
+
+.summary-icon {
+    width: 50px;
+    height: 50px;
+
+    border-radius: 14px;
+
+    background: rgba(34, 197, 94, 0.12);
+}
+
+.summary-card strong {
+    font-size: 27px;
+    line-height: 1.1;
+}
+
+/* Main list panel */
+.plants-panel {
+    min-height: 330px;
+
+    padding: 24px;
+
+    border-radius: 18px;
+
+    box-shadow: 0 6px 22px rgba(15, 23, 42, 0.045);
+}
+
+.panel-heading {
+    padding-bottom: 18px;
+    margin-bottom: 0;
+
+    border-bottom: 1px solid var(--border);
+}
+
+.panel-heading h2 {
+    font-size: 20px;
+    font-weight: 750;
+}
+
+.panel-heading p {
+    margin-top: 5px;
+}
+
+/* Reload */
+.btn-reload {
+    min-height: 39px;
+    padding: 0 14px;
+
+    border-radius: 10px;
+
+    transition: 0.2s ease;
+}
+
+.btn-reload:hover {
+    color: var(--green);
+    transform: translateY(-1px);
+}
+
+/* Empty state */
+.empty-state {
+    min-height: 220px;
+}
+
+.empty-state i {
+    width: 64px;
+    height: 64px;
+
+    display: grid;
+    place-items: center;
+
+    margin-bottom: 14px;
+
+    border-radius: 50%;
+
+    background: rgba(34, 197, 94, 0.09);
+    color: #22c55e;
+
+    font-size: 34px;
+}
+
+.empty-state h3 {
+    font-size: 18px;
+    font-weight: 750;
+}
+
+.empty-state p {
+    margin-top: 7px;
+    font-size: 13px;
+}
+
+/* Cards after plants are added */
+.plants-grid {
+    padding-top: 22px;
+}
+
+.plant-card {
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(15, 23, 42, 0.045);
+}
+
+.plant-card:hover {
+    border-color: rgba(34, 197, 94, 0.4);
+    box-shadow: 0 9px 25px rgba(15, 23, 42, 0.08);
+    transform: translateY(-3px);
+}
+
+/* Dark */
+html[data-theme="dark"] .summary-card,
+html[data-theme="dark"] .plants-panel,
+html[data-theme="dark"] .plant-card,
+html[data-theme="dark"] .theme-button {
+    box-shadow: none;
+}
+
+html[data-theme="dark"] .plants-main {
+    background:
+        radial-gradient(circle at 92% 3%, rgba(34, 197, 94, 0.055), transparent 26%),
+        var(--bg);
+}
+
+/* Mobile */
+@media (max-width: 720px) {
+    .plants-main {
+        padding: 20px 16px;
+    }
+
+    .plants-header-actions {
+        width: 100%;
+    }
+
+    .btn-add-plant {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .summary-card {
+        width: 100%;
+    }
+
+    .plants-panel {
+        padding: 18px;
+    }
+}
