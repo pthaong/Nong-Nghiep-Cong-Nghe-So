@@ -21,13 +21,93 @@
         rel="stylesheet"
     >
 
-    <link
-        rel="stylesheet"
-        href="../css/notification.css"
-    >
+    <link rel="stylesheet" href="../css/home.css">
+
+<link
+    rel="stylesheet"
+    href="../css/notification.css"
+>
 </head>
 
 <body>
+    <div class="app-shell">
+
+    <aside class="sidebar" id="sidebar">
+        <div class="brand">
+            <span class="dot"></span> AgriSmart
+        </div>
+
+        <div class="sidebar-scroll">
+
+            <a class="nav-link-app" href="home.html">
+                <i class="bi bi-house-door"></i>
+                <span>Trang chủ</span>
+            </a>
+
+            <a class="nav-link-app" href="plants.html">
+                <i class="bi bi-flower2"></i>
+                <span>Cây trồng</span>
+            </a>
+
+            <a class="nav-link-app" href="seasons.html">
+                <i class="bi bi-calendar3-range"></i>
+                <span>Mùa vụ</span>
+            </a>
+
+            <a class="nav-link-app" href="nhatky-index.html">
+                <i class="bi bi-journal-text"></i>
+                <span>Nhật ký canh tác</span>
+            </a>
+
+            <a class="nav-link-app" href="weather.html">
+                <i class="bi bi-cloud-sun"></i>
+                <span>Thời tiết</span>
+            </a>
+
+            <a class="nav-link-app" href="aichandoan-index.html">
+                <i class="bi bi-robot"></i>
+                <span>AI chẩn đoán &amp; tư vấn</span>
+            </a>
+
+            <div class="nav-section-label">Khác</div>
+
+            <a class="nav-link-app" href="prices.html">
+                <i class="bi bi-graph-up-arrow"></i>
+                <span>Giá nông sản</span>
+            </a>
+
+            <a class="nav-link-app" href="profile.html">
+                <i class="bi bi-person-circle"></i>
+                <span>Tài khoản</span>
+            </a>
+
+            <a class="nav-link-app active" href="notification.html">
+                <i class="bi bi-bell"></i>
+                <span>Thông báo</span>
+            </a>
+
+        </div>
+        <div class="sidebar-foot">
+            <div class="mini-user">
+                <div class="mini-avatar">N</div>
+
+                <div class="mini-user-info">
+                    <div class="mini-user-name">Nông dân</div>
+                    <div class="mini-user-location">
+                        <i class="bi bi-geo-alt-fill"></i>
+                        AgriSmart
+                    </div>
+                </div>
+            </div>
+
+            <button type="button" class="sidebar-logout">
+                <i class="bi bi-box-arrow-left"></i>
+                Đăng xuất
+            </button>
+        </div>
+    </aside>
+
+    <div class="main-col">
 
     <!-- HEADER -->
 
@@ -134,7 +214,9 @@
     <script src="../js/config.js"></script>
     <script src="../js/services/notification-service.js"></script>
     <script src="../js/notification.js"></script>
-
+    <script src="../js/logout.js"></script>
+    </div>
+</div>
 </body>
 
 </html>
