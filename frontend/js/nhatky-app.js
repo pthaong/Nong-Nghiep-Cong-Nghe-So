@@ -925,10 +925,10 @@ const DiaryService = {
   }
 
   function handleLogout() {
-    // Không tự xoá session ở đây vì cấu trúc đăng nhập của project
-    // chưa được xác định trong module Nhật ký.
-    showToast('Hãy sử dụng chức năng đăng xuất của hệ thống.');
-  }
+  localStorage.removeItem('agrismart_session');
+  sessionStorage.removeItem('agrismart_session');
+  window.location.href = '../index.html';
+}
 
   function bindEvents() {
     $btnOpenAdd.addEventListener('click', openAddModal);

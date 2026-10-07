@@ -20,16 +20,44 @@
   <aside class="sidebar" id="sidebar">
     <div class="brand"><span class="dot"></span> AgriSmart</div>
     <div class="sidebar-scroll">
-      <div class="nav-link-app"><i class="bi bi-house-door"></i> Trang chủ</div>
-      <div class="nav-link-app"><i class="bi bi-flower2"></i> Cây trồng</div>
-      <div class="nav-link-app active"><i class="bi bi-calendar3-range"></i> Mùa vụ</div>
-      <div class="nav-link-app"><i class="bi bi-journal-text"></i> Nhật ký canh tác</div>
-      <div class="nav-link-app"><i class="bi bi-cloud-sun"></i> Thời tiết</div>
-      <div class="nav-link-app"><i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn</div>
-      <div class="nav-section-label">Khác</div>
-      <div class="nav-link-app"><i class="bi bi-graph-up-arrow"></i> Giá nông sản</div>
-      <div class="nav-link-app"><i class="bi bi-person-circle"></i> Tài khoản</div>
-    </div>
+  <a class="nav-link-app" href="home.html">
+    <i class="bi bi-house-door"></i> Trang chủ
+  </a>
+
+  <a class="nav-link-app" href="plants.html">
+    <i class="bi bi-flower2"></i> Cây trồng
+  </a>
+
+  <a class="nav-link-app active" href="seasons.html">
+    <i class="bi bi-calendar3-range"></i> Mùa vụ
+  </a>
+
+  <a class="nav-link-app" href="nhatky-index.html">
+    <i class="bi bi-journal-text"></i> Nhật ký canh tác
+  </a>
+
+  <a class="nav-link-app" href="weather.html">
+    <i class="bi bi-cloud-sun"></i> Thời tiết
+  </a>
+
+  <a class="nav-link-app" href="aichandoan-index.html">
+    <i class="bi bi-robot"></i> AI chẩn đoán &amp; tư vấn
+  </a>
+
+  <div class="nav-section-label">Khác</div>
+
+  <a class="nav-link-app" href="prices.html">
+    <i class="bi bi-graph-up-arrow"></i> Giá nông sản
+  </a>
+
+  <a class="nav-link-app" href="profile.html">
+    <i class="bi bi-person-circle"></i> Tài khoản
+  </a>
+
+  <a class="nav-link-app" href="notification.html">
+    <i class="bi bi-bell"></i> Thông báo
+  </a>
+</div>
     <div class="sidebar-foot">
       <div class="mini-user">
         <div class="mini-avatar">N</div>
@@ -38,7 +66,13 @@
           <div style="color:#9FB99A; font-size:.72rem;"><i class="bi bi-geo-alt-fill me-1"></i>Cần Thơ</div>
         </div>
       </div>
-      <button class="btn btn-sm btn-outline-light w-100 mt-3"><i class="bi bi-box-arrow-left me-1"></i>Đăng xuất</button>
+      <button
+    type="button"
+    class="btn btn-sm btn-outline-light w-100 mt-3 sidebar-logout"
+>
+    <i class="bi bi-box-arrow-left me-1"></i>
+    Đăng xuất
+</button>
     </div>
   </aside>
 
@@ -172,6 +206,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
 <script src="../js/config.js"></script>
 <script src="../js/seasons.js"></script>
+<script src="../js/logout.js"></script>
 </body>
 </html>
 

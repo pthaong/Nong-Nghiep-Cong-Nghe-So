@@ -805,7 +805,7 @@ function setupPlantActions() {
             function () {
 
                 /*
-                 * Để href="ai.html" xử lý
+                 * Để href="aichandoan-index.html" xử lý
                  * điều hướng tự nhiên.
                  */
 
